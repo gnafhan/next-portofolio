@@ -1,3 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base{
+  @font-face{
+    font-family: 'Silka';
+    src: url('/font/silka.woff') format('woff');
+  }
+}
+
+body{
+  font-family: 'Silka';
+}
+.no-select {
+  user-select: none;
+}
+

@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 import {NextUIProvider} from "@nextui-org/react";
 import {ThemeProvider as NextThemesProvider} from "next-themes";
+import { Head } from 'next/document';
 export default function App({ Component, pageProps }) {
   return (
   <NextUIProvider>

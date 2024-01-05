@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
 export default function DarkModeToggle() {
-const [isSelected, setIsSelected] = useState(true);
-const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+const [isSelected, setIsSelected] = useState(theme=='light'?true:false);
 
 useEffect(() => {
     if (isSelected) {
@@ -14,16 +14,35 @@ useEffect(() => {
     } else{
         setTheme("dark");
     }
+
+    
 }, [isSelected]);
 
-  return (
-    <Switch
-      isSelected={isSelected} 
-      onValueChange={setIsSelected}
-      size="lg"
-      color="primary"
-      startContent={<SunIcon />}
-      endContent={<MoonIcon />}
-    />
-  );
+useEffect(()=>{
+  if(theme == "light"){
+    setIsSelected(true)
+  } else if(theme == "dark")
+  {
+  setIsSelected(false)
+}
+}, [theme])
+useEffect(()=>{
+  if(theme == "light"){
+    setTheme('dark')
+  } else if(theme == "dark")
+  {
+  setIsSelected(false)
+}
+
+}, [])
+return (
+  <Switch
+    isSelected={isSelected} 
+    onValueChange={setIsSelected}
+    size="lg"
+    color="primary"
+    startContent={<SunIcon />}
+    endContent={<MoonIcon />}
+  />
+);
 }
