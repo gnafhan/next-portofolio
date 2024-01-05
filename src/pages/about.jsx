@@ -1,19 +1,13 @@
 import NavbarHeader from '../components/Navbar';
-import HeroSection from '@/components/Hero';
-import GridSum from '@/components/Grid';
-import Skill from '@/components/Skill';
 import ParticleBG from './../components/Particle';
 
 
-export default function Home() {
+export default function AboutMe() {
   return (
     <div>
       <ParticleBG/>
       <NavbarHeader/>
       <div className="mx-auto max-w-6xl">
-          <HeroSection/>
-          <Skill/>
-          <GridSum/>
       </div>
   </div>
   )
