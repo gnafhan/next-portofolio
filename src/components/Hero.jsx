@@ -18,7 +18,7 @@ export default function HeroSection() {
               </motion.div>
             </div>
             <motion.div  whileHover={{scale: 1.05, rotate: "1deg"}} initial={{ opacity: 0, x:30 }} exit={{ opacity: 0, x:30 }} whileInView={{ opacity: 1,x:0 }} transition={{ duration: 0.5}} className='flex flex-1 justify-center'>
-              <Image className="rounded-none ps-3 pe-2" isBlurred src="/nafhan.png" width={300} height={300}  />
+              <Image fetchPriority="high" className="rounded-none ps-3 pe-2" isBlurred src="/nafhan.png" width={300} height={300} alt="Ghifari Nafhan"  />
             </motion.div>
           </div>
         </div>    

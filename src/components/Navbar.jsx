@@ -28,10 +28,6 @@ export default function NavbarHeader() {
   const handleBg = () => {
     setBg(!bg);
   };
-  // console.log(bg);
-
-  const menuItems = ["Home", "About", "Projects", "Media"];
-
   return (
     <Navbar
       className="md:my-2"
@@ -116,8 +112,8 @@ export default function NavbarHeader() {
         <NavbarMenuItem>
           <Link
             className="w-full font-silka font-semibold"
-            color="primary"
-            href="#"
+            color={currentPath === "/" ? "primary" : "foreground"}
+                href={ currentPath === "/" ? "#" : "/" }
             size="lg"
           >
             Home
@@ -126,8 +122,8 @@ export default function NavbarHeader() {
         <NavbarMenuItem>
           <Link
             className="w-full font-silka font-semibold"
-            color="foreground"
-            href="#"
+            color={currentPath === "/about" ? "primary" : "foreground"}
+            href={ currentPath === "/about" ? "#" : "/about" }
             size="lg"
           >
             About
@@ -136,8 +132,8 @@ export default function NavbarHeader() {
         <NavbarMenuItem>
           <Link
             className="w-full font-silka font-semibold"
-            color="foreground"
-            href="#"
+            color={currentPath === "/project" ? "primary" : "foreground"}
+            href={ currentPath === "/project" ? "#" : "/project" }
             size="lg"
           >
             Projects
@@ -146,8 +142,8 @@ export default function NavbarHeader() {
         <NavbarMenuItem>
           <Link
             className="w-full font-silka font-semibold"
-            color="foreground"
-            href="#"
+            color={currentPath === "/media" ? "primary" : "foreground"}
+            href={ currentPath === "/media" ? "#" : "/media" }
             size="lg"
           >
             Media

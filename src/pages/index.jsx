@@ -3,6 +3,7 @@ import HeroSection from '@/components/Hero';
 import GridSum from '@/components/Grid';
 import Skill from '@/components/Skill';
 import ParticleBG from './../components/Particle';
+import Footer from '@/components/Footer';
 
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
           <HeroSection/>
           <Skill/>
           <GridSum/>
+      <Footer/>
       </div>
   </div>
   )

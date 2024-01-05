@@ -233,9 +233,9 @@ export default function GridSum() {
               <p className="text-5xl font-bold">4</p>
             </div>
             <div>
-              <p className="font-semibold">Years Experience</p>
+              <p className="font-semibold">Years Learning</p>
               <p className="">
-                I have 4 years of experience, including 3 years as a beginner
+                I have 4 years of learning experience, including 3 years as a beginner
                 and 1 year at an intermediate level.
               </p>
             </div>
