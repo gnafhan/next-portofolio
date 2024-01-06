@@ -10,6 +10,9 @@ export default function AboutMe() {
       <NavbarHeader/>
       <div className="mx-auto max-w-6xl">
       <AboutMeContent/>
+      <div className="mt-16 flex flex-col px-7">
+        <p className='text-[30px] font-bold'>Experience</p>
+      </div>
       <Footer/>
       </div>
   </div>
