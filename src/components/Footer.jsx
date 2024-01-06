@@ -15,7 +15,9 @@ export default function Footer() {
           onClick={toggle}
           whileHover={{ scale: 1.2, rotate: "180deg" }}
           whileTap={{ scale: 1, rotate: "360deg" }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, y:30 }} 
+            whileInView={{ opacity: 1,y:0, rotate: "360deg"}} 
+          transition={{ duration: 1 }}
           className="mx-auto "
         >
           <Image src="/N-03.png" width={50} height={50} alt="logo N" />
@@ -24,18 +26,34 @@ export default function Footer() {
           © 2024 Ghifari Nafhan. All rights reserved.
         </p>
         <div class="mt-10 flex items-center justify-center space-x-4 text-sm font-semibold leading-6 text-slate-700">
+          <motion.div initial={{ opacity: 0, y:30 }} 
+            whileInView={{ opacity: 1,y:0 }} 
+            transition={{ duration: 0.5, delay: 0 }}>
           <Link target="_blank" href="https://www.linkedin.com/in/gnafhan/">
             <FaLinkedin className="w-[30px] h-[30px] hover:text-[#0A66C2] text-foreground cursor-pointer hover:scale-125" />
           </Link>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y:30 }} 
+            whileInView={{ opacity: 1,y:0 }} 
+            transition={{ duration: 0.5, delay: 0.25 }}>
           <Link target="_blank" href="https://www.github.com/gnafhan/">
             <FaGithub className="w-[30px] h-[30px] hover:text-foreground text-foreground cursor-pointer hover:scale-125" />
           </Link>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y:30,  }} 
+            whileInView={{ opacity: 1,y:0, }} 
+            transition={{ duration: 0.5, delay: 0.5,  }}>
           <Link target="_blank" href="https://www.instagram.com/ghifarinafhan_/">
             <SiInstagram className="w-[30px] h-[30px] hover:text-[#EF018B] text-foreground cursor-pointer hover:scale-125" />
           </Link>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y:30 }} 
+            whileInView={{ opacity: 1,y:0 }} 
+            transition={{ duration: 0.5, delay: 0.75 }}>
           <Link href="mailto:nafhanghifari@gmail.com">
             <SiGmail className="w-[30px] h-[30px] hover:text-red-500 text-foreground cursor-pointer hover:scale-125" />
           </Link>
+          </motion.div>
         </div>
       </div>
     </footer>
