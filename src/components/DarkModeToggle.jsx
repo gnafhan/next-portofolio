@@ -1,4 +1,4 @@
-import {Switch} from "@nextui-org/react";
+import {Switch, Link, Button} from "@nextui-org/react";
 import { MoonIcon } from "@/logo/moon";
 import { SunIcon } from "@/logo/sun";
 import { useEffect, useState } from "react";
@@ -39,13 +39,17 @@ useEffect(()=>{
 // }, [])
 console.log(theme==="light")
 return (
-  <Switch
-    isSelected={isSelected}
-    onValueChange={setIsSelected}
-    size="lg"
-    color="primary"
-    startContent={<SunIcon />}
-    endContent={<MoonIcon />}
-  />
+  <a>
+    <Switch
+      isSelected={isSelected}
+      onValueChange={setIsSelected}
+      size="lg"
+      color="primary"
+      className="cursor-none"
+      startContent={<SunIcon />}
+      endContent={<MoonIcon />}
+    />
+  
+  </a>
 );
 }

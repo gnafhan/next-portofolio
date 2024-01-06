@@ -13,6 +13,7 @@
 
 body{
   font-family: 'Silka';
+  /* cursor: url('/cursor.svg'), auto; */
 }
 .no-select {
   user-select: none;
@@ -36,3 +37,7 @@ body{
     background-position: 0% 50%;
   }
 }
+
+/* a, button { */
+  /* cursor: url('/cursor-click.svg'), auto; */
+/* } */

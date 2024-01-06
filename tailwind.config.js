@@ -10,6 +10,10 @@ module.exports = {
   ],
   theme: {
     extend:{
+      cursor:{
+        'default': 'url("/cursor.svg"), default',
+        'pointer': 'url("/cursor-click.svg"), pointer'
+      },
       keyframes: {
         animatedgradient: {
           '0%': { backgroundPosition: '0% 50%' },
