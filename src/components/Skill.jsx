@@ -33,7 +33,6 @@ export default function Skill() {
       ref4.current.style.transform = `translatey(${-y}px)`;
       ref5.current.style.transform = `translatey(${y}px)`;
     }
-    // console.log(y)
 });
   return (
     <motion.div className="py-20 pt-10 sm:py-28">

@@ -37,7 +37,6 @@ useEffect(()=>{
 // }
 
 // }, [])
-console.log(theme==="light")
 return (
   <a>
     <Switch

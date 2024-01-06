@@ -14,7 +14,6 @@ const AnimatedCursor = dynamic(() => import('react-animated-cursor'), {
 export default function App({ Component, pageProps }) {
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
   const { theme, setTheme } = useTheme()
-  console.log(isMobile)
   const [color, setColor] = useState(theme === 'dark' ? '#98D0FF' : '#557CBE');
 
 

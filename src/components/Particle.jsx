@@ -10,9 +10,6 @@ const ParticleBG = () => {
   const [init, setInit] = useState(false);
   const [bg, setBg] = useState(false);
   const {isToggled } = useToggle();
-  useEffect(() => {
-    console.log(bg);
-  }, [bg]);
   const options = useMemo(
     () => (
         {
@@ -256,7 +253,7 @@ const ParticleBG = () => {
   }, []);
 
   const particlesLoaded = (container) => {
-    console.log(container);
+    // console.log(container);
   };
 
 
