@@ -3,7 +3,6 @@ import NavbarHeader from '../components/Navbar';
 import ParticleBG from './../components/Particle';
 import AboutMeContent from '@/components/AboutMeContent';
 
-
 export default function AboutMe() {
   return (
     <div>

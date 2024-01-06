@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 
 export default function DarkModeToggle() {
   const { theme, setTheme } = useTheme()
-const [isSelected, setIsSelected] = useState(theme=='light'?true:false);
+  const [isSelected, setIsSelected] = useState(theme=='light'?true:false);
 
 useEffect(() => {
     if (isSelected) {
@@ -26,18 +26,21 @@ useEffect(()=>{
   setIsSelected(false)
 }
 }, [theme])
-useEffect(()=>{
-  if(theme == "light"){
-    setTheme('dark')
-  } else if(theme == "dark")
-  {
-  setIsSelected(false)
-}
+// useEffect(()=>{
+//   if(theme == "light"){
+//     // setTheme('dark')
+//   setIsSelected(true)
 
-}, [])
+//   } else if(theme == "dark")
+//   {
+//   setIsSelected(false)
+// }
+
+// }, [])
+console.log(theme==="light")
 return (
   <Switch
-    isSelected={isSelected} 
+    isSelected={isSelected}
     onValueChange={setIsSelected}
     size="lg"
     color="primary"

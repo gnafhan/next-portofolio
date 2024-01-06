@@ -18,6 +18,13 @@ import useBg from "@/hooks/useBg";
 import { useToggle } from "@/util/ToggleContext";
 import { useRouter } from "next/router";
 
+import dynamic from 'next/dynamic'
+ 
+const DynamicToggle = dynamic(() => import('./DarkModeToggle'), {
+  ssr:false,
+
+}, )
+
 export default function NavbarHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [bg, setBg] = useBg(false);
@@ -99,7 +106,7 @@ export default function NavbarHeader() {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <DarkModeToggle />
+          <DynamicToggle />
         </NavbarItem>
         <NavbarItem className="sm:hidden">
           <NavbarMenuToggle
