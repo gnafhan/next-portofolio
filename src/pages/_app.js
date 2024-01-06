@@ -22,7 +22,10 @@ export default function App({ Component, pageProps }) {
   <NextUIProvider>
     <NextThemesProvider attribute="class" defaultTheme="dark">
       <ToggleProvider>
-        { !isMobile  && (
+        { !isMobile  ? 
+        theme == 'dark' ?
+        (
+          
           <AnimatedCursor
             innerSize={8}
             outerSize={35}
@@ -31,14 +34,27 @@ export default function App({ Component, pageProps }) {
             outerAlpha={0}
             hasBlendMode={false}
             innerStyle={{
-              backgroundColor: color,
+              backgroundColor: "#98D0FF",
             }}
             outerStyle={{
-              border: `3px solid ${color}`,
+              border: `3px solid #98D0FF`,
             }}
           />
         
-        )}
+        ):<AnimatedCursor
+        innerSize={8}
+        outerSize={35}
+        innerScale={1}
+        outerScale={2}
+        outerAlpha={0}
+        hasBlendMode={false}
+        innerStyle={{
+          backgroundColor: "#3E81F6",
+        }}
+        outerStyle={{
+          border: `3px solid #3E81F6`,
+        }}
+      />:null}
         
       <Component {...pageProps} />
       </ToggleProvider>
