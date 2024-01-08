@@ -38,6 +38,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import CertificateCard from "./CertificateCard";
 
 export default function CertificateContent() {
+    const isMobile = useMediaQuery({ query: "(max-width: 1024px)" });
 
   return (
     <div className="flex flex-col px-7">
@@ -55,7 +56,7 @@ export default function CertificateContent() {
         className='mt-1'>Displayed here are the certificates that I have successfully achieved.</motion.p>
       <div className='mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-y-7'>
         {certificates.map((item, index)=>(
-            <CertificateCard title={item.title} avatar={item.avatar} author={item.author} image={item.image} credentialLink={item.credentialLink} credential={item.credential} />
+            <CertificateCard  delay={isMobile?0:((index%3)*0.4)} rotate={index%2==0?'1deg':'-1deg'} title={item.title} avatar={item.avatar} author={item.author} image={item.image} credentialLink={item.credentialLink} credential={item.credential} />
         ))}
       </div>
     </div>
