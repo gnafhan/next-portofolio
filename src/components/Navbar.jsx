@@ -47,12 +47,13 @@ export default function NavbarHeader() {
       <NavbarContent className="sm:hidden pr-3" justify="start">
         <NavbarBrand>
           <motion.div
-            onClick={toggle}
+            onClick={()=>router.push('/')}
             whileHover={{ scale: 1.2, rotate: "180deg" }}
             whileTap={{ scale: 1, rotate: "360deg" }}
             initial={{ opacity: 0}}
             whileInView={{ opacity: 1, rotate: "360deg"}}
             transition={{ duration: 1 }}
+            className="!cursor-none"
           >
             <Image src="/N-03.png" width={50} height={50} />
           </motion.div>
@@ -62,12 +63,13 @@ export default function NavbarHeader() {
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarBrand>
           <motion.div
-            onMouseDown={toggle}
+            onMouseDown={()=>router.push('/')}
             whileHover={{ scale: 1.2, rotate: "180deg", cursor: "pointer" }}
             whileTap={{ scale: 1, rotate: "360deg" }}
             transition={{ duration: 0.5, type: "keyframes" }}
             initial={{ opacity: 0}}
             whileInView={{ opacity: 1, rotate: "360deg"}}
+            className="!cursor-nonee"
           >
             <Image src="/N-03.png" width={50} height={50} />
           </motion.div>
