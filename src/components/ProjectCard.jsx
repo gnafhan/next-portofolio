@@ -48,6 +48,7 @@ export default function ProjectCard({delay, desc, title, techs, image, github, d
       {/* <Divider /> */}
       <CardBody className="overflow-visible mt02">
         <Image
+        isBlurred
           alt="Card background"
           radius="none"
           className="object-cover !max-h-[967px] size-[100%] rounded-sm"
