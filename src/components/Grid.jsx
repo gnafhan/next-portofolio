@@ -48,10 +48,12 @@ import { useEffect, useRef, useState } from "react";
 import Marquee from "react-fast-marquee";
 import { FaGolang, FaJava } from "react-icons/fa6";
 import { useToggle } from "@/util/ToggleContext";
+import { useMediaQuery } from 'react-responsive';
 
 export default function GridSum() {
   const { theme, setTheme } = useTheme();
   const [imageN, setImageN] = useState("/BnW-04.png");
+  const isMobile = useMediaQuery({ query: "(max-width: 1024px)" });
   const imageDark = [
     "olivia_dark.png",
     "nafhan-ai_dark.png",
@@ -83,7 +85,7 @@ export default function GridSum() {
   return (
     <div className="grid lg:grid-cols-4 grid-cols-2 md:grid-cols-3 sm:grid-cols-3 grid-rows-4 gap-4 ps-6 sm:px-6 grid-flow-row-dense">
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0 }}
@@ -129,7 +131,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.25 }}
@@ -163,7 +165,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.35 }}
@@ -200,7 +202,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.1 }}
@@ -217,7 +219,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -243,7 +245,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.25 }}
@@ -278,7 +280,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -320,7 +322,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.1 }}
@@ -354,7 +356,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.1 }}
@@ -393,7 +395,7 @@ export default function GridSum() {
       </motion.div>
 
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -427,7 +429,7 @@ export default function GridSum() {
         </Card>
       </motion.div>
       <motion.div
-        drag
+        drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 30 }}
         transition={{ duration: 0.5, delay: 0.3 }}

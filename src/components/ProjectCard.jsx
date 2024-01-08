@@ -18,16 +18,20 @@ import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic'
 import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
 
+import { useMediaQuery } from 'react-responsive';
+
 const TechIcon = dynamic(() => import('./TechIcon'), {
   ssr:false,
+
 }, )
 
 
 export default function ProjectCard({delay, desc, title, techs, image, github, demo, rotate}) {
   const [onHover, setOnHover] = React.useState(false);
+  const isMobile = useMediaQuery({ query: "(max-width: 1024px)" });
   return (
     <motion.div
-    drag
+    drag={!isMobile}
         dragConstraints={{ left: 0, top: 0, right: 0, bottom: 0 }}
         initial={{ opacity: 0, y: 50 }}
         transition={{ duration: 1, delay: delay}}
