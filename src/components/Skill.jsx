@@ -16,6 +16,7 @@ import { FaArrowDown, FaLinkedin } from "react-icons/fa";
 import { motion, useAnimationFrame } from "framer-motion";
 import { SiNextdotjs, SiNestjs, SiExpress, SiNuxtdotjs, SiReact  } from "react-icons/si";
 import { FaGolang } from "react-icons/fa6";
+import { useRouter } from "next/router";
 
 export default function Skill() {
   const ref = useRef(null);
@@ -23,15 +24,22 @@ export default function Skill() {
   const ref3 = useRef(null);
   const ref4 = useRef(null);
   const ref5 = useRef(null);
+  const router = useRouter();
+  const currentPath = router.pathname;
 
   useAnimationFrame((t) => {
     const y = (Math.sin(t / 1000)) * -5;
-    if(t>0){
-      ref.current.style.transform = `translatey(${y}px)`;
+    if(t>1000 && currentPath === "/" ){
+      try {
+        ref.current.style.transform = `translatey(${y}px)`;
       ref2.current.style.transform = `translatey(${-y}px)`;
       ref3.current.style.transform = `translatey(${y}px)`;
       ref4.current.style.transform = `translatey(${-y}px)`;
       ref5.current.style.transform = `translatey(${y}px)`;
+      } catch (error) {
+        console.log(error)
+      }
+      
     }
 });
   return (

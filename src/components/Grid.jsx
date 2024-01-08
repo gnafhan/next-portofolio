@@ -377,7 +377,7 @@ export default function GridSum() {
           <Tooltip showArrow={true} content="Go to Projects">
             <Button
               size="sm"
-              className="text-foreground shadow-dark-inset absolute bottom-3 left-3 z-10"
+              className="text-foreground shadow-dark-inset absolute right-3 top-3 z-10"
               href="https://www.linkedin.com/in/gnafhan/details/projects/"
               target="_blank"
               as={Link}

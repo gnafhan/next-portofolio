@@ -6,6 +6,7 @@ import { Head } from 'next/document';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import NextNProgress from 'nextjs-progressbar';
 
 const AnimatedCursor = dynamic(() => import('react-animated-cursor'), {
     ssr: false,
@@ -21,6 +22,7 @@ export default function App({ Component, pageProps }) {
   return (
   <NextUIProvider>
     <NextThemesProvider attribute="class" defaultTheme="dark">
+    <NextNProgress />
       <ToggleProvider>
         { !isMobile  ? 
         theme == 'dark' ?

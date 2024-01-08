@@ -6,9 +6,9 @@ import {
   NavbarMenu,
   NavbarContent,
   NavbarItem,
-  Link,
   Button
 } from "@nextui-org/react";
+import Link from 'next/link'
 import { AcmeLogo } from "@/logo/logo";
 import { useState } from "react";
 import DarkModeToggle from "./DarkModeToggle";
@@ -17,6 +17,7 @@ import { motion } from "framer-motion";
 import useBg from "@/hooks/useBg";
 import { useToggle } from "@/util/ToggleContext";
 import { useRouter } from "next/router";
+
 
 import dynamic from 'next/dynamic'
  
@@ -39,6 +40,7 @@ export default function NavbarHeader() {
     <Navbar
       className="md:my-2"
       maxWidth="xl"
+      position="sticky"
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
     >
@@ -48,7 +50,9 @@ export default function NavbarHeader() {
             onClick={toggle}
             whileHover={{ scale: 1.2, rotate: "180deg" }}
             whileTap={{ scale: 1, rotate: "360deg" }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0}}
+            whileInView={{ opacity: 1, rotate: "360deg"}}
+            transition={{ duration: 1 }}
           >
             <Image src="/N-03.png" width={50} height={50} />
           </motion.div>
@@ -62,6 +66,8 @@ export default function NavbarHeader() {
             whileHover={{ scale: 1.2, rotate: "180deg", cursor: "pointer" }}
             whileTap={{ scale: 1, rotate: "360deg" }}
             transition={{ duration: 0.5, type: "keyframes" }}
+            initial={{ opacity: 0}}
+            whileInView={{ opacity: 1, rotate: "360deg"}}
           >
             <Image src="/N-03.png" width={50} height={50} />
           </motion.div>
@@ -70,7 +76,7 @@ export default function NavbarHeader() {
 
       <NavbarContent justify="end">
         <NavbarItem isActive className="hidden sm:flex">
-          <Link className="font-silka font-semibold"
+          <Link className={`font-silka font-semibold ${currentPath === "/" ? "text-primary" : "text-foreground"}`}
                 color={currentPath === "/" ? "primary" : "foreground"}
                 href={ currentPath === "/" ? "#" : "/" }
           >
@@ -79,7 +85,7 @@ export default function NavbarHeader() {
         </NavbarItem>
         <NavbarItem className="hidden sm:flex">
           <Link
-            className="font-silka font-semibold"
+            className={`font-silka font-semibold ${currentPath === "/about" ? "text-primary" : "text-foreground"}`}
             color={currentPath === "/about" ? "primary" : "foreground"}
             href={ currentPath === "/about" ? "#" : "/about" }
             
@@ -89,7 +95,7 @@ export default function NavbarHeader() {
         </NavbarItem>
         <NavbarItem className="hidden sm:flex">
           <Link
-            className="font-silka font-semibold"
+            className={`font-silka font-semibold ${currentPath === "/project" ? "text-primary" : "text-foreground"}`}
             color={currentPath === "/project" ? "primary" : "foreground"}
             href={ currentPath === "/project" ? "#" : "/project" }
           >
@@ -98,11 +104,12 @@ export default function NavbarHeader() {
         </NavbarItem>
         <NavbarItem className="hidden sm:flex">
           <Link
-            className="font-silka font-semibold "
-            color={currentPath === "/media" ? "primary" : "foreground"}
-            href={ currentPath === "/media" ? "#" : "/media" }
+
+            className={`font-silka font-semibold ${currentPath === "/certificate" ? "text-primary" : "text-foreground"}`}
+            color={currentPath === "/certificate" ? "primary" : "foreground"}
+            href={ currentPath === "/certificate" ? "#" : "/certificate" }
           >
-            Media
+            Certificates
           </Link>
         </NavbarItem>
         <NavbarItem>
@@ -118,7 +125,7 @@ export default function NavbarHeader() {
       <NavbarMenu>
         <NavbarMenuItem>
           <Link
-            className="w-full font-silka font-semibold"
+             className={`w-full font-silka font-semibold ${currentPath === "/" ? "text-primary" : "text-foreground"}`}
             color={currentPath === "/" ? "primary" : "foreground"}
                 href={ currentPath === "/" ? "#" : "/" }
             size="lg"
@@ -128,7 +135,7 @@ export default function NavbarHeader() {
         </NavbarMenuItem>
         <NavbarMenuItem>
           <Link
-            className="w-full font-silka font-semibold"
+             className={`w-full font-silka font-semibold ${currentPath === "/about" ? "text-primary" : "text-foreground"}`}
             color={currentPath === "/about" ? "primary" : "foreground"}
             href={ currentPath === "/about" ? "#" : "/about" }
             size="lg"
@@ -138,7 +145,7 @@ export default function NavbarHeader() {
         </NavbarMenuItem>
         <NavbarMenuItem>
           <Link
-            className="w-full font-silka font-semibold"
+            className={`w-full font-silka font-semibold ${currentPath === "/project" ? "text-primary" : "text-foreground"}`}
             color={currentPath === "/project" ? "primary" : "foreground"}
             href={ currentPath === "/project" ? "#" : "/project" }
             size="lg"
@@ -148,12 +155,12 @@ export default function NavbarHeader() {
         </NavbarMenuItem>
         <NavbarMenuItem>
           <Link
-            className="w-full font-silka font-semibold"
-            color={currentPath === "/media" ? "primary" : "foreground"}
-            href={ currentPath === "/media" ? "#" : "/media" }
+             className={`w-full font-silka font-semibold ${currentPath === "/certificate" ? "text-primary" : "text-foreground"}`}
+            color={currentPath === "/certificate" ? "primary" : "foreground"}
+            href={ currentPath === "/certificate" ? "#" : "/certificate" }
             size="lg"
           >
-            Media
+            Certificates
           </Link>
         </NavbarMenuItem>
       </NavbarMenu>
