@@ -96,7 +96,7 @@ export default function GridSum() {
               <Button
                 size="md"
                 className="text-foreground shadow-dark-inset absolute top-3 right-3"
-                href="https://www.linkedin.com/in/gnafhan/"
+                href="/about"
                 target="_blank"
                 as={Link}
                 isIconOnly
@@ -177,7 +177,7 @@ export default function GridSum() {
               <Tooltip showArrow={true} content="View Certificates">
                 <Button
                   className="text-foreground shadow-dark-inset"
-                  href="https://www.linkedin.com/in/gnafhan/details/certifications/"
+                  href="/certificate"
                   target="_blank"
                   as={Link}
                   isIconOnly
@@ -378,7 +378,7 @@ export default function GridSum() {
             <Button
               size="sm"
               className="text-foreground shadow-dark-inset absolute right-3 top-3 z-10"
-              href="https://www.linkedin.com/in/gnafhan/details/projects/"
+              href="/project"
               target="_blank"
               as={Link}
               isIconOnly
