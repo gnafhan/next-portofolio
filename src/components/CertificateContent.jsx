@@ -67,66 +67,98 @@ export default function CertificateContent() {
 const dicoding = "https://media.licdn.com/dms/image/C560BAQHOIi63tC8k8w/company-logo_100_100/0/1660182933847/dicoding_logo?e=1712793600&v=beta&t=Rdy5iKyF3ihW5ORfOip_TYbjjnSh1at94__NzWTCxY0"
 const codepolitan = "https://media.licdn.com/dms/image/C510BAQE7k2gASfZNbA/company-logo_100_100/0/1631343789870?e=1712793600&v=beta&t=3_MfDi2s6vxI-OoJHjTofmKl8T2oHipga0A8WGvTFzc"
 const google= "https://media.licdn.com/dms/image/C4E0BAQHeBQ4A5_8BnQ/company-logo_100_100/0/1630643532495?e=1712793600&v=beta&t=9l6GrGnCMmvBjBzUFvaN9YBF_YqBZx41Y3jutXKho2M"
-const googleTitle = "Google Career Certificates"
+const googleTitle = "Google"
 const dicodingTitle = "Dicoding Indonesia"
 const codepolitanTitle = "Codepolitan"
 
 const certificates=[
     {
+      title: "Google Data Analytics Specialization", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/Ae1MnH7.png",
+      credentialLink:"https://coursera.org/verify/professional-cert/FK52RPKADU6W", 
+      credential:"FK52RPKADU6W"
+    },
+    {
+      title: "Google Data Analytics Capstone: Complete a Case Study", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/bBUZMGU.png",
+      credentialLink:"https://coursera.org/verify/9C28Q9DHRJ6H", 
+      credential:"9C28Q9DHRJ6H"
+    },
+    {
+      title: "Data Analysis with R Programming", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/rLGFexO.png",
+      credentialLink:"https://coursera.org/verify/UE6DVL676MLB", 
+      credential:"UE6DVL676MLB"
+    },
+    {
+      title: "Share Data Through the Art of Visualization", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/chAoomJ.png",
+      credentialLink:"https://coursera.org/verify/K9EXYHWR5ARE", 
+      credential:"K9EXYHWR5ARE"
+    },
+    {
+      title: "Analyze Data to Answer Questions", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/66XdPXv.png",
+      credentialLink:"https://coursera.org/verify/KPXN4GPWY46Y", 
+      credential:"KPXN4GPWY46Y"
+    },
+    {
+      title: "Data Analyst: Process Data from Dirty to Clean", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/G8SHDEi.png",
+      credentialLink:"https://coursera.org/verify/2DXZ39G9GFGH", 
+      credential:"2DXZ39G9GFGH"
+    },
+    {
+      title: "Data Analyst: Prepare Data for Exploration", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/u7g1zFk.png",
+      credentialLink:"https://www.coursera.org/account/accomplishments/verify/TQG27GFRDEFV", 
+      credential:"TQG27GFRDEFV"
+    },
+    {
+      title: "Data Analyst: Ask Questions to Make Data-Driven Decisions", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/olnhBhW.png",
+      credentialLink:"https://www.coursera.org/account/accomplishments/verify/4RSTLFQV5J79", 
+      credential:"4RSTLFQV5J79"
+    },
+    {
+      title: "Data Analyst: Foundations: Data, Data, Everywhere", 
+      avatar: google, 
+      author:googleTitle, 
+      image:"https://i.imgur.com/ZNoQaRc.png",
+      credentialLink:"https://www.coursera.org/account/accomplishments/verify/SYBT9KD4V7GE", 
+      credential:"SYBT9KD4V7GE"
+    },
+    {
      title: "Best Project of Software Engineering Class", 
      avatar: "https://media.licdn.com/dms/image/C560BAQEXr33flwTCIg/company-logo_100_100/0/1650849229911/omahti_logo?e=1712793600&v=beta&t=zCe7bWG0nlgJGnZAljg6JC0dDiwZ9CoToPdplWieMNQ", 
      author:"OmahTI UGM", 
-     image:"https://media.licdn.com/dms/image/D562DAQGQsgvN6NLTvw/profile-treasury-image-shrink_800_800/0/1703858388978?e=1705320000&v=beta&t=8uy1o0419sSePA3_FHNKlN9dkAHiPRAZZ-jNO7-tx6U",
+     image:"https://i.imgur.com/rPev41w.png",
      credentialLink:"https://drive.google.com/file/d/18kUsL84miQkwZRU04JXirrwJkY0wBghF/view?usp=sharing", 
      credential:"-"
     },
     {
-    title: "Memulai Pemrograman dengan Dart", 
-    avatar: dicoding, 
-    author:"Dicoding Indonesia", 
-    image:"https://i.imgur.com/A0N8A2h.png",
-    credentialLink:"https://www.dicoding.com/certificates/53XE47QWVZRN", 
-    credential:"53XE47QWVZRN"
-    },
-    {
-    title: "Sertifikat Kelas Belajar JavaScript Asynchronous", 
-    avatar: codepolitan, 
-    author:"Codepolitan", 
-    image:"https://lh3.googleusercontent.com/fife/AGXqzDnOEb_vSDPiCwX1ka8bC3vBP43VPvSVPtawqjOeMOjItjpeFtp6dqmiYYvbimVv43JHxc9KnlJjQvwi6nT5srR2VJ5V07xZiwasw3se89Ao9ZJF-cSKlrWXyuWY6f7JV1gkQ2gXrFUMGeGjJfpPgPCnijc0r68HhMVaLq0G2IZM2A-poNo9yRYDw5ZkCcBT1xEsm0D6oe5KePPuairDC61rbzF19Zj5B1RdRJtcz3V7XJ7Dfhea_9BnNrg2PB4JKcUYqRnj8ai23514LZvL0la5cuLxLK0X-txlRYCWhuWXReQO3_EDyj33MII4PAHzWH1s9yZkCtvajnOWcwg8I87Of0W7MErs4mWuRl9PNzm5TmfRAbSHUB1UGgun7hrPENBpO1M9yZLGQ3kNS4S978SR918Mc3GD3GXwaEtKxFpNNEMV1TS3qxd075fAbsV2_ftiGd6rahsVuhxzqcKnqVItLrDNUZnXW66VEQ-g7_lKIHC4Gx2V5DKQuvnROZLO9LKzTKqltxNTrmQUAdZPyWzhXW4q3voYCiDrGVYfZ0tShzbBgn49IoORk7eyU1boYVWFFA86HbDi9q185DKQt4nRbrOa1fb_x7zKAhK8U-q1Aijg_hyv6IDDU06Qr1ukMy173-C98mwc_XWjJ3tK9DjXMnmKJgEqd1LbgidmgjgBiCkx1U4u9g0mZwWhrwmF0WyZzRTE4jbo8sJiikQU5bxhuqsHXxm304wBeCVx8lmRKYbZlWD6vKGg90-qtzPns1rUrfw_JGARcuHRRCS_fixQ4Dd86lvjHIYoJ2xfJ7ib4aNqYUiQ-NwJcWPevEDzg-9YI1fy1vNaBPSxi6mYpsrV1ii_JqcreI5kstieGy9b0MZhGwRf83wGf5oW-3j0uJSiuTPzNkn7KEVsw7yo8nUcBjvIN8VH2KIYl2-Ix1eW4H4oaavQD7ZpUPyLd652KmFcMprYiFiME59zHsliWtnFAxlJemNiHe2FAAB0ySVqAu5JsveFzpO5_Yg3AEVyDFqTV032sm5P01isMdD4ZCRgZ9GDzMFVFSwJk-SxOQy78SlZqwsSbWBgH6nxf0BpekwEbJCcb47aozmAhXmggWJ0vJmyEsW2B7RiYQXXK-4mxiHy5TaHJrfDetZ6b5PC2yT2UXZVDgEpyK02UL7SZLXRp4z7GapxSKP-vHLdwjP2fl3Z2StluF3v04-B_DgJv0M_DIwBn42Ox_0BsjauV4S53Ew9RLbQu8j7SZ59TMZRJJfdl0kPzWllP1A6lAF_3PcSWY7c3-EdN0d5WZKWSN4yFQXaJ6L5dNsbUvLrSDcd8W9twfBpbonw99nm_qTWxtotyNhi8fQT8Laav8PU8YeqzxGhrpHxRaKgfpRXORIYXgwu32EibnI64CK7qwVBkkOzV3vF-bnc1VAk9iMLLu0oafZucDFbkd4LKVD-Vp2AjeeNezKi0tcZM0JsJnfTgmGaF1fhP52iPzSF-i3SFdpwgBoybnKwWhVCLgqN7o-nLkX0l1sgagU=w1920-h991",
-    credentialLink:"https://www.codepolitan.com/c/NJLO6WQ/", 
-    credential:"NJLO6WQ"
-    },
-    {
-    title: "Data Analyst: Prepare Data for Exploration", 
-    avatar: google, 
-    author:"Google Career Certificates", 
-    image:"https://i.imgur.com/u7g1zFk.png",
-    credentialLink:"https://www.coursera.org/account/accomplishments/verify/TQG27GFRDEFV", 
-    credential:"TQG27GFRDEFV"
-    },
-    {
-    title: "Alibaba Cloud Certified Developer", 
-    avatar: "https://media.licdn.com/dms/image/C510BAQF79kkZjBKHDA/company-logo_100_100/0/1630633364113/alibaba_cloud_computing_company_logo?e=1712793600&v=beta&t=Zj_JcULiEmuTmIIur-VNlCfF3J34JVwNWjtFFvl01PE", 
-    author:"Alibaba Cloud", 
-    image:"https://lh3.googleusercontent.com/u/0/drive-viewer/AEYmBYSmT5a3NbLaGAZMjqFWNsTtPz2_WELX2GWNY1wK3KOgDlE9Ao3Og_MdutNN8EkYhhOIHmEShOcYq5p3iadwHpX48RAu=w1960-h3640",
-    credentialLink:"https://drive.google.com/file/d/1bXTiSDzdh8aPkp7caOwXVhgMsNo1Vt0-/view", 
-    credential:"ACCD0119700100000999"
-    },
-    {
-    title: "Data Analyst: Ask Questions to Make Data-Driven Decisions", 
-    avatar: google, 
-    author:googleTitle, 
-    image:"https://i.imgur.com/olnhBhW.png",
-    credentialLink:"https://www.coursera.org/account/accomplishments/verify/4RSTLFQV5J79", 
-    credential:"4RSTLFQV5J79"
-    },
-    {
-    title: "Data Analyst: Foundations: Data, Data, Everywhere", 
-    avatar: google, 
-    author:googleTitle, 
-    image:"https://i.imgur.com/ZNoQaRc.png",
-    credentialLink:"https://www.coursera.org/account/accomplishments/verify/SYBT9KD4V7GE", 
-    credential:"SYBT9KD4V7GE"
+      title: "Alibaba Cloud Certified Developer", 
+      avatar: "https://media.licdn.com/dms/image/C510BAQF79kkZjBKHDA/company-logo_100_100/0/1630633364113/alibaba_cloud_computing_company_logo?e=1712793600&v=beta&t=Zj_JcULiEmuTmIIur-VNlCfF3J34JVwNWjtFFvl01PE", 
+      author:"Alibaba Cloud", 
+      image:"https://lh3.googleusercontent.com/u/0/drive-viewer/AEYmBYSmT5a3NbLaGAZMjqFWNsTtPz2_WELX2GWNY1wK3KOgDlE9Ao3Og_MdutNN8EkYhhOIHmEShOcYq5p3iadwHpX48RAu=w1960-h3640",
+      credentialLink:"https://drive.google.com/file/d/1bXTiSDzdh8aPkp7caOwXVhgMsNo1Vt0-/view", 
+      credential:"ACCD0119700100000999"
     },
     {
     title: "Machine Learning: Introduction to Deep Learning", 
@@ -151,6 +183,14 @@ const certificates=[
     image:"https://i.imgur.com/vf1XC1n.png",
     credentialLink:"https://www.kaggle.com/learn/certification/ghifarinafhan/intro-to-machine-learning", 
     credential:"-"
+    },
+    {
+      title: "Memulai Pemrograman dengan Dart", 
+      avatar: dicoding, 
+      author:"Dicoding Indonesia", 
+      image:"https://i.imgur.com/A0N8A2h.png",
+      credentialLink:"https://www.dicoding.com/certificates/53XE47QWVZRN", 
+      credential:"53XE47QWVZRN"
     },
     {
     title: "Machine Learning: Memulai Dasar Visualisasi Data", 
@@ -343,6 +383,14 @@ const certificates=[
     image:"https://i.imgur.com/2zrFBpd.png",
     credentialLink:"https://aiplanet.com/course/certificates/verify/0fbfb588-9622-481b-8c55-971c502e7533/", 
     credential:"0fbfb588-9622-481b-8c55-971c502e7533"
+    },
+    {
+      title: "Sertifikat Kelas Belajar JavaScript Asynchronous", 
+      avatar: codepolitan, 
+      author:"Codepolitan", 
+      image:"https://lh3.googleusercontent.com/fife/AGXqzDnOEb_vSDPiCwX1ka8bC3vBP43VPvSVPtawqjOeMOjItjpeFtp6dqmiYYvbimVv43JHxc9KnlJjQvwi6nT5srR2VJ5V07xZiwasw3se89Ao9ZJF-cSKlrWXyuWY6f7JV1gkQ2gXrFUMGeGjJfpPgPCnijc0r68HhMVaLq0G2IZM2A-poNo9yRYDw5ZkCcBT1xEsm0D6oe5KePPuairDC61rbzF19Zj5B1RdRJtcz3V7XJ7Dfhea_9BnNrg2PB4JKcUYqRnj8ai23514LZvL0la5cuLxLK0X-txlRYCWhuWXReQO3_EDyj33MII4PAHzWH1s9yZkCtvajnOWcwg8I87Of0W7MErs4mWuRl9PNzm5TmfRAbSHUB1UGgun7hrPENBpO1M9yZLGQ3kNS4S978SR918Mc3GD3GXwaEtKxFpNNEMV1TS3qxd075fAbsV2_ftiGd6rahsVuhxzqcKnqVItLrDNUZnXW66VEQ-g7_lKIHC4Gx2V5DKQuvnROZLO9LKzTKqltxNTrmQUAdZPyWzhXW4q3voYCiDrGVYfZ0tShzbBgn49IoORk7eyU1boYVWFFA86HbDi9q185DKQt4nRbrOa1fb_x7zKAhK8U-q1Aijg_hyv6IDDU06Qr1ukMy173-C98mwc_XWjJ3tK9DjXMnmKJgEqd1LbgidmgjgBiCkx1U4u9g0mZwWhrwmF0WyZzRTE4jbo8sJiikQU5bxhuqsHXxm304wBeCVx8lmRKYbZlWD6vKGg90-qtzPns1rUrfw_JGARcuHRRCS_fixQ4Dd86lvjHIYoJ2xfJ7ib4aNqYUiQ-NwJcWPevEDzg-9YI1fy1vNaBPSxi6mYpsrV1ii_JqcreI5kstieGy9b0MZhGwRf83wGf5oW-3j0uJSiuTPzNkn7KEVsw7yo8nUcBjvIN8VH2KIYl2-Ix1eW4H4oaavQD7ZpUPyLd652KmFcMprYiFiME59zHsliWtnFAxlJemNiHe2FAAB0ySVqAu5JsveFzpO5_Yg3AEVyDFqTV032sm5P01isMdD4ZCRgZ9GDzMFVFSwJk-SxOQy78SlZqwsSbWBgH6nxf0BpekwEbJCcb47aozmAhXmggWJ0vJmyEsW2B7RiYQXXK-4mxiHy5TaHJrfDetZ6b5PC2yT2UXZVDgEpyK02UL7SZLXRp4z7GapxSKP-vHLdwjP2fl3Z2StluF3v04-B_DgJv0M_DIwBn42Ox_0BsjauV4S53Ew9RLbQu8j7SZ59TMZRJJfdl0kPzWllP1A6lAF_3PcSWY7c3-EdN0d5WZKWSN4yFQXaJ6L5dNsbUvLrSDcd8W9twfBpbonw99nm_qTWxtotyNhi8fQT8Laav8PU8YeqzxGhrpHxRaKgfpRXORIYXgwu32EibnI64CK7qwVBkkOzV3vF-bnc1VAk9iMLLu0oafZucDFbkd4LKVD-Vp2AjeeNezKi0tcZM0JsJnfTgmGaF1fhP52iPzSF-i3SFdpwgBoybnKwWhVCLgqN7o-nLkX0l1sgagU=w1920-h991",
+      credentialLink:"https://www.codepolitan.com/c/NJLO6WQ/", 
+      credential:"NJLO6WQ"
     },
     {
     title: "Sertifikat Belajar GIT untuk Pemula", 
