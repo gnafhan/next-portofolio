@@ -7,22 +7,29 @@ import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import NextNProgress from 'nextjs-progressbar';
+import { CookiesProvider } from 'react-cookie';
+import { AuthContextProvider } from '@/context/authContext';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 const AnimatedCursor = dynamic(() => import('react-animated-cursor'), {
     ssr: false,
+
 });
 
 export default function App({ Component, pageProps }) {
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
   const { theme, setTheme } = useTheme()
   const [color, setColor] = useState(theme === 'dark' ? '#98D0FF' : '#557CBE');
-
+  const queryClient = new QueryClient()
 
 
   return (
   <NextUIProvider>
     <NextThemesProvider attribute="class" defaultTheme="dark">
     <NextNProgress />
+    <QueryClientProvider client={queryClient}>
+    <CookiesProvider>
+      <AuthContextProvider>
       <ToggleProvider>
         { !isMobile  ? 
         theme == 'dark' ?
@@ -60,6 +67,9 @@ export default function App({ Component, pageProps }) {
         
       <Component {...pageProps} />
       </ToggleProvider>
+      </AuthContextProvider>
+      </CookiesProvider>
+      </QueryClientProvider>
     </NextThemesProvider>
   </NextUIProvider>
   )
