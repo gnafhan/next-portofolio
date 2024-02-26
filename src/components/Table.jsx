@@ -5,7 +5,7 @@ import {DeleteIcon} from "./DeleteIcon";
 import {EyeIcon} from "./EyeIcon";
 import { columns, users } from "@/data/data";
 import { useQueryClient } from 'react-query';
-import useDataFetching from "@/pages/links/getLink";
+import useDataFetching from "@/util/getLink";
 import { useRouter } from "next/router";
 
 const statusColorMap = {
