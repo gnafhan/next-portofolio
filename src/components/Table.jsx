@@ -71,11 +71,11 @@ export default function TableData({token}) {
                 <EyeIcon />
               </span>
             </Tooltip>
-            {/* <Tooltip content="Edit link">
+            <Tooltip content="Edit link">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50" onClick={()=> router.push("/links/edit/" + user.id)} >
                 <EditIcon />
               </span>
-            </Tooltip> */}
+            </Tooltip>
             <Tooltip color="danger" content="Delete link">
               <span className="text-lg text-danger cursor-pointer active:opacity-50" onClick={()=> handleDelete(user.id)}>
                 <DeleteIcon />
