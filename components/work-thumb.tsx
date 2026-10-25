@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Check, MapPin, MessageCircle, Pencil, ScanLine } from "lucide-react";
+import { Check, Database, MapPin, Pencil, ScanLine, Sparkles } from "lucide-react";
+import { AppLogo } from "./app-logos";
 import { cycle, useStart } from "./anim";
 
 /** Small looping motion graphic for each case study card. */
@@ -27,86 +28,98 @@ function enter(on: boolean, T: number, from: number, y = 6) {
 }
 
 const SCENES: Record<string, (p: SceneProps) => React.ReactNode> = {
-  /* chat message → ledger row, total updates */
+  /* chat message → live status → new row in the database → confirmation reply */
   catataja: ({ on }) => {
-    const T = 9;
+    const T = 10;
+    const status = [
+      { at: 1.2, text: "Reading…", Icon: Sparkles, cls: "lg-sm text-ink-2" },
+      { at: 2.6, text: "Saving to DB…", Icon: Database, cls: "lg-sm text-ink-2" },
+      { at: 4, text: "Saved", Icon: Check, cls: "lg-ok" },
+    ];
     return (
-      <div className="absolute inset-0">
-        <motion.div
-          className="lg-accent absolute left-[6%] top-[38%] rounded-2xl rounded-br-md px-3 py-2"
-          initial={{ opacity: 0, x: -10 }}
-          animate={on ? { opacity: [0, 0, 1, 1, 0, 0], x: [-10, -10, 0, 0, 90, 90], scale: [1, 1, 1, 1, 0.6, 0.6] } : undefined}
-          transition={cycle(T, [0, 0.5, 1, 2.6, 3.6, T])}
-        >
-          coffee 25k
-        </motion.div>
-        <div className="lg-sm absolute right-[6%] top-[18%] w-[52%] rounded-xl px-3 py-2">
-          <div className="text-ink-3">Ledger · October</div>
-          <motion.div {...enter(on, T, 3.6, -6)} className="mt-1 flex items-center justify-between font-medium">
-            <span>Coffee</span>
-            <span>Rp 25.000</span>
+      <div className="absolute inset-0 grid grid-cols-[1.05fr_0.95fr] gap-3 px-3 py-3">
+        {/* chat side */}
+        <div className="flex flex-col gap-1.5">
+          <motion.div {...enter(on, T, 0.4)} className="lg-accent ml-auto w-fit rounded-2xl rounded-br-md px-3 py-1.5">
+            coffee 25k
           </motion.div>
-          <div className="mt-1 flex items-center justify-between text-ink-3">
+          <div className="relative h-6">
+            {status.map((st, i) => {
+              const to = i + 1 < status.length ? status[i + 1].at : T - 0.6;
+              return (
+                <motion.span
+                  key={st.text}
+                  className={`${st.cls} absolute right-0 top-0 flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5`}
+                  initial={{ opacity: 0 }}
+                  animate={on ? { opacity: [0, 0, 1, 1, 0, 0] } : undefined}
+                  transition={cycle(T, [0, st.at, st.at + 0.25, to, to + 0.2, T])}
+                >
+                  <st.Icon size={10} strokeWidth={st.Icon === Check ? 3 : 2} aria-hidden /> {st.text}
+                </motion.span>
+              );
+            })}
+          </div>
+          <motion.div {...enter(on, T, 4.6)} className="lg-sm w-fit max-w-full rounded-2xl rounded-bl-md px-3 py-1.5">
+            Saved ✓ Coffee 25k
+          </motion.div>
+        </div>
+        {/* database side */}
+        <div className="lg-sm mt-9 self-start overflow-hidden rounded-xl">
+          <div className="flex items-center gap-1 border-b border-line px-2.5 py-1.5 text-ink-3">
+            <Database size={11} aria-hidden /> transactions
+          </div>
+          <div className="flex justify-between px-2.5 py-1 text-ink-3">
             <span>Food</span>
-            <span>Rp 40.000</span>
+            <span>40.000</span>
           </div>
-          <div className="mt-1.5 flex items-center justify-between border-t border-line pt-1.5">
-            <span className="text-ink-3">Total</span>
-            <span className="relative font-medium">
-              <motion.span animate={on ? { opacity: [1, 1, 0, 0, 1] } : undefined} transition={cycle(T, [0, 4, 4.3, T - 0.6, T])}>
-                Rp 40.000
-              </motion.span>
-              <motion.span
-                className="absolute right-0 top-0 text-accent"
-                initial={{ opacity: 0 }}
-                animate={on ? { opacity: [0, 0, 1, 1, 0] } : undefined}
-                transition={cycle(T, [0, 4.2, 4.5, T - 0.6, T])}
-              >
-                Rp 65.000
-              </motion.span>
-            </span>
-          </div>
+          <motion.div
+            className="flex justify-between border-t border-line px-2.5 py-1 font-medium"
+            initial={{ opacity: 0, backgroundColor: "rgba(43,127,255,0)" }}
+            animate={on ? { opacity: [0, 0, 1, 1, 0], backgroundColor: ["rgba(43,127,255,0)", "rgba(43,127,255,0)", "rgba(43,127,255,0.18)", "rgba(43,127,255,0)", "rgba(43,127,255,0)"] } : undefined}
+            transition={cycle(T, [0, 3.6, 4, 5.5, T])}
+          >
+            <span>Coffee</span>
+            <span>25.000</span>
+          </motion.div>
         </div>
       </div>
     );
   },
 
-  /* three chats slide into a board, then get approved */
+  /* chats from different apps become tasks on one to-do list */
   "inbox-assistant": ({ on }) => {
     const T = 10;
-    const msgs = ["can you fix…", "please upload…", "quick review?"];
+    const msgs = [
+      { app: "whatsapp", task: "Fix empty export" },
+      { app: "gmail", task: "Update slides" },
+      { app: "slack", task: "Review PR #42" },
+    ];
     return (
       <div className="absolute inset-0">
         {msgs.map((m, i) => {
-          const go = 0.8 + i * 1.6;
-          const y = `${20 + i * 22}%`;
+          const go = 0.8 + i * 1.8;
+          const y = `${18 + i * 24}%`;
           return (
             <motion.div
-              key={m}
-              className="lg-sm absolute left-[5%] flex items-center gap-1 whitespace-nowrap rounded-lg px-2 py-1 text-ink-2"
-              initial={{ left: "5%", top: y, opacity: 1 }}
-              animate={on ? { left: ["5%", "5%", "56%", "56%", "5%"], top: [y, y, `${30 + i * 16}%`, `${30 + i * 16}%`, y], opacity: [1, 1, 0, 0, 1] } : undefined}
-              transition={cycle(T, [0, go, go + 1.1, T - 0.4, T])}
+              key={m.app}
+              className="lg-sm absolute flex size-8 items-center justify-center rounded-xl text-ink"
+              initial={{ left: "6%", top: y, opacity: 1 }}
+              animate={on ? { left: ["6%", "6%", "52%", "52%", "6%", "6%"], top: [y, y, `${34 + i * 16}%`, `${34 + i * 16}%`, y, y], opacity: [1, 1, 0, 0, 0, 1] } : undefined}
+              transition={cycle(T, [0, go, go + 1.1, T - 0.5, T - 0.49, T])}
             >
-              <MessageCircle size={11} aria-hidden /> {m}
+              <AppLogo app={m.app} size={15} />
             </motion.div>
           );
         })}
-        <div className="lg-sm absolute right-[5%] top-[12%] h-[76%] w-[44%] rounded-xl px-2.5 py-2">
-          <div className="font-medium">One board</div>
+        <div className="lg-sm absolute right-[5%] top-[12%] h-[76%] w-[52%] rounded-xl px-2.5 py-2">
+          <div className="font-medium">My to-do list</div>
           {msgs.map((m, i) => {
-            const land = 0.8 + i * 1.6 + 1.1;
+            const land = 0.8 + i * 1.8 + 1.1;
             return (
-              <motion.div key={m} {...enter(on, T, land, 0)} className="mt-1.5 flex items-center gap-1.5">
-                <motion.span
-                  className="lg-ok flex size-3.5 items-center justify-center rounded-full"
-                  initial={{ scale: 0 }}
-                  animate={on ? { scale: [0, 0, 1, 1, 0] } : undefined}
-                  transition={cycle(T, [0, 6.5 + i * 0.5, 6.8 + i * 0.5, T - 0.6, T])}
-                >
-                  <Check size={8} strokeWidth={3} />
-                </motion.span>
-                <span className="truncate text-ink-2">{m.replace("…", "").replace("?", "")}</span>
+              <motion.div key={m.app} {...enter(on, T, land, 0)} className="mt-1.5 flex items-center gap-1.5">
+                <span className="size-3 shrink-0 rounded border border-line-strong" />
+                <span className="flex-1 truncate text-ink-2">{m.task}</span>
+                <AppLogo app={m.app} size={10} className="shrink-0 text-ink-3" />
               </motion.div>
             );
           })}

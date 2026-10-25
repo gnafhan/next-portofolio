@@ -9,9 +9,9 @@ import { HeroArt } from "@/components/home/hero-art";
 
 const BENTO = [
   {
-    pain: "Work requests arrive in five different apps, and some get lost.",
-    title: "Everything lands in one place",
-    body: "An assistant reads every chat, turns requests into a single to-do board, and a person approves what goes in.",
+    pain: "Requests come in through WhatsApp, email, Slack and Discord, and some get forgotten.",
+    title: "Every request, one to-do list",
+    body: "An assistant reads those chats, rewrites each request as a clear task, and puts it on a single to-do list.",
     impact: "Nothing slips through the cracks",
     href: "/work/inbox-assistant",
     demo: <OneBoardStory />,

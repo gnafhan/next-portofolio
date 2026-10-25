@@ -1,85 +1,126 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Check, Database, Hash, Mail, MessageCircle, Smartphone, Sparkles, Trash2, X } from "lucide-react";
+import { Check, Database, Sparkles, Trash2, X } from "lucide-react";
+import { AppLogo } from "../app-logos";
 import { cycle, useStart } from "../anim";
 
 /* ------------------------------------------------------------------ */
-/* 1. Requests scattered across apps fly, one by one, into one board   */
+/* 1. Messages from many apps become tasks on one to-do list           */
 /* ------------------------------------------------------------------ */
 
-const SOURCES = [
-  { x: 14, label: "Chat", Icon: MessageCircle },
-  { x: 38, label: "Email", Icon: Mail },
-  { x: 62, label: "Group", Icon: Hash },
-  { x: 86, label: "DM", Icon: Smartphone },
+const LOGOS = ["whatsapp", "gmail", "slack", "discord", "telegram", "instagram", "line", "messenger"];
+const logoX = (k: number) => 7 + k * 12.3;
+const REQUESTS = [
+  { app: "whatsapp", from: 0, msg: "the export is empty, help?", task: "Fix empty export" },
+  { app: "gmail", from: 1, msg: "slides for Friday please", task: "Update Friday slides" },
+  { app: "slack", from: 2, msg: "PR #42 needs a review", task: "Review PR #42" },
+  { app: "discord", from: 3, msg: "lab module isn't up yet", task: "Upload lab module" },
 ];
-const TASKS = ["Fix the login bug", "Upload lab module", "Review the report", "Update the slides"];
-const T1 = 13;
+const STEP1 = 3;
+const T1 = 1 + REQUESTS.length * STEP1 + 2.5;
+
+/** Text that swaps between values at given seconds of a cycle. */
+function Steps({ values, at, total, on, className }: { values: string[]; at: number[]; total: number; on: boolean; className?: string }) {
+  return (
+    <span className={`relative inline-block ${className ?? ""}`}>
+      <span className="invisible">{values.reduce((a, b) => (b.length > a.length ? b : a))}</span>
+      {values.map((v, k) => {
+        const from = at[k];
+        const to = k + 1 < at.length ? at[k + 1] : total - 0.5;
+        return (
+          <motion.span
+            key={v}
+            className="absolute inset-0 whitespace-nowrap"
+            initial={{ opacity: k === 0 ? 1 : 0 }}
+            animate={on ? { opacity: k === 0 ? [1, 1, 0, 0, 1] : [0, 0, 1, 1, 0, 0] } : undefined}
+            transition={k === 0 ? cycle(total, [0, to, to + 0.2, total - 0.3, total]) : cycle(total, [0, from, from + 0.2, to, to + 0.2, total])}
+          >
+            {v}
+          </motion.span>
+        );
+      })}
+    </span>
+  );
+}
 
 export function OneBoardStory() {
   const [ref, on] = useStart();
+  const landAt = (i: number) => 1 + i * STEP1 + 2.4;
   return (
-    <div ref={ref} className="relative h-full w-full overflow-hidden text-[0.8rem]">
-      {SOURCES.map(({ x, label, Icon }, i) => {
-        const appear = 1 + i * 2;
+    <div ref={ref} className="relative h-full w-full overflow-hidden text-[0.78rem]">
+      {/* where requests come from */}
+      {LOGOS.map((app, k) => {
+        const req = REQUESTS.find((r) => r.from === k);
+        const t = req ? 1 + REQUESTS.indexOf(req) * STEP1 : -1;
         return (
-          <div key={label} className="absolute top-[8%] flex -translate-x-1/2 flex-col items-center gap-1" style={{ left: `${x}%` }}>
-            <motion.span
-              className="lg-sm flex size-10 items-center justify-center rounded-full text-ink-2"
-              animate={on ? { scale: [1, 1, 1.18, 1, 1] } : undefined}
-              transition={cycle(T1, [0, appear, appear + 0.3, appear + 0.7, T1])}
-            >
-              <Icon size={17} aria-hidden />
-            </motion.span>
-            <span className="text-[0.72rem] text-ink-3">{label}</span>
-          </div>
+          <motion.span
+            key={app}
+            className="lg-sm absolute top-[5%] flex size-8 -translate-x-1/2 items-center justify-center rounded-xl text-ink"
+            style={{ left: `${logoX(k)}%` }}
+            animate={on && req ? { scale: [1, 1, 1.2, 1, 1] } : undefined}
+            transition={req ? cycle(T1, [0, t, t + 0.3, t + 0.7, T1]) : undefined}
+          >
+            <AppLogo app={app} size={15} />
+          </motion.span>
         );
       })}
 
-      <div className="lg-sm absolute left-1/2 top-[40%] h-[54%] w-[64%] -translate-x-1/2 rounded-2xl">
-        <div className="flex items-center justify-between px-3 pt-2.5 text-[0.75rem]">
-          <span className="font-medium">One board</span>
-          <span className="text-ink-3">you approve</span>
+      {/* the assistant in between */}
+      <div className="lg-sm absolute left-1/2 top-[30%] flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-[0.72rem] text-ink-2">
+        <Sparkles size={12} className="text-accent" aria-hidden /> AI turns messages into tasks
+      </div>
+
+      {/* where they end up */}
+      <div className="lg-sm absolute left-1/2 top-[45%] h-[51%] w-[74%] -translate-x-1/2 rounded-2xl px-3 pt-2">
+        <div className="flex items-center justify-between text-[0.75rem]">
+          <span className="font-medium">My to-do list</span>
+          <Steps
+            on={on}
+            total={T1}
+            className="text-ink-3"
+            values={["0 tasks", "1 task", "2 tasks", "3 tasks", "4 tasks"]}
+            at={[0, landAt(0), landAt(1), landAt(2), landAt(3)]}
+          />
         </div>
       </div>
 
-      {TASKS.map((t, i) => {
-        const appear = 1 + i * 2;
-        const depart = appear + 0.7;
-        const land = depart + 1.6;
-        const rowTop = 52 + i * 10;
-        const src = `${SOURCES[i].x}%`;
+      {REQUESTS.map((r, i) => {
+        const appear = 1 + i * STEP1;
+        const atAi = appear + 1.3;
+        const land = landAt(i);
+        const rowTop = 55 + i * 9.5;
+        const src = `${logoX(r.from)}%`;
         return (
-          <div key={t}>
+          <div key={r.task}>
+            {/* message → task */}
             <motion.div
               className="lg-sm absolute z-10 -translate-x-1/2 whitespace-nowrap rounded-lg px-2.5 py-1"
-              initial={{ left: src, top: "26%", opacity: 0 }}
+              initial={{ left: src, top: "17%", opacity: 0 }}
               animate={
                 on
                   ? {
-                      left: [src, src, src, src, "50%", "50%", "50%"],
-                      top: ["26%", "26%", "26%", "26%", `${rowTop}%`, `${rowTop}%`, `${rowTop}%`],
-                      opacity: [0, 0, 1, 1, 1, 0, 0],
-                      scale: [0.85, 0.85, 1, 1, 1, 1, 1],
+                      left: [src, src, src, "50%", "50%", "50%", "50%", "50%"],
+                      top: ["17%", "17%", "17%", "29%", "29%", `${rowTop}%`, `${rowTop}%`, `${rowTop}%`],
+                      opacity: [0, 0, 1, 1, 1, 1, 0, 0],
                     }
                   : undefined
               }
-              transition={cycle(T1, [0, appear, appear + 0.4, depart, land, land + 0.3, T1])}
+              transition={cycle(T1, [0, appear, appear + 0.4, atAi, atAi + 0.5, land, land + 0.25, T1])}
             >
-              {t}
+              <Steps on={on} total={T1} values={[`“${r.msg}”`, r.task]} at={[0, atAi + 0.1]} />
             </motion.div>
+            {/* the task row it becomes */}
             <motion.div
-              className="absolute left-1/2 flex w-[58%] -translate-x-1/2 items-center justify-between rounded-lg px-2.5 py-1"
+              className="absolute left-1/2 flex w-[68%] -translate-x-1/2 items-center gap-2 rounded-lg px-2 py-1"
               style={{ top: `${rowTop}%` }}
               initial={{ opacity: 0 }}
               animate={on ? { opacity: [0, 0, 1, 1, 0] } : undefined}
-              transition={cycle(T1, [0, land, land + 0.3, T1 - 0.8, T1])}
+              transition={cycle(T1, [0, land, land + 0.25, T1 - 0.6, T1])}
             >
-              <span>{t}</span>
-              <span className="lg-ok flex size-4 items-center justify-center rounded-full">
-                <Check size={10} strokeWidth={3} />
-              </span>
+              <span className="size-3.5 shrink-0 rounded border border-line-strong" />
+              <span className="flex-1 truncate">{r.task}</span>
+              <AppLogo app={r.app} size={12} className="shrink-0 text-ink-3" />
             </motion.div>
           </div>
         );
@@ -223,7 +264,7 @@ export function TrustedAnswerStory() {
 }
 
 /* ------------------------------------------------------------------ */
-/* 4. Each messy entry gets cleaned, labelled, and dropped in its box  */
+/* 4. Each messy entry passes the cleaner and drops into its category  */
 /* ------------------------------------------------------------------ */
 
 type Bucket = "coffee" | "transport" | "dropped";
@@ -233,72 +274,47 @@ const ENTRIES: { messy: string; clean: string; bucket: Bucket }[] = [
   { messy: "kopi susu 18k", clean: "Coffee · 18k", bucket: "coffee" },
   { messy: "??? N/A", clean: "No amount", bucket: "dropped" },
 ];
-const BUCKET_Y: Record<Bucket, number> = { coffee: 14, transport: 48, dropped: 76 };
-const STEP = 3;
-const T4 = 1 + ENTRIES.length * STEP + 2;
-const landAt = (i: number) => 1 + i * STEP + 2.6;
-
-/** Text that steps through values at given seconds of the cycle. */
-function Counter({ values, at, on, className }: { values: string[]; at: number[]; on: boolean; className?: string }) {
-  return (
-    <span className={`relative block ${className ?? ""}`}>
-      <span className="invisible">{values[values.length - 1]}</span>
-      {values.map((v, k) => {
-        const from = at[k];
-        const to = k + 1 < at.length ? at[k + 1] : T4 - 0.5;
-        return (
-          <motion.span
-            key={v}
-            className="absolute inset-0"
-            initial={{ opacity: k === 0 ? 1 : 0 }}
-            animate={on ? { opacity: k === 0 ? [1, 1, 0, 0, 1] : [0, 0, 1, 1, 0, 0] } : undefined}
-            transition={k === 0 ? cycle(T4, [0, to, to + 0.2, T4 - 0.3, T4]) : cycle(T4, [0, from, from + 0.2, to, to + 0.2, T4])}
-          >
-            {v}
-          </motion.span>
-        );
-      })}
-    </span>
-  );
-}
+const BUCKET_Y: Record<Bucket, number> = { coffee: 22, transport: 54, dropped: 80 };
+const STEP4 = 3;
+const T4 = 1 + ENTRIES.length * STEP4 + 2;
+const landAt4 = (i: number) => 1 + i * STEP4 + 2.4;
 
 export function CleanDataStory() {
   const [ref, on] = useStart();
   return (
     <div ref={ref} className="relative h-full w-full overflow-hidden text-[0.74rem]">
       <span className="absolute left-[4%] top-[5%] text-[0.72rem] text-ink-3">Typed by people</span>
+      <span className="absolute left-[36%] top-[5%] flex items-center gap-1 text-[0.72rem] text-ink-3">
+        <Sparkles size={11} className="text-accent" aria-hidden /> AI cleans
+      </span>
       <span className="absolute left-[68%] top-[5%] text-[0.72rem] text-ink-3">Sorted</span>
 
-      {/* the cleaner in the middle */}
-      <div className="lg-sm absolute left-[34.5%] top-[17%] flex h-[27%] w-[31%] flex-col items-center justify-end rounded-xl pb-2 text-center">
-        <Sparkles size={14} className="text-accent" aria-hidden />
-        <span className="mt-0.5 text-[0.7rem] text-ink-3">clean + label</span>
-      </div>
+      {/* the cleaning gate every row passes through */}
+      <div className="lg-sm absolute left-[38%] top-[14%] h-[80%] w-[9%] rounded-full" />
 
-      {/* buckets */}
-      <div className="lg-sm absolute left-[68%] top-[12%] h-[30%] w-[29%] rounded-xl px-2.5 py-2">
+      {/* category boxes */}
+      <div className="lg-sm absolute left-[68%] top-[14%] h-[29%] w-[29%] rounded-xl px-2.5 py-2">
         <div className="font-medium">Coffee</div>
-        <Counter on={on} className="text-ink-2" values={["Rp 0", "Rp 25k", "Rp 43k"]} at={[0, landAt(0), landAt(2)]} />
+        <Steps on={on} total={T4} className="text-ink-2" values={["Rp 0", "Rp 25k", "Rp 43k"]} at={[0, landAt4(0), landAt4(2)]} />
       </div>
-      <div className="lg-sm absolute left-[68%] top-[46%] h-[25%] w-[29%] rounded-xl px-2.5 py-2">
+      <div className="lg-sm absolute left-[68%] top-[47%] h-[24%] w-[29%] rounded-xl px-2.5 py-2">
         <div className="font-medium">Transport</div>
-        <Counter on={on} className="text-ink-2" values={["Rp 0", "Rp 350k"]} at={[0, landAt(1)]} />
+        <Steps on={on} total={T4} className="text-ink-2" values={["Rp 0", "Rp 350k"]} at={[0, landAt4(1)]} />
       </div>
-      <div className="lg-sm absolute left-[68%] top-[75%] h-[20%] w-[29%] rounded-xl px-2.5 py-2 text-[var(--human)]">
+      <div className="lg-sm absolute left-[68%] top-[75%] h-[19%] w-[29%] rounded-xl px-2.5 py-2 text-[var(--human)]">
         <div className="flex items-center gap-1 font-medium">
           <Trash2 size={11} aria-hidden /> Dropped
         </div>
-        <Counter on={on} values={["0 rows", "1 row"]} at={[0, landAt(3)]} />
+        <Steps on={on} total={T4} values={["0 rows", "1 row"]} at={[0, landAt4(3)]} />
       </div>
 
-      {/* entries travel: list → cleaner → their box */}
       {ENTRIES.map((e, i) => {
-        const go = 1 + i * STEP;
-        const atCleaner = go + 0.9;
-        const leave = go + 1.7;
-        const land = landAt(i);
-        const y0 = `${20 + i * 18}%`;
-        const yb = `${BUCKET_Y[e.bucket] + 12}%`;
+        const go = 1 + i * STEP4;
+        const inGate = go + 0.7;
+        const out = go + 1.3;
+        const land = landAt4(i);
+        const y0 = `${18 + i * 19}%`;
+        const yb = `${BUCKET_Y[e.bucket]}%`;
         return (
           <motion.div
             key={e.messy}
@@ -307,32 +323,21 @@ export function CleanDataStory() {
             animate={
               on
                 ? {
-                    left: ["4%", "4%", "35.5%", "35.5%", "68%", "68%", "68%", "4%"],
-                    top: [y0, y0, "20%", "20%", yb, yb, yb, y0],
-                    opacity: [1, 1, 1, 1, 1, 0, 0, 1],
-                    scale: [1, 1, 1.04, 1.04, 1, 0.8, 0.8, 1],
+                    left: ["4%", "4%", "28%", "36%", "68%", "68%", "68%", "4%", "4%"],
+                    top: [y0, y0, y0, y0, yb, yb, yb, y0, y0],
+                    opacity: [1, 1, 1, 1, 1, 0, 0, 0, 1],
                   }
                 : undefined
             }
-            transition={cycle(T4, [0, go, atCleaner, leave, land, land + 0.3, T4 - 0.4, T4])}
+            transition={cycle(T4, [0, go, inGate, out, land, land + 0.3, T4 - 0.5, T4 - 0.49, T4])}
           >
-            <span className="relative block">
-              <motion.span
-                className="block font-mono text-[var(--human)]"
-                animate={on ? { opacity: [1, 1, 0, 0, 1] } : undefined}
-                transition={cycle(T4, [0, atCleaner + 0.1, atCleaner + 0.4, T4 - 0.4, T4])}
-              >
-                {e.messy}
-              </motion.span>
-              <motion.span
-                className={`absolute inset-0 block whitespace-nowrap font-medium ${e.bucket === "dropped" ? "text-[var(--human)]" : ""}`}
-                initial={{ opacity: 0 }}
-                animate={on ? { opacity: [0, 0, 1, 1, 0] } : undefined}
-                transition={cycle(T4, [0, atCleaner + 0.2, atCleaner + 0.5, T4 - 0.4, T4])}
-              >
-                {e.clean}
-              </motion.span>
-            </span>
+            <Steps
+              on={on}
+              total={T4}
+              className={`font-medium ${e.bucket === "dropped" ? "text-[var(--human)]" : ""}`}
+              values={[e.messy, e.clean]}
+              at={[0, inGate + 0.2]}
+            />
           </motion.div>
         );
       })}

@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Check, Clock3, MapPin, MessageCircle } from "lucide-react";
+import { Check, Clock3, MapPin } from "lucide-react";
+import { AppLogo } from "../app-logos";
 import { SiGo, SiPython, SiTypescript } from "react-icons/si";
 import portrait from "@/public/images/nafhan.png";
 
@@ -21,18 +22,6 @@ const pop = (delay: number) => ({
 export function HeroArt() {
   return (
     <div className="relative mx-auto h-[300px] w-[300px] sm:h-[380px] sm:w-[380px]">
-      {/* slow orbit ring with glass beads, and a glass disc behind the portrait */}
-      <motion.div
-        className="absolute inset-[4%] rounded-full border border-dashed border-line-strong"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-      >
-        <span className="lg-accent absolute left-1/2 top-[-6px] size-3 -translate-x-1/2 rounded-full" />
-        <span className="lg-sm absolute bottom-[12%] left-[3%] size-4 rounded-full" />
-        <span className="lg-sm absolute right-[1%] top-[40%] size-2.5 rounded-full" />
-      </motion.div>
-      <div className="glass absolute inset-[18%] rounded-full" />
-
       <Image
         src={portrait}
         alt="Illustration of Ghifari Nafhan"
@@ -64,11 +53,11 @@ export function HeroArt() {
       {/* result: many inboxes, one board */}
       <motion.div {...pop(0.7)} className="absolute bottom-[14%] right-[-6%] sm:right-[-14%]">
         <motion.div {...float(1.2, 10, 6)} className="glass w-[160px] rounded-2xl px-3 py-2.5 text-[0.75rem] sm:w-[180px]">
-          <div className="flex items-center gap-1 text-ink-3">
-            {[0, 1, 2, 3].map((i) => (
-              <MessageCircle key={i} size={12} aria-hidden />
+          <div className="flex items-center gap-1.5 text-ink-2">
+            {["whatsapp", "gmail", "slack", "discord"].map((a) => (
+              <AppLogo key={a} app={a} size={12} />
             ))}
-            <span className="ml-1">→ 1 board</span>
+            <span className="ml-0.5 whitespace-nowrap text-ink-3">→ one list</span>
           </div>
           <div className="mt-1.5 flex items-center gap-1.5">
             <span className="lg-ok flex size-4 items-center justify-center rounded-full">
