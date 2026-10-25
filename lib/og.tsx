@@ -23,8 +23,6 @@ export async function renderOg({ kicker, title, description }: { kicker: string;
           display: "flex",
           flexDirection: "column",
           background: "#000",
-          backgroundImage:
-            "radial-gradient(900px 420px at 50% -120px, rgba(10,132,255,0.45), transparent 70%), radial-gradient(700px 400px at 100% 100%, rgba(94,92,230,0.3), transparent 70%)",
           padding: 72,
           fontFamily: "Geist",
           color: "#f5f5f7",

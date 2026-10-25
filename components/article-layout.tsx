@@ -51,7 +51,7 @@ export function ArticleLayout({
           ))}
         </dl>
       </header>
-      <div className="h-px bg-gradient-to-r from-transparent via-line-strong to-transparent" />
+      <div className="h-px bg-line" />
       <div className="relative grid gap-10 pt-12 lg:grid-cols-[13rem_minmax(0,44rem)_1fr]">
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-10">

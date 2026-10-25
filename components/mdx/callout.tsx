@@ -1,6 +1,6 @@
 const styles = {
   note: { label: "Note", cls: "" },
-  lesson: { label: "Lesson", cls: "tint-blue" },
+  lesson: { label: "Lesson", cls: "!bg-accent-soft" },
   warn: { label: "Watch out", cls: "tint-warm" },
 } as const;
 

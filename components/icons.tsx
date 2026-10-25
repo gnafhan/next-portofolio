@@ -47,7 +47,7 @@ export function Logo({ size = 28, className }: { size?: number; className?: stri
 
 export type Tone = "blue" | "green" | "orange" | "violet";
 
-/** iOS-style app icon: gradient squircle, glossy rim, white glyph. */
+/** App-style icon: flat squircle with a white glyph. */
 export function IconTile({ name, size = 56, tone = "blue" }: { name: string; size?: number; tone?: Tone }) {
   return (
     <span className={`app-icon app-icon-${tone}`} style={{ width: size, height: size, borderRadius: size * 0.26 }}>
