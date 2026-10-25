@@ -1,24 +1,26 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { IconTile } from "./icons";
+import { WorkThumb } from "./work-thumb";
 import { formatDate, type Post, type Work } from "@/lib/content";
-import { toneFor } from "@/lib/tone";
 
 export function WorkCard({ work, large = false }: { work: Work; large?: boolean }) {
   return (
     <Link href={`/work/${work.slug}`} className="glass glass-hover group flex h-full flex-col rounded-2xl p-6">
-      <div className="flex items-start justify-between gap-3">
-        <IconTile name={work.icon} tone={toneFor(work.order)} size={large ? 54 : 46} />
-        <span className="lg flex size-8 items-center justify-center rounded-full text-ink-3 group-hover:text-ink">
-          <ArrowUpRight size={16} />
-        </span>
+      <div className="relative -mx-2 -mt-2">
+        <WorkThumb slug={work.slug} />
+        <div className="absolute right-2 top-2">
+          <span className="lg flex size-8 items-center justify-center rounded-full text-ink-3 group-hover:text-ink">
+            <ArrowUpRight size={16} />
+          </span>
+        </div>
       </div>
-      <div className="mt-5 text-[0.78rem] text-ink-3">{work.period} · {work.role}</div>
+      <div className="mt-4 text-[0.78rem] text-ink-3">{work.period} · {work.role}</div>
       <h3 className={`mt-1 font-semibold tracking-tight ${large ? "text-[1.4rem]" : "text-[1.15rem]"}`}>{work.title}</h3>
       <p className="mt-2 text-[0.93rem] leading-relaxed text-ink-2">{work.summary}</p>
       <div className="mt-auto flex flex-wrap gap-1.5 pt-5">
         {work.stack.slice(0, 4).map((s) => (
-          <span key={s} className="rounded-full border border-line px-2.5 py-0.5 text-[0.72rem] text-ink-2">{s}</span>
+          <span key={s} className="lg-sm rounded-full px-2.5 py-0.5 text-[0.72rem] text-ink-2">{s}</span>
         ))}
       </div>
     </Link>

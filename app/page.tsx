@@ -5,36 +5,41 @@ import { getAllPosts, getAllWork, getPage } from "@/lib/content";
 import { site } from "@/lib/site";
 import { WorkCard, PostRow } from "@/components/cards";
 import { TechStack } from "@/components/home/tech-stack";
-import { ChatDemo } from "@/components/home/chat-demo";
-import { InboxDemo } from "@/components/home/inbox-demo";
-import { EvalDemo } from "@/components/home/eval-demo";
-import { PipelineDemo } from "@/components/home/pipeline-demo";
+import { OneBoardStory, HoursToMinutesStory, TrustedAnswerStory, CleanDataStory } from "@/components/home/stories";
 import portrait from "@/public/images/nafhan.png";
 
 const BENTO = [
   {
-    title: "The model decides, code does the math",
-    body: "LLM features that call tools on real data, so totals and records are computed, not guessed.",
-    href: "/work/catataja",
-    demo: <ChatDemo />,
-  },
-  {
-    title: "Scattered requests, one board",
-    body: "An assistant that reads chats read-only, proposes tickets, and waits for a person to approve.",
+    pain: "Work requests arrive in five different apps, and some get lost.",
+    title: "Everything lands in one place",
+    body: "An assistant reads every chat, turns requests into a single to-do board, and a person approves what goes in.",
+    impact: "Nothing slips through the cracks",
     href: "/work/inbox-assistant",
-    demo: <InboxDemo />,
+    demo: <OneBoardStory />,
   },
   {
-    title: "Evals gate every change",
-    body: "Agent behaviour is tested like code: scenarios run on each pull request before anything ships.",
+    pain: "Grading lab reports took three hours every single week.",
+    title: "Hours of checking, done in minutes",
+    body: "AI does the first pass against a clear rubric, flags what's missing, and the teacher makes the final call.",
+    impact: "3 hours → 3 minutes of review a week",
+    href: "/work/lab-report-grading-agent",
+    demo: <HoursToMinutesStory />,
+  },
+  {
+    pain: "Chatbots sound confident even when they make numbers up.",
+    title: "Answers you can actually trust",
+    body: "The AI understands the question, then looks up your real records instead of guessing the total.",
+    impact: "Every number comes from your own data",
     href: "/work/catataja",
-    demo: <EvalDemo />,
+    demo: <TrustedAnswerStory />,
   },
   {
-    title: "From messy data to a dashboard",
-    body: "Pipelines that normalize what people actually type, drop what can't be trusted, and feed the UI.",
-    href: "/work",
-    demo: <PipelineDemo />,
+    pain: "Data typed by people is messy: dates, amounts and typos all over.",
+    title: "From messy data to clear charts",
+    body: "Pipelines clean every value, drop the rows that can't be trusted, and feed a dashboard people can read.",
+    impact: "Decisions made on data you can check",
+    href: "/work/outbreak-investigation-platform",
+    demo: <CleanDataStory />,
   },
 ];
 
@@ -99,7 +104,7 @@ export default function Home() {
 
       {/* Bento: show, don't tell */}
       <section className="pt-10">
-        <SectionHead title="What I build" body="Four patterns that show up in almost everything I ship." />
+        <SectionHead title="What I build" body="Real problems, solved end to end. Each one is a project you can read about." />
         <div className="glass mt-8 grid overflow-hidden rounded-3xl md:grid-cols-2">
           {BENTO.map((b, i) => (
             <Link
@@ -109,9 +114,13 @@ export default function Home() {
             >
               <div className="relative h-[310px] overflow-hidden">{b.demo}</div>
               <div className="border-t border-line p-6">
-                <h3 className="text-[1.12rem] font-medium tracking-tight">{b.title}</h3>
+                <p className="text-[0.88rem] text-ink-3">{b.pain}</p>
+                <h3 className="mt-2 text-[1.12rem] font-medium tracking-tight">{b.title}</h3>
                 <p className="mt-1.5 text-ink-2">{b.body}</p>
-                <span className="mt-3 inline-block text-[0.9rem] text-accent group-hover:underline">See how →</span>
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                  <span className="lg-sm rounded-full px-3 py-1 text-[0.82rem] font-medium">{b.impact}</span>
+                  <span className="text-[0.9rem] text-accent group-hover:underline">See how →</span>
+                </div>
               </div>
             </Link>
           ))}
