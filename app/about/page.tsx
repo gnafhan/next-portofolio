@@ -69,7 +69,7 @@ export default function AboutPage() {
                 <span className="font-medium">{e.org}</span>
                 <span className="text-ink-2"> · {e.role}</span>
               </div>
-              <span className="font-mono text-[0.75rem] uppercase tracking-wider text-ink-3 sm:pt-1">{e.period}</span>
+              <span className="text-[0.88rem] text-ink-3 sm:pt-0.5">{e.period}</span>
             </li>
           ))}
         </ul>
@@ -81,7 +81,7 @@ export default function AboutPage() {
           <ul className="space-y-2.5">
             {honors.map((h) => (
               <li key={h.title} className="flex gap-3 text-[0.95rem]">
-                <span className="font-mono text-[0.75rem] text-ink-3 pt-0.5">{h.year}</span>
+                <span className="w-10 shrink-0 text-[0.88rem] text-ink-3">{h.year}</span>
                 <span>{h.title}</span>
               </li>
             ))}
@@ -90,7 +90,7 @@ export default function AboutPage() {
             <ul className="space-y-2.5">
               {certifications.map((c) => (
                 <li key={c.title} className="flex gap-3 text-[0.95rem]">
-                  <span className="font-mono text-[0.75rem] text-ink-3 pt-0.5">{c.year}</span>
+                  <span className="w-10 shrink-0 text-[0.88rem] text-ink-3">{c.year}</span>
                   <span>{c.title} <span className="text-ink-3">· {c.issuer}</span></span>
                 </li>
               ))}

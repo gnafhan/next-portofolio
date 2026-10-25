@@ -44,7 +44,6 @@ export function ArticleLayout({
             <div key={m.label}>
               <dt className="label">{m.label}</dt>
               <dd className="mt-1.5 flex gap-2 text-[0.92rem]">
-                <span aria-hidden className="font-mono text-ink-3">└</span>
                 <span>{m.value}</span>
               </dd>
             </div>

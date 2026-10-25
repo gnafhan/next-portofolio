@@ -20,7 +20,7 @@ export function BarChart({
               style={{ width: `${Math.max(2, (i.value / top) * 100)}%` }}
             />
           </span>
-          <span className="font-mono text-[0.8rem] tabular-nums text-ink">
+          <span className="text-[0.85rem] tabular-nums text-ink">
             {i.value}
             {unit}
           </span>

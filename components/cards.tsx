@@ -6,10 +6,10 @@ import { toneFor } from "@/lib/tone";
 
 export function WorkCard({ work, large = false }: { work: Work; large?: boolean }) {
   return (
-    <Link href={`/work/${work.slug}`} className="glass glass-hover group flex h-full flex-col rounded-[28px] p-6">
+    <Link href={`/work/${work.slug}`} className="glass glass-hover group flex h-full flex-col rounded-2xl p-6">
       <div className="flex items-start justify-between gap-3">
         <IconTile name={work.icon} tone={toneFor(work.order)} size={large ? 54 : 46} />
-        <span className="glass flex size-9 items-center justify-center rounded-full text-ink-3 transition group-hover:text-ink">
+        <span className="flex size-8 items-center justify-center rounded-full border border-line text-ink-3 transition group-hover:text-ink">
           <ArrowUpRight size={16} />
         </span>
       </div>
@@ -32,7 +32,7 @@ export function PostRow({ post }: { post: Post }) {
       <div>
         <div className="font-medium leading-snug group-hover:text-accent">
           {post.title}
-          {post.draft && <span className="ml-2 rounded-full bg-[var(--human)]/15 px-2 py-0.5 align-middle text-[0.65rem] font-medium uppercase text-[var(--human)]">draft</span>}
+          {post.draft && <span className="ml-2 rounded-full bg-[var(--human)]/15 px-2 py-0.5 align-middle text-[0.72rem] font-medium text-[var(--human)]">draft</span>}
         </div>
         <div className="mt-1 line-clamp-2 text-[0.9rem] text-ink-2">{post.description}</div>
       </div>

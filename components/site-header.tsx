@@ -30,33 +30,36 @@ export function SiteHeader() {
   }, [router, resolvedTheme, setTheme]);
 
   return (
-    <header className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4">
-      <div className="mx-auto grid h-14 max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3">
-        <Link href="/" aria-label="Home" className="glass flex size-12 items-center justify-center rounded-full">
+    <header className="sticky top-0 z-40 border-b border-line bg-bg/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link href="/" aria-label="Home" className="flex items-center gap-2.5">
           <Logo size={26} />
+          <span className="hidden text-[0.98rem] font-semibold tracking-tight sm:inline">Ghifari Nafhan</span>
         </Link>
-        <nav aria-label="Main" className="justify-self-center">
-          <ul className="glass flex items-center gap-0.5 rounded-full p-1">
-            {nav.map((n) => {
-              const active = pathname === n.href || pathname.startsWith(`${n.href}/`);
-              return (
-                <li key={n.href}>
-                  <Link
-                    href={n.href}
-                    aria-current={active ? "page" : undefined}
-                    title={`${n.label} (${n.key})`}
-                    className={`block rounded-full px-3 py-1.5 text-[0.88rem] transition-colors sm:px-4 ${
-                      active ? "bg-ink/[0.07] text-ink dark:bg-white/[0.12]" : "text-ink-2 hover:text-ink"
-                    }`}
-                  >
-                    {n.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-        <ThemeToggle />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <nav aria-label="Main">
+            <ul className="flex items-center">
+              {nav.map((n) => {
+                const active = pathname === n.href || pathname.startsWith(`${n.href}/`);
+                return (
+                  <li key={n.href}>
+                    <Link
+                      href={n.href}
+                      aria-current={active ? "page" : undefined}
+                      title={`${n.label} (${n.key})`}
+                      className={`block rounded-full px-3 py-1.5 text-[0.92rem] transition-colors ${
+                        active ? "text-ink" : "text-ink-3 hover:text-ink"
+                      }`}
+                    >
+                      {n.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

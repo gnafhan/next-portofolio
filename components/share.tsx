@@ -11,22 +11,22 @@ export function Share({ url, title, markdownUrl }: { url: string; title: string;
   const enc = encodeURIComponent;
   const linkCls = "flex gap-2 text-ink-3 hover:text-ink";
   return (
-    <div className="font-mono text-[0.75rem]">
+    <div className="text-[0.88rem]">
       <div className="label mb-3">Share</div>
-      <ul className="space-y-1.5">
+      <ul className="space-y-2">
         <li>
           <a className={linkCls} href={`https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`} target="_blank" rel="noopener">
-            <span aria-hidden>└</span>LinkedIn
+            LinkedIn
           </a>
         </li>
         <li>
           <a className={linkCls} href={`https://x.com/intent/post?url=${enc(url)}&text=${enc(title)}`} target="_blank" rel="noopener">
-            <span aria-hidden>└</span>X.com
+            X.com
           </a>
         </li>
         <li>
           <a className={linkCls} href={`mailto:?subject=${enc(title)}&body=${enc(url)}`}>
-            <span aria-hidden>└</span>Email
+            Email
           </a>
         </li>
         <li>
@@ -38,7 +38,6 @@ export function Share({ url, title, markdownUrl }: { url: string; title: string;
               flash("url");
             }}
           >
-            <span aria-hidden>└</span>
             {done === "url" ? "Copied" : "Copy URL"}
           </button>
         </li>
@@ -53,7 +52,6 @@ export function Share({ url, title, markdownUrl }: { url: string; title: string;
                 flash("md");
               }}
             >
-              <span aria-hidden>└</span>
               {done === "md" ? "Copied" : "Copy markdown"}
             </button>
           </li>

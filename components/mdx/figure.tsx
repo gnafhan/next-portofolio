@@ -71,7 +71,7 @@ export function Figure({
   return (
     <figure
       ref={ref}
-      className="fig glass not-prose my-8 overflow-hidden rounded-[22px]"
+      className="fig glass not-prose my-8 overflow-hidden rounded-2xl"
     >
       {(title || sub) && (
         <div className="flex items-start justify-between gap-4 px-5 pt-4">
@@ -79,7 +79,7 @@ export function Figure({
             {title && <div className="text-[0.98rem] font-semibold leading-snug">{title}</div>}
             {sub && <div className="mt-0.5 text-[0.85rem] text-ink-3">{sub}</div>}
           </div>
-          <div data-fig-actions="" className="flex shrink-0 items-center gap-1 font-mono text-[0.7rem] uppercase tracking-wider">
+          <div data-fig-actions="" className="flex shrink-0 items-center gap-1 text-[0.78rem]">
             {status ? (
               <span className="px-1.5 py-1 text-accent">{status}</span>
             ) : (
@@ -98,7 +98,7 @@ export function Figure({
       <div className="overflow-x-auto px-5 py-5">{children}</div>
       {caption && (
         <figcaption className="flex gap-4 border-t border-line px-5 py-3 text-[0.9rem] text-ink-2">
-          <span className="fig-label shrink-0 font-mono text-[0.7rem] uppercase tracking-wider text-ink-3 leading-6" />
+          <span className="fig-label shrink-0 text-[0.85rem] font-medium text-ink-3 leading-6" />
           <span>{caption}</span>
         </figcaption>
       )}

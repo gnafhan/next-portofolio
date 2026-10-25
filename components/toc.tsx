@@ -34,7 +34,7 @@ export function Toc({ headings, minutes }: { headings: Heading[]; minutes: numbe
   const filled = Math.round(progress * blocks);
 
   return (
-    <div className="font-mono text-[0.75rem]">
+    <div className="text-[0.88rem]">
       {headings.length > 0 && (
         <>
           <div className="label mb-3">Contents</div>
@@ -43,9 +43,8 @@ export function Toc({ headings, minutes }: { headings: Heading[]; minutes: numbe
               <li key={h.id} className={h.depth === 3 ? "pl-3" : ""}>
                 <a
                   href={`#${h.id}`}
-                  className={`flex gap-2 leading-snug transition-colors ${active === h.id ? "text-ink" : "text-ink-3 hover:text-ink-2"}`}
+                  className={`block border-l-2 pl-3 leading-snug transition-colors ${active === h.id ? "border-accent text-ink" : "border-transparent text-ink-3 hover:text-ink-2"}`}
                 >
-                  <span aria-hidden className="text-ink-3">{active === h.id ? "▸" : "└"}</span>
                   <span className="line-clamp-2">{h.text}</span>
                 </a>
               </li>
@@ -56,12 +55,12 @@ export function Toc({ headings, minutes }: { headings: Heading[]; minutes: numbe
       <div className="mt-6 flex items-center gap-3" aria-label={`${pct}% read`}>
         <span aria-hidden className="flex gap-[2px]">
           {Array.from({ length: blocks }, (_, i) => (
-            <span key={i} className={`h-2.5 w-[5px] ${i < filled ? "bg-ink" : "bg-line-strong"}`} />
+            <span key={i} className={`h-1.5 w-3 rounded-full ${i < filled ? "bg-accent" : "bg-line-strong"}`} />
           ))}
         </span>
         <span className="tabular-nums text-ink-3">{pct}%</span>
       </div>
-      <div className="mt-2 uppercase tracking-wider text-ink-3">{minutes} min read</div>
+      <div className="mt-2 text-ink-3">{minutes} min read</div>
     </div>
   );
 }

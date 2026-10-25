@@ -68,7 +68,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
             {work.links.length > 0 && (
               <div className="flex flex-wrap gap-4">
                 {work.links.map((l) => (
-                  <a key={l.href} href={l.href} target="_blank" rel="noopener" className="font-mono text-[0.8rem] text-accent hover:underline">
+                  <a key={l.href} href={l.href} target="_blank" rel="noopener" className="text-[0.9rem] text-accent hover:underline">
                     {l.label} ↗
                   </a>
                 ))}

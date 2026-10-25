@@ -22,7 +22,7 @@ export default function BlogIndex() {
       {tags.length > 0 && (
         <ul className="mb-6 flex flex-wrap gap-2">
           {tags.map((t) => (
-            <li key={t} className="rounded-full border border-line px-3 py-1 font-mono text-[0.72rem] text-ink-3">{t}</li>
+            <li key={t} className="rounded-full border border-line px-3 py-1 text-[0.8rem] text-ink-2">{t}</li>
           ))}
         </ul>
       )}

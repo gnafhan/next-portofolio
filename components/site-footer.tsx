@@ -9,8 +9,8 @@ export function SiteFooter({ year }: { year: number }) {
     { label: "RSS", href: "/rss.xml" },
   ];
   return (
-    <footer className="mt-24 px-3 pb-6 sm:px-6">
-      <div className="glass mx-auto flex max-w-6xl flex-col gap-4 rounded-[28px] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+    <footer className="mt-24 border-t border-line">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p className="text-[0.85rem] text-ink-3">
           © {year} {site.name} · {site.location}
         </p>

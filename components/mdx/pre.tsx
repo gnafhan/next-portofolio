@@ -15,7 +15,7 @@ export function Pre(props: React.ComponentProps<"pre">) {
           setCopied(true);
           setTimeout(() => setCopied(false), 1400);
         }}
-        className="absolute right-2 top-2 rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[0.68rem] uppercase tracking-wider text-ink-3 opacity-0 transition group-hover:opacity-100 focus:opacity-100"
+        className="absolute right-2 top-2 rounded border border-line bg-surface px-1.5 py-0.5 text-[0.72rem] text-ink-3 opacity-0 transition group-hover:opacity-100 focus:opacity-100"
         aria-label="Copy code"
       >
         {copied ? "copied" : "copy"}

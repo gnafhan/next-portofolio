@@ -1,7 +1,7 @@
 const styles = {
   note: { label: "Note", cls: "" },
-  lesson: { label: "Lesson", cls: "!bg-accent-soft" },
-  warn: { label: "Watch out", cls: "tint-warm" },
+  lesson: { label: "Lesson", cls: "!bg-accent-soft !border-transparent" },
+  warn: { label: "Watch out", cls: "!border-[var(--human)]/40" },
 } as const;
 
 export function Callout({
