@@ -53,7 +53,7 @@ export default function AboutPage() {
             { label: site.email, href: `mailto:${site.email}` },
           ].map((l) => (
             <li key={l.href}>
-              <a href={l.href} className="inline-block rounded-full border border-line-strong px-4 py-2 text-[0.9rem] hover:bg-surface-2" target={l.href.startsWith("http") ? "_blank" : undefined} rel="noopener">
+              <a href={l.href} className="lg inline-block rounded-full px-4 py-2 text-[0.9rem]" target={l.href.startsWith("http") ? "_blank" : undefined} rel="noopener">
                 {l.label}
               </a>
             </li>

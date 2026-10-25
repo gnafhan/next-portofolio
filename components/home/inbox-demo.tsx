@@ -27,7 +27,7 @@ export function InboxDemo() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0 }}
-              className="rounded-xl border border-line bg-surface px-3 py-2"
+              className="rounded-xl glass px-3 py-2"
             >
               <div className="flex items-center gap-1.5 text-[0.72rem] text-ink-3">
                 <MessageCircle size={12} aria-hidden /> {m.from}
@@ -48,7 +48,7 @@ export function InboxDemo() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ delay: i * 0.12 }}
-                className="flex items-center justify-between gap-2 rounded-xl border border-line bg-surface px-3 py-2"
+                className="flex items-center justify-between gap-2 rounded-xl glass px-3 py-2"
               >
                 <span className="leading-snug">{m.ticket}</span>
                 {i < approved ? (

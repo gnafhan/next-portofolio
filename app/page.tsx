@@ -73,10 +73,10 @@ export default function Home() {
             stack around them, from data pipelines to the UI people touch.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/work" className="btn btn-primary">
+            <Link href="/work" className="lg btn btn-primary">
               See my work <ArrowRight size={16} aria-hidden />
             </Link>
-            <a href={site.links.linkedin} target="_blank" rel="noopener" className="btn btn-secondary">
+            <a href={site.links.linkedin} target="_blank" rel="noopener" className="lg btn">
               Connect on LinkedIn
             </a>
           </div>
@@ -100,14 +100,14 @@ export default function Home() {
       {/* Bento: show, don't tell */}
       <section className="pt-10">
         <SectionHead title="What I build" body="Four patterns that show up in almost everything I ship." />
-        <div className="mt-8 grid overflow-hidden rounded-3xl border border-line md:grid-cols-2">
+        <div className="glass mt-8 grid overflow-hidden rounded-3xl md:grid-cols-2">
           {BENTO.map((b, i) => (
             <Link
               key={b.title}
               href={b.href}
-              className={`group flex flex-col bg-surface transition-colors hover:bg-surface-2/50 ${i % 2 ? "md:border-l" : ""} ${i > 0 ? "border-t" : ""} ${i === 1 ? "md:border-t-0" : ""} border-line`}
+              className={`group flex flex-col transition-colors hover:bg-ink/[0.02] ${i % 2 ? "md:border-l" : ""} ${i > 0 ? "border-t" : ""} ${i === 1 ? "md:border-t-0" : ""} border-line`}
             >
-              <div className="relative h-[310px] overflow-hidden bg-bg">{b.demo}</div>
+              <div className="relative h-[310px] overflow-hidden">{b.demo}</div>
               <div className="border-t border-line p-6">
                 <h3 className="text-[1.12rem] font-medium tracking-tight">{b.title}</h3>
                 <p className="mt-1.5 text-ink-2">{b.body}</p>

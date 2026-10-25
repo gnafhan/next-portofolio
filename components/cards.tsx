@@ -9,7 +9,7 @@ export function WorkCard({ work, large = false }: { work: Work; large?: boolean 
     <Link href={`/work/${work.slug}`} className="glass glass-hover group flex h-full flex-col rounded-2xl p-6">
       <div className="flex items-start justify-between gap-3">
         <IconTile name={work.icon} tone={toneFor(work.order)} size={large ? 54 : 46} />
-        <span className="flex size-8 items-center justify-center rounded-full border border-line text-ink-3 transition group-hover:text-ink">
+        <span className="lg flex size-8 items-center justify-center rounded-full text-ink-3 group-hover:text-ink">
           <ArrowUpRight size={16} />
         </span>
       </div>

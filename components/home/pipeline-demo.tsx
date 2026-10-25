@@ -19,7 +19,7 @@ export function PipelineDemo() {
   const charted = step >= 2;
   return (
     <div ref={ref} className="flex h-full w-full flex-col justify-center gap-4 px-6 py-8">
-      <div className="overflow-hidden rounded-2xl border border-line bg-surface font-mono text-[0.75rem]">
+      <div className="overflow-hidden rounded-2xl glass font-mono text-[0.75rem]">
         {ROWS.map((r, i) => {
           const dropped = cleaned && r.clean[0] === "dropped";
           const cells = cleaned ? r.clean : r.raw;
@@ -38,7 +38,7 @@ export function PipelineDemo() {
           );
         })}
       </div>
-      <div className="space-y-1.5 rounded-2xl border border-line bg-surface px-4 py-3 text-[0.78rem]">
+      <div className="space-y-1.5 rounded-2xl glass px-4 py-3 text-[0.78rem]">
         {BARS.map((b) => (
           <div key={b.label} className="grid grid-cols-[4.5rem_1fr] items-center gap-3">
             <span className="text-ink-3">{b.label}</span>

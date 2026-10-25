@@ -20,7 +20,7 @@ export function EvalDemo() {
   const passed = done >= SCENARIOS.length;
   return (
     <div ref={ref} className="flex h-full w-full flex-col justify-center px-6 py-8 text-[0.85rem]">
-      <div className="rounded-2xl border border-line bg-surface">
+      <div className="rounded-2xl glass">
         <div className="flex items-center gap-2 border-b border-line px-4 py-3">
           <GitPullRequest size={15} className="text-accent" aria-hidden />
           <span className="font-medium">Improve receipt parsing</span>

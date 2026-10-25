@@ -79,15 +79,15 @@ export function Figure({
             {title && <div className="text-[0.98rem] font-semibold leading-snug">{title}</div>}
             {sub && <div className="mt-0.5 text-[0.85rem] text-ink-3">{sub}</div>}
           </div>
-          <div data-fig-actions="" className="flex shrink-0 items-center gap-1 text-[0.78rem]">
+          <div data-fig-actions="" className="flex shrink-0 items-center gap-1.5 text-[0.78rem]">
             {status ? (
               <span className="px-1.5 py-1 text-accent">{status}</span>
             ) : (
               <>
-                <button type="button" onClick={copy} className="rounded px-1.5 py-1 text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label="Copy figure as PNG">
+                <button type="button" onClick={copy} className="lg rounded-full px-2.5 py-0.5 text-ink-2 hover:text-ink" aria-label="Copy figure as PNG">
                   copy
                 </button>
-                <button type="button" onClick={download} className="rounded px-1.5 py-1 text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label="Download figure as PNG">
+                <button type="button" onClick={download} className="lg rounded-full px-2.5 py-0.5 text-ink-2 hover:text-ink" aria-label="Download figure as PNG">
                   png
                 </button>
               </>
