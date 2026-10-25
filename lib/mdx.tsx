@@ -10,7 +10,7 @@ import { Stats } from "@/components/mdx/stats";
 import { Pre } from "@/components/mdx/pre";
 import { BarChart } from "@/components/mdx/bar-chart";
 import { Video, YouTube, Img } from "@/components/mdx/media";
-import { PixelIcon } from "@/components/pixel-icon";
+import { Glyph } from "@/components/icons";
 
 function Heading({ as: Tag, id, children }: { as: "h2" | "h3"; id?: string; children: React.ReactNode }) {
   return (
@@ -34,7 +34,7 @@ export const mdxComponents = {
   BarChart,
   Video,
   YouTube,
-  PixelIcon,
+  Glyph,
   pre: Pre,
   img: Img,
   h2: (p: React.ComponentProps<"h2">) => <Heading as="h2" id={p.id}>{p.children}</Heading>,

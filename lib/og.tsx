@@ -1,29 +1,14 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
-import { GRIDS } from "@/components/pixel-icon";
+import { Logo } from "@/components/icons";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
 const fontDir = path.join(process.cwd(), "assets/fonts");
 
-function Pixels({ name, size, color }: { name: string; size: number; color: string }) {
-  const grid = GRIDS[name] ?? GRIDS.spark;
-  const n = grid.length;
-  const cell = size / n;
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {grid.flatMap((row, y) =>
-        [...row].map((c, x) =>
-          c === "X" ? <rect key={`${x}-${y}`} x={x * cell} y={y * cell} width={cell + 0.5} height={cell + 0.5} fill={color} /> : null,
-        ),
-      )}
-    </svg>
-  );
-}
-
-export async function renderOg({ kicker, title, description, icon = "logo" }: { kicker: string; title: string; description?: string; icon?: string }) {
+export async function renderOg({ kicker, title, description }: { kicker: string; title: string; description?: string; icon?: string }) {
   const [regular, semibold, mono] = await Promise.all([
     readFile(path.join(fontDir, "Geist-Regular.ttf")),
     readFile(path.join(fontDir, "Geist-SemiBold.ttf")),
@@ -31,22 +16,61 @@ export async function renderOg({ kicker, title, description, icon = "logo" }: { 
   ]);
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#faf9f5", padding: 72, fontFamily: "Geist" }}>
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          background: "#000",
+          backgroundImage:
+            "radial-gradient(900px 420px at 50% -120px, rgba(10,132,255,0.45), transparent 70%), radial-gradient(700px 400px at 100% 100%, rgba(94,92,230,0.3), transparent 70%)",
+          padding: 72,
+          fontFamily: "Geist",
+          color: "#f5f5f7",
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", width: 104, height: 104, background: "#3355d1", borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
-            <Pixels name={icon} size={58} color="#ffffff" />
+          <div
+            style={{
+              display: "flex",
+              width: 104,
+              height: 104,
+              borderRadius: 52,
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.22)",
+            }}
+          >
+            <Logo size={58} />
           </div>
-          <div style={{ fontFamily: "Geist Mono", fontSize: 24, color: "#8c8a82", letterSpacing: 2, textTransform: "uppercase" }}>{kicker}</div>
+          <div
+            style={{
+              display: "flex",
+              fontFamily: "Geist Mono",
+              fontSize: 22,
+              color: "#d1d1d6",
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              padding: "12px 24px",
+              borderRadius: 999,
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.2)",
+            }}
+          >
+            {kicker}
+          </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", marginTop: "auto" }}>
-          <div style={{ fontSize: title.length > 60 ? 56 : 68, fontWeight: 600, color: "#161614", lineHeight: 1.08, letterSpacing: -1.5 }}>{title}</div>
+          <div style={{ fontSize: title.length > 60 ? 56 : 70, fontWeight: 600, lineHeight: 1.06, letterSpacing: -2 }}>{title}</div>
           {description && (
-            <div style={{ fontSize: 28, color: "#57564f", marginTop: 24, lineHeight: 1.4, maxWidth: 980 }}>
+            <div style={{ fontSize: 28, color: "#a1a1a6", marginTop: 24, lineHeight: 1.4, maxWidth: 1000 }}>
               {description.length > 150 ? `${description.slice(0, 147)}…` : description}
             </div>
           )}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 48, paddingTop: 24, borderTop: "2px solid #e5e2d8", fontFamily: "Geist Mono", fontSize: 24, color: "#57564f" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 44, fontFamily: "Geist Mono", fontSize: 24, color: "#8e8e93" }}>
           <span>Ghifari Nafhan</span>
           <span>nafhan.com</span>
         </div>

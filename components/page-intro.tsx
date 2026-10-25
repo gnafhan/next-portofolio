@@ -1,4 +1,4 @@
-import { IconTile } from "./pixel-icon";
+import { IconTile } from "./icons";
 
 export function PageIntro({ icon, label, title, children }: { icon: string; label: string; title: string; children: React.ReactNode }) {
   return (

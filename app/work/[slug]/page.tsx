@@ -60,7 +60,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
                 <div className="label mb-3">Built with</div>
                 <ul className="flex flex-wrap gap-2">
                   {work.stack.map((s) => (
-                    <li key={s} className="rounded-full border border-line bg-surface px-3 py-1 font-mono text-[0.75rem] text-ink-2">{s}</li>
+                    <li key={s} className="glass rounded-full px-3 py-1 text-[0.78rem] text-ink-2">{s}</li>
                   ))}
                 </ul>
               </div>
@@ -75,7 +75,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
               </div>
             )}
             {next && next.slug !== work.slug && (
-              <Link href={`/work/${next.slug}`} className="block rounded-[10px] border border-line bg-surface p-4 hover:border-line-strong">
+              <Link href={`/work/${next.slug}`} className="glass glass-hover block rounded-[20px] p-4">
                 <div className="label">Next case study</div>
                 <div className="mt-1 font-medium">{next.title}</div>
               </Link>

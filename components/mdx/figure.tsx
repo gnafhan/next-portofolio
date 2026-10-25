@@ -8,7 +8,7 @@ function slugify(s: string) {
 
 async function renderPng(node: HTMLElement) {
   const { toBlob } = await import("html-to-image");
-  const bg = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() || "#ffffff";
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--surface-solid").trim() || "#ffffff";
   const blob = await toBlob(node, {
     pixelRatio: 2,
     backgroundColor: bg,
@@ -71,7 +71,7 @@ export function Figure({
   return (
     <figure
       ref={ref}
-      className="fig not-prose my-8 overflow-hidden rounded-[10px] border border-line bg-surface"
+      className="fig glass not-prose my-8 overflow-hidden rounded-[22px]"
     >
       {(title || sub) && (
         <div className="flex items-start justify-between gap-4 px-5 pt-4">

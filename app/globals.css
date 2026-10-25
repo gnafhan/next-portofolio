@@ -2,49 +2,64 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Liquid glass design tokens */
 :root {
-  --bg: #faf9f5;
-  --surface: #ffffff;
-  --surface-2: #f2f0e9;
-  --ink: #161614;
-  --ink-2: #57564f;
-  --ink-3: #8c8a82;
-  --line: #e5e2d8;
-  --line-strong: #cfcbbf;
-  --accent: #3355d1;
+  --bg: #f2f3f7;
+  --surface: rgba(255, 255, 255, 0.62);
+  --surface-solid: #ffffff;
+  --surface-2: rgba(0, 0, 0, 0.04);
+  --surface-2-solid: #f0f1f5;
+  --ink: #1d1d1f;
+  --ink-2: #515154;
+  --ink-3: #86868b;
+  --line: rgba(0, 0, 0, 0.08);
+  --line-strong: rgba(0, 0, 0, 0.16);
+  --accent: #0071e3;
   --accent-ink: #ffffff;
-  --accent-soft: #e6ebfb;
-  --sage: #dfe8d8;
-  --sage-ink: #2f4a2a;
-  --sand: #f1e4cc;
-  --sand-ink: #5c4219;
-  --rose: #f3dcd6;
-  --rose-ink: #6e2b1c;
-  --human: #c2591f;
-  --ok: #2f7d4f;
+  --accent-soft: rgba(0, 113, 227, 0.1);
+  --human: #e8590c;
+  --ok: #1f9d55;
+
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-rim-hi: rgba(255, 255, 255, 0.95);
+  --glass-rim-lo: rgba(255, 255, 255, 0.35);
+  --glass-rim-edge: rgba(0, 0, 0, 0.07);
+  --glass-shadow: 0 1px 1px rgba(0, 0, 0, 0.03), 0 10px 30px -8px rgba(30, 40, 80, 0.14);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+  --glow-1: rgba(0, 113, 227, 0.16);
+  --glow-2: rgba(175, 82, 222, 0.1);
+  --glow-3: rgba(255, 159, 10, 0.08);
   color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --bg: #141413;
-  --surface: #1c1c1a;
-  --surface-2: #242421;
-  --ink: #f1efe7;
-  --ink-2: #b4b2a9;
-  --ink-3: #85837b;
-  --line: #2e2d2a;
-  --line-strong: #44423d;
-  --accent: #8aa2f5;
-  --accent-ink: #10131f;
-  --accent-soft: #1f2640;
-  --sage: #22301f;
-  --sage-ink: #c4dab9;
-  --sand: #33291a;
-  --sand-ink: #ecd6ae;
-  --rose: #3a231d;
-  --rose-ink: #f1c4b6;
-  --human: #ec8a52;
-  --ok: #6fc391;
+  --bg: #000000;
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-solid: #111113;
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --surface-2-solid: #1a1a1d;
+  --ink: #f5f5f7;
+  --ink-2: #a1a1a6;
+  --ink-3: #6e6e73;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --accent: #2997ff;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(41, 151, 255, 0.16);
+  --human: #ff9f45;
+  --ok: #34c759;
+
+  --glass-bg: rgba(255, 255, 255, 0.045);
+  --glass-bg-strong: rgba(28, 28, 32, 0.72);
+  --glass-rim-hi: rgba(255, 255, 255, 0.32);
+  --glass-rim-lo: rgba(255, 255, 255, 0.06);
+  --glass-rim-edge: rgba(255, 255, 255, 0.04);
+  --glass-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  --glow-1: rgba(10, 132, 255, 0.28);
+  --glow-2: rgba(94, 92, 230, 0.2);
+  --glow-3: rgba(255, 159, 10, 0.06);
   color-scheme: dark;
 }
 
@@ -60,19 +75,13 @@
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
-  --color-sage: var(--sage);
-  --color-sage-ink: var(--sage-ink);
-  --color-sand: var(--sand);
-  --color-sand-ink: var(--sand-ink);
-  --color-rose: var(--rose);
-  --color-rose-ink: var(--rose-ink);
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, -apple-system, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 html {
   background: var(--bg);
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 6rem;
 }
 
 body {
@@ -80,6 +89,21 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ambient light behind the glass, fixed to the viewport */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 36rem at 50% -12rem, var(--glow-1), transparent 70%),
+    radial-gradient(40rem 30rem at 92% 30%, var(--glow-2), transparent 70%),
+    radial-gradient(36rem 28rem at 4% 75%, var(--glow-3), transparent 70%),
+    radial-gradient(70rem 30rem at 50% 115%, var(--glow-1), transparent 70%);
 }
 
 ::selection {
@@ -94,10 +118,106 @@ body {
 
 .label {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-3);
+}
+
+/* Glass surface: translucent fill, blur, a specular rim that is bright on top */
+.glass {
+  position: relative;
+  isolation: isolate;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: var(--glass-inset), var(--glass-shadow);
+}
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    165deg,
+    var(--glass-rim-hi),
+    var(--glass-rim-lo) 28%,
+    var(--glass-rim-edge) 55%,
+    var(--glass-rim-lo) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+.glass-strong {
+  background: var(--glass-bg-strong);
+}
+.glass-hover {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.25s;
+}
+.glass-hover:hover {
+  transform: translateY(-2px);
+  background: var(--glass-bg-strong);
+}
+
+/* Tinted glass for bento tiles */
+.tint-blue { background-image: linear-gradient(150deg, rgba(10, 132, 255, 0.22), rgba(94, 92, 230, 0.08) 60%, transparent); }
+.tint-warm { background-image: linear-gradient(150deg, rgba(255, 159, 10, 0.2), rgba(255, 55, 95, 0.06) 65%, transparent); }
+.tint-green { background-image: linear-gradient(150deg, rgba(52, 199, 89, 0.2), rgba(48, 176, 199, 0.07) 65%, transparent); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  padding: 0.62rem 1.25rem;
+  font-size: 0.93rem;
+  font-weight: 500;
+  transition: transform 0.2s, filter 0.2s, background-color 0.2s;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  color: #fff;
+  background: linear-gradient(180deg, #3d9bff, #0a6cff);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 8px 24px -8px rgba(10, 108, 255, 0.7);
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+/* iOS-style app icons */
+.app-icon {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 6px rgba(0, 0, 0, 0.12), 0 6px 16px -6px rgba(0, 0, 0, 0.35);
+}
+.app-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 50%);
+  pointer-events: none;
+}
+.app-icon-blue { background: linear-gradient(160deg, #5ac8fa, #0a6cff); }
+.app-icon-green { background: linear-gradient(160deg, #6ee08a, #1fa85a); }
+.app-icon-orange { background: linear-gradient(160deg, #ffc15a, #ff7a1a); }
+.app-icon-violet { background: linear-gradient(160deg, #c38bff, #6c4dff); }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: var(--surface-solid);
+  }
 }
 
 /* Article typography */

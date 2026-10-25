@@ -1,4 +1,4 @@
-import { IconTile } from "./pixel-icon";
+import { IconTile, type Tone } from "./icons";
 import { Toc } from "./toc";
 import { Share } from "./share";
 import type { Heading } from "@/lib/content";
@@ -20,7 +20,7 @@ export function ArticleLayout({
   footer,
 }: {
   icon: string;
-  tone?: "accent" | "sage" | "sand" | "rose";
+  tone?: Tone;
   kicker?: React.ReactNode;
   title: string;
   description: string;
@@ -51,7 +51,7 @@ export function ArticleLayout({
           ))}
         </dl>
       </header>
-      <div className="border-t border-line" />
+      <div className="h-px bg-gradient-to-r from-transparent via-line-strong to-transparent" />
       <div className="relative grid gap-10 pt-12 lg:grid-cols-[13rem_minmax(0,44rem)_1fr]">
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-10">

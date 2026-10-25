@@ -7,7 +7,7 @@ function Marker({ kind = "check" }: { kind?: Kind }) {
   }
   return (
     <span
-      className={`flex size-[15px] items-center justify-center rounded-full border bg-surface ${
+      className={`flex size-[15px] items-center justify-center rounded-full border bg-[var(--surface-solid)] ${
         kind === "auto" ? "border-[var(--ok)] text-[var(--ok)]" : "border-line-strong text-ink-3"
       }`}
       aria-label={kind === "auto" ? "automated" : "step"}

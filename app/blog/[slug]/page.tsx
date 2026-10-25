@@ -71,13 +71,13 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
           (newer || older) && (
             <nav className="mt-12 grid gap-3 sm:grid-cols-2" aria-label="More posts">
               {older ? (
-                <Link href={`/blog/${older.slug}`} className="rounded-[10px] border border-line bg-surface p-4 hover:border-line-strong">
+                <Link href={`/blog/${older.slug}`} className="glass glass-hover rounded-[20px] p-4">
                   <div className="label">Previous</div>
                   <div className="mt-1 font-medium">{older.title}</div>
                 </Link>
               ) : <span />}
               {newer && (
-                <Link href={`/blog/${newer.slug}`} className="rounded-[10px] border border-line bg-surface p-4 text-right hover:border-line-strong">
+                <Link href={`/blog/${newer.slug}`} className="glass glass-hover rounded-[20px] p-4 text-right">
                   <div className="label">Next</div>
                   <div className="mt-1 font-medium">{newer.title}</div>
                 </Link>

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 import { nav } from "@/lib/site";
-import { PixelIcon } from "./pixel-icon";
+import { Logo } from "./icons";
 import { ThemeToggle } from "./theme";
 
 export function SiteHeader() {
@@ -13,6 +13,7 @@ export function SiteHeader() {
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
 
+  // Keyboard shortcuts: W, B, N, A for sections, H for home, T for theme.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
@@ -29,33 +30,33 @@ export function SiteHeader() {
   }, [router, resolvedTheme, setTheme]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-bg/85 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2.5 text-accent" aria-label="Home">
-          <PixelIcon name="logo" size={22} />
-          <span className="font-mono text-[0.8rem] font-medium tracking-wide text-ink">nafhan</span>
+    <header className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4">
+      <div className="mx-auto grid h-14 max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3">
+        <Link href="/" aria-label="Home" className="glass flex size-12 items-center justify-center rounded-full">
+          <Logo size={26} />
         </Link>
-        <nav className="flex items-center gap-3 sm:gap-6" aria-label="Main">
-          {nav.map((n) => {
-            const active = pathname === n.href || pathname.startsWith(`${n.href}/`);
-            return (
-              <Link
-                key={n.href}
-                href={n.href}
-                aria-current={active ? "page" : undefined}
-                className={`font-mono text-[0.72rem] uppercase tracking-wider transition-colors ${
-                  active ? "text-ink" : "text-ink-3 hover:text-ink"
-                }`}
-              >
-                <span className="hidden sm:inline">[{n.key}] </span>
-                {n.label}
-              </Link>
-            );
-          })}
-          <span className="hidden sm:block">
-            <ThemeToggle />
-          </span>
+        <nav aria-label="Main" className="justify-self-center">
+          <ul className="glass flex items-center gap-0.5 rounded-full p-1">
+            {nav.map((n) => {
+              const active = pathname === n.href || pathname.startsWith(`${n.href}/`);
+              return (
+                <li key={n.href}>
+                  <Link
+                    href={n.href}
+                    aria-current={active ? "page" : undefined}
+                    title={`${n.label} (${n.key})`}
+                    className={`block rounded-full px-3 py-1.5 text-[0.88rem] transition-colors sm:px-4 ${
+                      active ? "bg-ink/[0.07] text-ink dark:bg-white/[0.12]" : "text-ink-2 hover:text-ink"
+                    }`}
+                  >
+                    {n.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </nav>
+        <ThemeToggle />
       </div>
     </header>
   );

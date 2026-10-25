@@ -2,6 +2,7 @@
 
 import { ThemeProvider as NextThemes, useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
+import { Moon, Sun } from "lucide-react";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
@@ -21,10 +22,11 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={() => setTheme(dark ? "light" : "dark")}
-      className="font-mono text-[0.72rem] uppercase tracking-wider text-ink-3 hover:text-ink"
+      className="glass flex size-12 items-center justify-center rounded-full text-ink-2 hover:text-ink"
       aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      title="Theme (T)"
     >
-      [T] {mounted ? (dark ? "Light" : "Dark") : "Theme"}
+      {mounted ? dark ? <Sun size={18} strokeWidth={1.75} /> : <Moon size={18} strokeWidth={1.75} /> : <span className="size-[18px]" />}
     </button>
   );
 }
