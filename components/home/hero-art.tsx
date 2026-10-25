@@ -1,0 +1,93 @@
+"use client";
+
+import Image from "next/image";
+import { motion } from "motion/react";
+import { Check, Clock3, MapPin, MessageCircle } from "lucide-react";
+import { SiGo, SiPython, SiTypescript } from "react-icons/si";
+import portrait from "@/public/images/nafhan.png";
+
+const float = (delay: number, distance = 8, duration = 5) => ({
+  animate: { y: [0, -distance, 0] },
+  transition: { duration, delay, repeat: Infinity, ease: "easeInOut" as const },
+});
+
+const pop = (delay: number) => ({
+  initial: { opacity: 0, scale: 0.85 },
+  animate: { opacity: 1, scale: 1 },
+  transition: { delay, duration: 0.5, ease: "easeOut" as const },
+});
+
+/** Portrait with floating glass cards that show results, not claims. */
+export function HeroArt() {
+  return (
+    <div className="relative mx-auto h-[300px] w-[300px] sm:h-[380px] sm:w-[380px]">
+      {/* slow orbit ring with glass beads, and a glass disc behind the portrait */}
+      <motion.div
+        className="absolute inset-[4%] rounded-full border border-dashed border-line-strong"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+      >
+        <span className="lg-accent absolute left-1/2 top-[-6px] size-3 -translate-x-1/2 rounded-full" />
+        <span className="lg-sm absolute bottom-[12%] left-[3%] size-4 rounded-full" />
+        <span className="lg-sm absolute right-[1%] top-[40%] size-2.5 rounded-full" />
+      </motion.div>
+      <div className="glass absolute inset-[18%] rounded-full" />
+
+      <Image
+        src={portrait}
+        alt="Illustration of Ghifari Nafhan"
+        priority
+        sizes="(min-width: 640px) 260px, 200px"
+        className="absolute bottom-[6%] left-1/2 w-[200px] -translate-x-1/2 select-none sm:w-[260px]"
+      />
+
+      {/* location */}
+      <motion.div {...pop(0.2)} className="absolute -top-1 right-[4%]">
+        <motion.span {...float(0, 6, 4.5)} className="lg-sm flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.78rem]">
+          <span className="size-1.5 rounded-full bg-[var(--ok)]" />
+          <MapPin size={12} aria-hidden /> Yogyakarta, ID
+        </motion.span>
+      </motion.div>
+
+      {/* result: hours to minutes */}
+      <motion.div {...pop(0.45)} className="absolute left-[-6%] top-[24%] sm:left-[-14%]">
+        <motion.div {...float(0.6, 9, 5.5)} className="glass w-[150px] rounded-2xl px-3 py-2.5 text-[0.75rem] sm:w-[170px]">
+          <div className="flex items-center gap-1.5 text-ink-3">
+            <Clock3 size={12} aria-hidden /> Weekly grading
+          </div>
+          <div className="mt-1 text-[0.95rem] font-medium">
+            <span className="text-ink-3 line-through">3 hours</span> → 3 min
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* result: many inboxes, one board */}
+      <motion.div {...pop(0.7)} className="absolute bottom-[14%] right-[-6%] sm:right-[-14%]">
+        <motion.div {...float(1.2, 10, 6)} className="glass w-[160px] rounded-2xl px-3 py-2.5 text-[0.75rem] sm:w-[180px]">
+          <div className="flex items-center gap-1 text-ink-3">
+            {[0, 1, 2, 3].map((i) => (
+              <MessageCircle key={i} size={12} aria-hidden />
+            ))}
+            <span className="ml-1">→ 1 board</span>
+          </div>
+          <div className="mt-1.5 flex items-center gap-1.5">
+            <span className="lg-ok flex size-4 items-center justify-center rounded-full">
+              <Check size={10} strokeWidth={3} />
+            </span>
+            <span className="font-medium">Nothing slips through</span>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* stack */}
+      <motion.div {...pop(0.95)} className="absolute bottom-[-2%] left-[2%]">
+        <motion.span {...float(0.3, 7, 4.8)} className="lg-sm flex items-center gap-2 rounded-full px-3 py-1.5">
+          <SiPython size={13} aria-hidden />
+          <SiTypescript size={13} aria-hidden />
+          <SiGo size={18} aria-hidden />
+        </motion.span>
+      </motion.div>
+
+    </div>
+  );
+}

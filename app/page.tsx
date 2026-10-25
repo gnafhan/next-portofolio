@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getAllPosts, getAllWork, getPage } from "@/lib/content";
@@ -6,7 +5,7 @@ import { site } from "@/lib/site";
 import { WorkCard, PostRow } from "@/components/cards";
 import { TechStack } from "@/components/home/tech-stack";
 import { OneBoardStory, HoursToMinutesStory, TrustedAnswerStory, CleanDataStory } from "@/components/home/stories";
-import portrait from "@/public/images/nafhan.png";
+import { HeroArt } from "@/components/home/hero-art";
 
 const BENTO = [
   {
@@ -71,11 +70,11 @@ export default function Home() {
         <div className="order-2 md:order-1">
           <p className="text-[1.05rem] text-ink-2">Hi, I&apos;m {site.name}.</p>
           <h1 className="mt-3 text-[2.6rem] font-medium leading-[1.05] tracking-tighter sm:text-[3.6rem]">
-            I build AI systems that actually get used.
+            I build AI that turns hours of manual work into minutes.
           </h1>
           <p className="mt-5 max-w-[52ch] text-[1.08rem] leading-relaxed text-ink-2">
-            Software engineer in {site.location}. I ship AI features into messy, real-world workflows and do the full
-            stack around them, from data pipelines to the UI people touch.
+            Software engineer in {site.location}. I find the slow, repetitive parts of a workflow and automate them end to
+            end, from the data pipeline to the screen people use.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/work" className="lg btn btn-primary">
@@ -87,13 +86,7 @@ export default function Home() {
           </div>
         </div>
         <div className="order-1 flex justify-center md:order-2">
-          <Image
-            src={portrait}
-            alt="Illustration of Ghifari Nafhan"
-            priority
-            sizes="(min-width: 768px) 320px, 220px"
-            className="w-[220px] select-none md:w-[320px]"
-          />
+          <HeroArt />
         </div>
       </section>
 

@@ -3,9 +3,9 @@ export const site = {
   shortName: "Nafhan",
   url: "https://nafhan.com",
   title: "Ghifari Nafhan · AI engineer, full-stack",
-  headline: "Software engineer building AI systems that actually get used.",
+  headline: "I build AI that turns hours of manual work into minutes.",
   description:
-    "I ship AI systems into messy, real-world workflows, full-stack from data to UI. Case studies, build logs and production AI lessons.",
+    "Software engineer automating slow, manual work with AI, end to end from data to UI. Case studies, build logs and production AI lessons.",
   location: "Yogyakarta, Indonesia",
   email: "nafhanghifari@gmail.com",
   links: {

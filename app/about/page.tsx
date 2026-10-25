@@ -9,7 +9,7 @@ import portrait from "@/public/images/nafhan.png";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Ghifari Nafhan is a software engineer in Yogyakarta building AI systems that actually get used, full-stack from data to UI.",
+  description: "Ghifari Nafhan is a software engineer in Yogyakarta who automates slow, manual work with AI, full-stack from data to UI.",
   alternates: { canonical: "/about" },
 };
 
@@ -26,7 +26,7 @@ export default function AboutPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
       <PageIntro icon="logo" label="About" title="Hi, I'm Nafhan.">
-        Software engineer in {site.location}. I build AI systems that actually get used, and the full stack around them.
+        Software engineer in {site.location}. I automate slow, manual work with AI, and build the full stack around it.
       </PageIntro>
 
       <Section label="Short version">
