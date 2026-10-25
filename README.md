@@ -34,6 +34,7 @@ The file name is the URL slug: lowercase, words joined with `-`.
    updated: 2026-11-10       # optional
    tags: [ai-engineering, evals]
    icon: check               # wallet inbox pulse plate check home chat chart flow spark
+   scene: lab-report-grading-agent  # optional animated header scene, see components/work-thumb.tsx
    draft: true               # optional; true = only visible in dev and Vercel previews
    ---
 

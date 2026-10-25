@@ -13,7 +13,7 @@ export default function WorkIndex() {
   const work = getAllWork();
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
-      <PageIntro icon="flow" label="[W] Work" title="Case studies">
+      <PageIntro icon="flow" label="Work" title="Case studies">
         Things I built end to end, mostly AI features that had to survive real users and real data. Each one covers the
         problem, what I shipped, and the decisions I&apos;d make again.
       </PageIntro>

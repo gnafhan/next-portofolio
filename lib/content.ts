@@ -28,6 +28,8 @@ export type Post = Base & {
   tags: string[];
   draft: boolean;
   cover?: string;
+  /** name of an illustrated scene (see components/work-thumb.tsx) */
+  scene?: string;
 };
 
 export type WorkLink = { label: string; href: string };
@@ -95,6 +97,7 @@ export function getAllPosts(): Post[] {
         draft: Boolean(data.draft),
         icon: String(data.icon ?? "spark"),
         cover: data.cover ? String(data.cover) : undefined,
+        scene: data.scene ? String(data.scene) : undefined,
         headings: extractHeadings(body),
         readingMinutes: readingMinutes(body),
       }))

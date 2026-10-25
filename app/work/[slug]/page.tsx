@@ -7,6 +7,7 @@ import { Mdx } from "@/lib/mdx";
 import { getAllWork, getWork } from "@/lib/content";
 import { absoluteUrl } from "@/lib/site";
 import { toneFor } from "@/lib/tone";
+import { TechChip } from "@/components/tech-chip";
 
 export const dynamicParams = false;
 
@@ -40,6 +41,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
     <>
       <ArticleLayout
         icon={work.icon}
+        scene={work.slug}
         tone={toneFor(work.order)}
         kicker={<Link href="/work" className="label hover:text-ink">← Work · Case study</Link>}
         title={work.title}
@@ -60,7 +62,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
                 <div className="label mb-3">Built with</div>
                 <ul className="flex flex-wrap gap-2">
                   {work.stack.map((s) => (
-                    <li key={s} className="glass rounded-full px-3 py-1 text-[0.78rem] text-ink-2">{s}</li>
+                    <li key={s}><TechChip name={s} className="!px-3 !py-1 !text-[0.8rem]" /></li>
                   ))}
                 </ul>
               </div>

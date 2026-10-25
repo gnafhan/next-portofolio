@@ -1,0 +1,216 @@
+"use client";
+
+import { motion } from "motion/react";
+import { Award, BrainCircuit, Database, GraduationCap, Hammer, LayoutDashboard, Medal, PenLine, Server, Trophy } from "lucide-react";
+import { SiGoogle, SiMeta } from "react-icons/si";
+import { cycle, useStart } from "./anim";
+
+/* Data → backend → AI → UI, with a request travelling through each layer. */
+const LAYERS = [
+  { label: "Data", note: "pipelines, Postgres", Icon: Database },
+  { label: "Backend", note: "APIs, auth, queues", Icon: Server },
+  { label: "AI", note: "LLMs, tools, evals", Icon: BrainCircuit },
+  { label: "UI", note: "what people touch", Icon: LayoutDashboard },
+];
+
+export function StackFlow() {
+  const [ref, on] = useStart();
+  const T = 8;
+  return (
+    <div ref={ref} className="glass relative overflow-hidden rounded-3xl px-5 py-7">
+      <div className="relative grid grid-cols-4 gap-3">
+        <span className="absolute left-[12%] right-[12%] top-6 h-px bg-line-strong" aria-hidden />
+        {LAYERS.map(({ label, note, Icon }, i) => (
+          <div key={label} className="relative flex flex-col items-center text-center">
+            <motion.span
+              className="lg-sm relative z-10 flex size-12 items-center justify-center rounded-2xl text-ink"
+              animate={on ? { scale: [1, 1, 1.15, 1, 1] } : undefined}
+              transition={cycle(T, [0, 0.6 + i * 1.6, 0.9 + i * 1.6, 1.3 + i * 1.6, T])}
+            >
+              <Icon size={20} aria-hidden />
+            </motion.span>
+            <span className="mt-2 text-[0.9rem] font-medium">{label}</span>
+            <span className="text-[0.75rem] text-ink-3">{note}</span>
+          </div>
+        ))}
+        <motion.span
+          className="lg-accent absolute top-[18px] z-20 size-3 rounded-full"
+          initial={{ left: "12%", opacity: 0 }}
+          animate={on ? { left: ["12%", "12%", "37%", "62.5%", "87%", "87%"], opacity: [0, 1, 1, 1, 1, 0] } : undefined}
+          transition={cycle(T, [0, 0.6, 2.2, 3.8, 5.4, 6], "linear")}
+        />
+      </div>
+      <p className="mt-6 text-center text-[0.85rem] text-ink-3">One person, the whole path: from where the data lives to the screen people use.</p>
+    </div>
+  );
+}
+
+/* Experience as a timeline that draws itself */
+export function Timeline({ items }: { items: readonly { org: string; role: string; period: string }[] }) {
+  const [ref, on] = useStart(0.15);
+  return (
+    <div ref={ref} className="relative pl-7">
+      <motion.span
+        className="absolute left-[9px] top-2 w-px origin-top bg-line-strong"
+        style={{ bottom: 8 }}
+        initial={{ scaleY: 0 }}
+        animate={on ? { scaleY: 1 } : undefined}
+        transition={{ duration: 1.6, ease: "easeOut" }}
+      />
+      <ul className="space-y-3">
+        {items.map((e, i) => (
+          <motion.li
+            key={`${e.org}-${e.role}`}
+            className="relative"
+            initial={{ opacity: 0, x: -8 }}
+            animate={on ? { opacity: 1, x: 0 } : undefined}
+            transition={{ delay: 0.15 + i * 0.12, duration: 0.5 }}
+          >
+            <span className={`absolute -left-[25px] top-4 size-3 rounded-full ${i < 3 ? "lg-accent" : "lg-sm"}`} />
+            <div className="glass grid gap-1 rounded-2xl px-4 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
+              <div>
+                <span className="font-medium">{e.org}</span>
+                <span className="text-ink-2"> · {e.role}</span>
+              </div>
+              <span className="text-[0.88rem] text-ink-3">{e.period}</span>
+            </div>
+          </motion.li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* /now: three small scenes for building, writing and studying */
+export function NowScenes() {
+  const [ref, on] = useStart();
+  const T = 7;
+  return (
+    <div ref={ref} className="grid gap-4 sm:grid-cols-3">
+      <div className="glass rounded-3xl p-5">
+        <div className="flex items-center gap-2 text-[0.9rem] font-medium">
+          <Hammer size={16} aria-hidden /> Building
+        </div>
+        <div className="lg-sm mt-4 h-24 rounded-xl p-2.5">
+          <div className="flex gap-1">
+            {[0, 1, 2].map((k) => (
+              <span key={k} className="size-1.5 rounded-full bg-ink/20" />
+            ))}
+          </div>
+          <div className="mt-2 grid grid-cols-3 gap-1.5">
+            {[0, 1, 2, 3, 4, 5].map((k) => (
+              <motion.span
+                key={k}
+                className={`h-5 rounded-md ${k === 0 ? "lg-accent" : "lg-sm"}`}
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={on ? { opacity: [0, 0, 1, 1, 0], scale: [0.6, 0.6, 1, 1, 0.6] } : undefined}
+                transition={cycle(T, [0, 0.4 + k * 0.5, 0.8 + k * 0.5, T - 0.6, T])}
+              />
+            ))}
+          </div>
+        </div>
+        <p className="mt-3 text-[0.88rem] text-ink-2">This site, a content machine, and my personal ops assistant.</p>
+      </div>
+
+      <div className="glass rounded-3xl p-5">
+        <div className="flex items-center gap-2 text-[0.9rem] font-medium">
+          <PenLine size={16} aria-hidden /> Writing
+        </div>
+        <div className="lg-sm mt-4 h-24 space-y-2 rounded-xl p-3">
+          {[85, 95, 70, 55].map((w, k) => (
+            <motion.span
+              key={k}
+              className="block h-1.5 rounded-full bg-ink/20"
+              initial={{ width: 0 }}
+              animate={on ? { width: ["0%", "0%", `${w}%`, `${w}%`, "0%"] } : undefined}
+              transition={cycle(T, [0, 0.4 + k * 0.9, 1.2 + k * 0.9, T - 0.6, T])}
+            />
+          ))}
+        </div>
+        <p className="mt-3 text-[0.88rem] text-ink-2">Production AI lessons and build logs, in English.</p>
+      </div>
+
+      <div className="glass rounded-3xl p-5">
+        <div className="flex items-center gap-2 text-[0.9rem] font-medium">
+          <GraduationCap size={16} aria-hidden /> Studying
+        </div>
+        <div className="lg-sm mt-4 flex h-24 flex-col justify-center rounded-xl px-3">
+          <div className="flex justify-between text-[0.72rem] text-ink-3">
+            <span>2023</span>
+            <span>2027</span>
+          </div>
+          <div className="relative mt-1.5 h-2 rounded-full bg-ink/10">
+            <motion.span
+              className="lg-accent absolute inset-y-0 left-0 rounded-full"
+              initial={{ width: "0%" }}
+              animate={on ? { width: "81%" } : undefined}
+              transition={{ duration: 2, ease: "easeOut", delay: 0.3 }}
+            />
+          </div>
+          <div className="mt-1.5 text-right text-[0.72rem] text-ink-3">Software Engineering, UGM</div>
+        </div>
+        <p className="mt-3 text-[0.88rem] text-ink-2">Final stretch of my degree, graduating in 2027.</p>
+      </div>
+    </div>
+  );
+}
+
+/* Awards and certificates as glass badges */
+
+export function CredentialGrid({
+  honors,
+  certifications,
+}: {
+  honors: readonly { title: string; year: string }[];
+  certifications: readonly { title: string; issuer: string; year: string }[];
+}) {
+  const [ref, on] = useStart(0.2);
+  const honorIcon = (t: string) => (/1st|place/i.test(t) ? Trophy : /scholarship/i.test(t) ? GraduationCap : /mention/i.test(t) ? Medal : Award);
+  const certIcon = (issuer: string) => (issuer === "Google" ? SiGoogle : SiMeta);
+  return (
+    <div ref={ref} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {honors.map((h, i) => {
+        const Icon = honorIcon(h.title);
+        return (
+          <motion.div
+            key={h.title}
+            className="glass flex items-start gap-3 rounded-2xl px-4 py-3"
+            initial={{ opacity: 0, y: 10 }}
+            animate={on ? { opacity: 1, y: 0 } : undefined}
+            transition={{ delay: i * 0.08, duration: 0.45 }}
+          >
+            <span className="lg-sm flex size-9 shrink-0 items-center justify-center rounded-xl text-ink">
+              <Icon size={17} aria-hidden />
+            </span>
+            <div>
+              <div className="text-[0.92rem] leading-snug">{h.title}</div>
+              <div className="mt-0.5 text-[0.8rem] text-ink-3">{h.year}</div>
+            </div>
+          </motion.div>
+        );
+      })}
+      {certifications.map((c, i) => {
+        const Icon = certIcon(c.issuer);
+        return (
+          <motion.div
+            key={c.title}
+            className="glass flex items-start gap-3 rounded-2xl px-4 py-3"
+            initial={{ opacity: 0, y: 10 }}
+            animate={on ? { opacity: 1, y: 0 } : undefined}
+            transition={{ delay: (honors.length + i) * 0.08, duration: 0.45 }}
+          >
+            <span className="lg-sm flex size-9 shrink-0 items-center justify-center rounded-xl text-ink">
+              <Icon size={15} aria-hidden />
+            </span>
+            <div>
+              <div className="text-[0.92rem] leading-snug">{c.title}</div>
+              <div className="mt-0.5 text-[0.8rem] text-ink-3">
+                {c.issuer} · {c.year}
+              </div>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}

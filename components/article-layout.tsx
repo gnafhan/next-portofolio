@@ -1,4 +1,5 @@
-import { IconTile, type Tone } from "./icons";
+import type { Tone } from "./icons";
+import { WorkThumb } from "./work-thumb";
 import { Toc } from "./toc";
 import { Share } from "./share";
 import type { Heading } from "@/lib/content";
@@ -6,8 +7,7 @@ import type { Heading } from "@/lib/content";
 export type MetaItem = { label: string; value: React.ReactNode };
 
 export function ArticleLayout({
-  icon,
-  tone,
+  scene,
   kicker,
   title,
   description,
@@ -21,6 +21,7 @@ export function ArticleLayout({
 }: {
   icon: string;
   tone?: Tone;
+  scene?: string;
   kicker?: React.ReactNode;
   title: string;
   description: string;
@@ -35,7 +36,11 @@ export function ArticleLayout({
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
       <header className="mx-auto max-w-[44rem] pb-12 pt-14 sm:pt-20">
-        <IconTile name={icon} tone={tone} size={64} />
+        {scene && (
+          <div className="glass mb-8 rounded-3xl p-2">
+            <WorkThumb slug={scene} />
+          </div>
+        )}
         {kicker && <div className="mt-6">{kicker}</div>}
         <h1 className="mt-4 text-[2rem] font-semibold leading-[1.15] tracking-tight sm:text-[2.5rem]">{title}</h1>
         <p className="mt-4 text-[1.1rem] leading-relaxed text-ink-2">{description}</p>

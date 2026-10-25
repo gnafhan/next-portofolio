@@ -51,6 +51,7 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
     <>
       <ArticleLayout
         icon={post.icon}
+        scene={post.scene}
         kicker={
           <Link href="/blog" className="label hover:text-ink">
             ← Blog{post.draft ? " · draft (not public)" : ""}

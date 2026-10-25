@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageIntro } from "@/components/page-intro";
 import { site } from "@/lib/site";
+import Image from "next/image";
 import { certifications, earlier, experience, honors } from "@/lib/profile";
+import { CredentialGrid, StackFlow, Timeline } from "@/components/illustrations";
+import portrait from "@/public/images/nafhan.png";
 
 export const metadata: Metadata = {
   title: "About",
@@ -22,11 +25,12 @@ function Section({ id, label, children }: { id?: string; label: string; children
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
-      <PageIntro icon="logo" label="[A] About" title="Hi, I'm Nafhan.">
+      <PageIntro icon="logo" label="About" title="Hi, I'm Nafhan.">
         Software engineer in {site.location}. I build AI systems that actually get used, and the full stack around them.
       </PageIntro>
 
       <Section label="Short version">
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_200px]">
         <div className="prose max-w-[44rem]">
           <p>
             Most of my work sits between backend systems, data and the messy job of turning an idea into something people
@@ -42,6 +46,11 @@ export default function AboutPage() {
             I&apos;m finishing an applied bachelor&apos;s in Software Engineering Technology at Universitas Gadjah Mada, where
             I also spent two years as a practicum assistant and coordinator.
           </p>
+        </div>
+        <Image src={portrait} alt="Illustration of Ghifari Nafhan" sizes="200px" className="mx-auto hidden w-[200px] lg:block" />
+        </div>
+        <div className="mt-8">
+          <StackFlow />
         </div>
       </Section>
 
@@ -62,44 +71,19 @@ export default function AboutPage() {
       </Section>
 
       <Section label="Experience">
-        <ul className="divide-y divide-line">
-          {experience.map((e) => (
-            <li key={`${e.org}-${e.role}`} className="grid gap-1 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
-              <div>
-                <span className="font-medium">{e.org}</span>
-                <span className="text-ink-2"> · {e.role}</span>
-              </div>
-              <span className="text-[0.88rem] text-ink-3 sm:pt-0.5">{e.period}</span>
-            </li>
-          ))}
-        </ul>
+        <Timeline items={experience} />
         <p className="mt-4 text-[0.9rem] text-ink-3">{earlier}</p>
       </Section>
 
       <Section id="credentials" label="Awards & credentials">
-        <div className="grid gap-8 md:grid-cols-2">
-          <ul className="space-y-2.5">
-            {honors.map((h) => (
-              <li key={h.title} className="flex gap-3 text-[0.95rem]">
-                <span className="w-10 shrink-0 text-[0.88rem] text-ink-3">{h.year}</span>
-                <span>{h.title}</span>
-              </li>
-            ))}
-          </ul>
-          <div>
-            <ul className="space-y-2.5">
-              {certifications.map((c) => (
-                <li key={c.title} className="flex gap-3 text-[0.95rem]">
-                  <span className="w-10 shrink-0 text-[0.88rem] text-ink-3">{c.year}</span>
-                  <span>{c.title} <span className="text-ink-3">· {c.issuer}</span></span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 text-[0.9rem] text-ink-3">
-              The rest of my course certificates live on <a className="underline underline-offset-4" href={site.links.linkedin} target="_blank" rel="noopener">LinkedIn</a>.
-            </p>
-          </div>
-        </div>
+        <CredentialGrid honors={honors} certifications={certifications} />
+        <p className="mt-4 text-[0.9rem] text-ink-3">
+          The rest of my course certificates live on{" "}
+          <a className="underline underline-offset-4" href={site.links.linkedin} target="_blank" rel="noopener">
+            LinkedIn
+          </a>
+          .
+        </p>
       </Section>
 
       <Section label="This site">

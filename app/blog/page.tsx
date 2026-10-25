@@ -15,7 +15,7 @@ export default function BlogIndex() {
   const tags = [...new Set(posts.flatMap((p) => p.tags))].slice(0, 12);
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
-      <PageIntro icon="chat" label="[B] Blog" title="Writing">
+      <PageIntro icon="chat" label="Blog" title="Writing">
         Production AI lessons and build logs. What worked, what didn&apos;t, and why. Subscribe via{" "}
         <Link href="/rss.xml" className="text-accent underline underline-offset-4">RSS</Link>.
       </PageIntro>

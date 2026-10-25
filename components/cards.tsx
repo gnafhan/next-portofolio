@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { IconTile } from "./icons";
 import { WorkThumb } from "./work-thumb";
+import { TechChip } from "./tech-chip";
 import { formatDate, type Post, type Work } from "@/lib/content";
 
 export function WorkCard({ work, large = false }: { work: Work; large?: boolean }) {
@@ -20,7 +20,7 @@ export function WorkCard({ work, large = false }: { work: Work; large?: boolean 
       <p className="mt-2 text-[0.93rem] leading-relaxed text-ink-2">{work.summary}</p>
       <div className="mt-auto flex flex-wrap gap-1.5 pt-5">
         {work.stack.slice(0, 4).map((s) => (
-          <span key={s} className="lg-sm rounded-full px-2.5 py-0.5 text-[0.72rem] text-ink-2">{s}</span>
+          <TechChip key={s} name={s} />
         ))}
       </div>
     </Link>
@@ -30,7 +30,11 @@ export function WorkCard({ work, large = false }: { work: Work; large?: boolean 
 export function PostRow({ post }: { post: Post }) {
   return (
     <Link href={`/blog/${post.slug}`} className="group grid grid-cols-[auto_minmax(0,1fr)] gap-4 rounded-2xl px-2 py-4 transition hover:bg-surface-2 sm:grid-cols-[auto_minmax(0,1fr)_auto]">
-      <IconTile name={post.icon} size={42} />
+      <span className="glass relative block h-[68px] w-[112px] overflow-hidden rounded-xl">
+        <span className="absolute left-0 top-0 block w-[280px] origin-top-left scale-[0.4]">
+          <WorkThumb slug={post.scene ?? ""} />
+        </span>
+      </span>
       <div>
         <div className="font-medium leading-snug group-hover:text-accent">
           {post.title}
