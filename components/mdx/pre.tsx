@@ -1,0 +1,25 @@
+"use client";
+
+import { useRef, useState } from "react";
+
+export function Pre(props: React.ComponentProps<"pre">) {
+  const ref = useRef<HTMLPreElement>(null);
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="group relative">
+      <pre ref={ref} {...props} />
+      <button
+        type="button"
+        onClick={async () => {
+          await navigator.clipboard.writeText(ref.current?.innerText ?? "");
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1400);
+        }}
+        className="absolute right-2 top-2 rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[0.68rem] uppercase tracking-wider text-ink-3 opacity-0 transition group-hover:opacity-100 focus:opacity-100"
+        aria-label="Copy code"
+      >
+        {copied ? "copied" : "copy"}
+      </button>
+    </div>
+  );
+}

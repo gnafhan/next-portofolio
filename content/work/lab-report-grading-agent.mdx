@@ -1,0 +1,63 @@
+---
+title: "From 3 hours to 3 minutes: a lab report grading agent"
+summary: "Two AI agents that turn weekly lab report grading into a short review: one writes the grading guide, one grades against it, and I make the final call."
+role: "Teaching assistant & builder"
+period: "2024–2026"
+stack: ["LLM agents", "Prompt design"]
+icon: "check"
+order: 5
+featured: false
+links: []
+---
+
+## The problem
+
+As a practicum teaching assistant at Universitas Gadjah Mada, I spent nearly 3 hours every week grading lab reports.
+
+The work matters. Students learn from the feedback, and the grade has to be fair. But it was also very repetitive. For every report I checked the same things: does it cover the theory, is the methodology right, do the conclusions follow, is the formatting correct. Week after week, the same process with different content.
+
+I kept thinking: "if it's repetitive and follows a pattern, it can probably be automated."
+
+The catch is that grading is a judgment call. I didn't want a system that hands out grades on its own. I wanted one that does the tedious reading and checking, and leaves the decision to me.
+
+## What I built
+
+A grading pipeline with two agents, each with one job.
+
+First, the **Guide Maker Agent**. It builds the grading guide: the rubric that says what a good report for this assignment should contain, across theory, methodology, conclusions and formatting.
+
+Second, the **Grading Agent**. It reads each student report and grades it against that guide.
+
+Then I review. I go through the agent's assessment and make the final decision on every grade.
+
+<Figure title="Two agents, one reviewer" sub="Guide first, then grading, then a human" caption="The agents prepare the decision. I still make it.">
+  <Flow items={[
+    { section: "Prepare", label: "Guide Maker Agent", note: "builds the grading guide for the assignment", kind: "auto" },
+    { section: "Grade", label: "Student reports", note: "one per student, every week", kind: "auto" },
+    { label: "Grading Agent", note: "checks each report against the guide", kind: "auto" },
+    { section: "Decide", label: "My review", note: "read the assessment, decide the grade", kind: "human" }
+  ]} />
+</Figure>
+
+<Stats items={[
+  { value: "3h → 3m", label: "my weekly review time" },
+  { value: "2", label: "agents, one job each" }
+]} />
+
+## Decisions that mattered
+
+**1. Write the guide before grading anything.** Splitting the work into a guide maker and a grader means every report is measured against the same written standard, not against whatever the model happens to focus on in that report.
+
+**2. One agent, one job.** Making a rubric and applying a rubric are different tasks. Keeping them in separate agents keeps each one's instructions short and its output easy to read.
+
+**3. A human makes every final decision.** The agents handle the reading and the checklist. I keep the judgment. That was the line I drew from the start, and it's the reason I'm comfortable using it for something that affects students' grades.
+
+## What I learned
+
+The result: what took 3 hours now takes 3 minutes of review time.
+
+But here's what surprised me most: the quality actually improved. The AI doesn't get tired or skim the last few reports at midnight. When I graded everything by hand, the reports at the bottom of the pile got less of my attention than the ones at the top. With the agents doing the first pass, every report gets the same careful read.
+
+<Callout type="lesson">Automate the part that is repetitive and follows a pattern. Keep the part that is a decision.</Callout>
+
+I'm still making final decisions. The AI handles the tedious, repetitive parts that honestly didn't need a human in the first place.

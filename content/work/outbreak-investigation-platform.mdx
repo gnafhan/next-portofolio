@@ -1,0 +1,61 @@
+---
+title: "Outbreak investigation platform"
+summary: "A full-stack platform for field investigations: questionnaires with conditional logic, anonymous public submissions with location, and per-organization quotas."
+role: "Full-stack engineer"
+period: "2026"
+stack: ["TypeScript", "NestJS", "TypeORM", "PostgreSQL", "Next.js", "TanStack Query", "OpenAPI"]
+icon: "pulse"
+order: 3
+featured: true
+links: []
+---
+
+## The problem
+
+When an outbreak is being investigated, the questions you need to ask depend on the answers you just got. "Are you sick?" If yes, ask about symptoms and when they started. If no, skip all of that. A static form either asks irrelevant questions or misses the ones that matter.
+
+There's a second problem. Some of the data has to come from people who will never create an account: residents or respondents reached through a shared link. They need to submit quickly, anonymously, and ideally with a location attached.
+
+And because several organizations share the platform, each one needs limits on projects, submissions and team members that the system actually enforces.
+
+## What I built
+
+A NestJS and TypeORM backend on PostgreSQL, with a Next.js frontend using TanStack Query. Organizations create projects, build questionnaires, invite project managers and investigators, and collect responses either through the authenticated app or through public links.
+
+The core pieces:
+
+- **A questionnaire builder with conditional logic.** Each field can carry rules like show if, hide if, require if, enable if and disable if, pointing at another question's answer.
+- **Public sharing.** A questionnaire can be shared through a token link. Anyone with the link can submit without an account, with optional GPS capture and reverse geocoding.
+- **Quotas and roles.** Organizations have limits on projects, submissions and members, with voucher redemption and an audit trail. Invitations check and reserve quota before they're sent.
+- **A typed API contract.** Every controller documents its responses in OpenAPI, and the raw spec is served so the frontend can generate its client.
+
+<Figure title="One questionnaire, two ways in" sub="Same evaluator for investigators and the public" caption="Sharing one condition evaluator between both forms means a rule behaves the same no matter who fills it in.">
+  <Mermaid chart={`flowchart LR
+  B[Builder: fields + rules] --> Q[(Questionnaire version)]
+  Q --> I[Investigator form]
+  Q --> P[Public link form]
+  I --> E[Shared condition evaluator]
+  P --> E
+  E --> V[Validate visible fields]
+  V --> R[(Responses)]
+  P -.->|optional| L[GPS + reverse geocode]
+  L -.-> R`} />
+</Figure>
+
+## Decisions that mattered
+
+**1. One condition evaluator, shared by both forms.** The authenticated response form and the public form use the same evaluator. Multiple conditions on one field combine with AND, and rules cascade: if a field's source question is itself hidden, the dependent field is treated as hidden too. Hidden fields are skipped for rendering, skipped for required checks, and left out of the submitted payload. A field that becomes required through a rule uses the evaluated state, not its static flag. Writing it once meant one set of unit tests covers both paths, including operators like contains, in, not in and is empty, and a real branching scenario.
+
+**2. Delete and recreate conditions on save.** Published questionnaires get cloned into a new draft when someone edits them. Updating conditions by ID across that clone caused rules to be dropped silently. Saving conditions without client IDs and recreating them every time is less elegant, but a condition can't vanish between versions anymore. I verified it by saving and publishing the same rule repeatedly, including the clone-on-draft path.
+
+**3. Anonymous responses as first-class rows.** Instead of a separate table for public submissions, responses got a nullable user and an anonymous flag, and public access goes through share token entities. That keeps one response model, one statistics path and one export path, whether the respondent logged in or not.
+
+**4. Migrations that can run twice.** Some PostgreSQL changes, like altering an enum type, don't belong inside a transaction block, and running them there led to deadlocks and failed deploys. So those migrations run without the wrapping transaction, and migrations guard themselves with existence checks. A migration that already ran in one environment becomes a no-op in the next instead of a broken deploy.
+
+<Callout type="note">Conditional logic is easy to demo and hard to get right. The bugs live in the edges: a hidden field that is still required, a rule pointing at another hidden field, a rule lost when a form is versioned.</Callout>
+
+## What I learned
+
+Forms look like a frontend problem until the data has to be trusted. Most of the work here was making sure the server, the builder and both response forms agree on what "visible" and "required" mean at the moment of submission.
+
+The OpenAPI contract paid for itself in the same way. When the frontend and backend move fast in parallel, response shapes drift. Documenting every response, including errors and auth states, gave the frontend one contract to generate its client from, instead of guessing at response shapes.

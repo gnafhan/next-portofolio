@@ -1,0 +1,60 @@
+---
+title: "RT 06 Citran community portal"
+summary: "A heritage and news portal for a Kotagede neighborhood, with a CMS that lets non-technical admins edit text directly on the live page."
+role: "Full-stack developer & designer"
+period: "2026"
+stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL", "Vercel"]
+icon: "home"
+order: 6
+featured: false
+links: []
+---
+
+## The problem
+
+RT 06 Citran is a neighborhood in the Kotagede heritage corridor, in Bantul, Yogyakarta. I built its web portal during KKN, Universitas Gadjah Mada's community service program, where students live in and work with a local community.
+
+The neighborhood wanted a place to show its heritage sites, publish local news, and share its community rules. That part is a normal website.
+
+The real constraint was what happens after we leave. The people who would keep the site up to date are neighborhood officers, not developers. They needed to keep news and announcements current without learning a technical CMS dashboard, with its content types, fields and separate preview.
+
+## What I built
+
+An editorial portal in Next.js with a custom design language drawn from Javanese batik: a sogan and turmeric palette and a hand-built SVG Kawung pattern. It has pages for heritage sites, community activity reports, a history timeline, the neighborhood regulations (the original poster next to a full-text transcription), and the board of officers.
+
+Behind it sits a small CMS on Supabase:
+
+- **Inline editing.** A signed-in officer sees the public page as usual, plus a floating toolbar. They click a piece of text, edit it in place, and save. No dashboard.
+- **Admin pages** for activity reports and board members, with photo uploads straight from a phone camera into storage.
+- **An org chart that builds itself** from the position titles officers type in.
+
+<Figure title="Editing the live page" sub="What happens when an officer changes a sentence" caption="The editor is the page itself, so there is nothing new to learn.">
+  <Flow items={[
+    { section: "Officer", label: "Signs in, opens the public page", note: "floating toolbar appears", kind: "human" },
+    { label: "Clicks a text and edits it", note: "in place, with keyboard shortcuts", kind: "human" },
+    { section: "Server", label: "Authenticated save", note: "one row in a key-value content table", kind: "check" },
+    { label: "Revalidate the layout", note: "cache refreshed on demand", kind: "auto" },
+    { section: "Visitors", label: "Updated page", note: "same URL, new text", kind: "auto" }
+  ]} />
+</Figure>
+
+<Stats items={[
+  { value: "142", label: "editable text fields across two pages" },
+  { value: "2", label: "environment variables to deploy" }
+]} />
+
+## Decisions that mattered
+
+**1. A key-value table instead of a headless CMS.** Every editable string lives in one `site_content` table, keyed with dotted namespaces like a page and section path. An inline wrapper component reads the value and makes it editable for signed-in officers. That covered 67 fields on the home page and 75 on the about page without adopting a heavy third-party CMS or teaching anyone a new tool.
+
+**2. Derive the org chart instead of modeling it.** The board changes over time, and asking officers to manage parent and level fields would be asking for broken data. So officers only type a position title. A fuzzy matcher sorts titles into four tiers, from the head of the RT down to coordinators, and the page draws SVG connector lines on desktop and an indented tree on mobile. If the titles don't map cleanly, it falls back to a simple grid.
+
+**3. One vendor for data, auth and files.** The first version uploaded images through a separate third-party image service. I moved storage into Supabase with row-level security policies, so auth, data and files live in one place. Uploads became a native file input that opens the phone camera, and deployment went down to two environment variables.
+
+**4. Keep admin queries strict and separate.** The public pages can fall back to sample content when the database isn't seeded. Admin pages never do: they only work with real database IDs and show a clear error otherwise. That stopped the server from crashing when someone tried to edit placeholder content.
+
+## What I learned
+
+The hardest bug wasn't a feature. Session refresh in Next.js 15 sometimes sent signed-in officers into an infinite redirect loop. The fix was to propagate auth cookies the way the Supabase SSR guide prescribes in middleware, and to use full-page navigation instead of client-side router pushes.
+
+<Callout type="lesson">For a community project, the best feature is the one that still works after the developers go home. Make editing feel like using the site, not like using software.</Callout>
