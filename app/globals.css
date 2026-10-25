@@ -422,3 +422,27 @@ body {
 .prose .not-prose li + li {
   margin-top: 0;
 }
+
+/* Footer wordmark: twinkling dots and a slow scan band */
+@keyframes wordmark-twinkle {
+  0%, 35%, 65%, 100% { opacity: 0; }
+  50% { opacity: 0.95; }
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.8; }
+}
+.star-twinkle {
+  animation: star-twinkle 4s ease-in-out infinite;
+}
+@keyframes wordmark-scan {
+  0% { transform: translateX(0); }
+  70%, 100% { transform: translateX(1320px); }
+}
+.wordmark-twinkle {
+  animation: wordmark-twinkle 3s ease-in-out infinite;
+}
+.wordmark-scan {
+  animation: wordmark-scan 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  opacity: 0.85;
+}

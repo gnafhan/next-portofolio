@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site, nav } from "@/lib/site";
 import { Logo } from "./icons";
+import { FooterWordmark } from "./footer-wordmark";
 
 /** Deterministic scatter of faint dots for the footer background (same on server and client). */
 function dotField(count: number, w: number, h: number) {
@@ -26,7 +27,15 @@ export function SiteFooter({ year }: { year: number }) {
       {/* faint scattered dots behind everything */}
       <svg className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 420" aria-hidden>
         {DOTS.map((d, i) => (
-          <circle key={i} cx={d.x} cy={d.y} r={d.r} className="fill-[var(--ink-3)]" opacity={0.35} />
+          <circle
+            key={i}
+            cx={d.x}
+            cy={d.y}
+            r={d.r}
+            className={`fill-[var(--ink-3)] ${i % 5 === 0 ? "star-twinkle" : ""}`}
+            opacity={0.35}
+            style={i % 5 === 0 ? { animationDelay: `${-(i % 13) * 0.37}s`, animationDuration: `${3 + (i % 4)}s` } : undefined}
+          />
         ))}
       </svg>
 
@@ -83,24 +92,7 @@ export function SiteFooter({ year }: { year: number }) {
       </div>
 
       {/* giant halftone wordmark, cropped by the bottom edge */}
-      <div className="relative mt-6 select-none" style={{ height: "max(21.3vw, 122px)" }} aria-hidden>
-        <svg viewBox="0 0 1000 270" className="absolute left-1/2 top-0 w-[112%] min-w-[640px] -translate-x-1/2">
-          <defs>
-            <pattern id="footer-dots" width="7" height="7" patternUnits="userSpaceOnUse">
-              <circle cx="3.5" cy="3.5" r="2.1" className="fill-[var(--ink)]" />
-            </pattern>
-          </defs>
-          <text
-            x="500"
-            y="250"
-            textAnchor="middle"
-            fill="url(#footer-dots)"
-            style={{ fontFamily: "var(--font-geist-sans), sans-serif", fontWeight: 600, fontSize: 330, letterSpacing: "-0.04em" }}
-          >
-            nafhan
-          </text>
-        </svg>
-      </div>
+      <FooterWordmark />
     </footer>
   );
 }
