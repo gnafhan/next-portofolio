@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleLayout } from "@/components/article-layout";
-import { JsonLd } from "@/components/json-ld";
+import { JsonLd, breadcrumbSchema, isoDate } from "@/components/json-ld";
+import { Breadcrumb } from "@/components/breadcrumb";
 import { Mdx } from "@/lib/mdx";
 import { formatDate, getAllPosts, getPost } from "@/lib/content";
 import { absoluteUrl, site } from "@/lib/site";
@@ -28,9 +29,9 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
       url: `/blog/${post.slug}`,
       title: post.title,
       description: post.description,
-      publishedTime: post.date,
-      modifiedTime: post.updated ?? post.date,
-      authors: [site.url],
+      publishedTime: isoDate(post.date),
+      modifiedTime: isoDate(post.updated ?? post.date),
+      authors: [absoluteUrl("/about")],
       tags: post.tags,
     },
     twitter: { card: "summary_large_image", title: post.title, description: post.description },
@@ -53,9 +54,10 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
         icon={post.icon}
         scene={post.scene}
         kicker={
-          <Link href="/blog" className="label hover:text-ink">
-            ← Blog{post.draft ? " · draft (not public)" : ""}
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }, { name: post.title }]} />
+            {post.draft && <span className="text-[0.8rem] text-[var(--human)]">draft, not public</span>}
+          </div>
         }
         title={post.title}
         description={post.description}
@@ -89,14 +91,15 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
       >
         <Mdx source={post.body} />
       </ArticleLayout>
+      <JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }, { name: post.title }])} />
       <JsonLd
         data={{
           "@context": "https://schema.org",
           "@type": "BlogPosting",
           headline: post.title,
           description: post.description,
-          datePublished: post.date,
-          dateModified: post.updated ?? post.date,
+          datePublished: isoDate(post.date),
+          dateModified: isoDate(post.updated ?? post.date),
           url,
           mainEntityOfPage: url,
           image: absoluteUrl(`/blog/${post.slug}/opengraph-image`),

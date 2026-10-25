@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 export const site = {
   name: "Ghifari Nafhan",
   shortName: "Nafhan",
@@ -23,4 +25,16 @@ export const nav = [
 
 export function absoluteUrl(path = "/") {
   return new URL(path, site.url).toString();
+}
+
+/** Per-page metadata with matching Open Graph and Twitter tags (pages must not inherit the home page's). */
+export function pageMeta({ title, description, path }: { title: string; description: string; path: string }): Metadata {
+  const full = `${title} · ${site.name}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: { type: "website", url: path, siteName: site.name, locale: "en_US", title: full, description },
+    twitter: { card: "summary_large_image", title: full, description },
+  };
 }

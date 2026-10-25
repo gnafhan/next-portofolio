@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleLayout } from "@/components/article-layout";
-import { JsonLd } from "@/components/json-ld";
+import { JsonLd, breadcrumbSchema } from "@/components/json-ld";
+import { Breadcrumb } from "@/components/breadcrumb";
 import { Mdx } from "@/lib/mdx";
 import { getAllWork, getWork } from "@/lib/content";
 import { absoluteUrl } from "@/lib/site";
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
     description: work.summary,
     keywords: work.stack,
     alternates: { canonical: `/work/${work.slug}` },
-    openGraph: { type: "article", url: `/work/${work.slug}`, title: work.title, description: work.summary },
+    openGraph: { type: "article", url: `/work/${work.slug}`, siteName: "Ghifari Nafhan", title: work.title, description: work.summary, authors: [absoluteUrl("/about")] },
     twitter: { card: "summary_large_image", title: work.title, description: work.summary },
   };
 }
@@ -43,7 +44,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
         icon={work.icon}
         scene={work.slug}
         tone={toneFor(work.order)}
-        kicker={<Link href="/work" className="label hover:text-ink">← Work · Case study</Link>}
+        kicker={<Breadcrumb items={[{ name: "Home", path: "/" }, { name: "Work", path: "/work" }, { name: work.title }]} />}
         title={work.title}
         description={work.summary}
         meta={[
@@ -87,6 +88,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
       >
         <Mdx source={work.body} />
       </ArticleLayout>
+      <JsonLd data={breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Work", path: "/work" }, { name: work.title }])} />
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -94,6 +96,8 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
           name: work.title,
           description: work.summary,
           url,
+          dateCreated: work.period.match(/\d{4}/)?.[0],
+          author: { "@id": absoluteUrl("/#person") },
           creator: { "@id": absoluteUrl("/#person") },
           keywords: work.stack.join(", "),
           image: absoluteUrl(`/work/${work.slug}/opengraph-image`),

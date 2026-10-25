@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { useStart } from "../anim";
 
 type Stage = { label: string; note?: string; token: string; human?: boolean };
@@ -80,7 +80,7 @@ export function Pipeline({ stages }: { stages: Stage[] }) {
               <polygon points={front} className={`fill-[var(--line)] ${edge}`} strokeWidth={1} />
               <polygon points={side} className={`fill-[var(--line-strong)] ${edge}`} strokeWidth={1} opacity={0.8} />
               <polygon points={top} className={`fill-[var(--surface-2)] ${edge}`} strokeWidth={1} />
-              <motion.polygon
+              <m.polygon
                 points={top}
                 className={s.human ? "fill-[var(--human)]" : "fill-[var(--accent)]"}
                 initial={{ opacity: 0 }}
@@ -104,7 +104,7 @@ export function Pipeline({ stages }: { stages: Stage[] }) {
         })}
 
         {/* the travelling token */}
-        <motion.g
+        <m.g
           initial={{ x: cx(0) }}
           animate={on ? { x: xs } : undefined}
           transition={{ duration: T, times: times.map((t) => t / T), repeat: Infinity, ease: "easeInOut" }}
@@ -115,7 +115,7 @@ export function Pipeline({ stages }: { stages: Stage[] }) {
             const a = arrive(i) - (i === 0 ? 0.4 : MOVE * 0.5);
             const b = i + 1 < n ? arrive(i + 1) - MOVE * 0.5 : T - 0.3;
             return (
-              <motion.text
+              <m.text
                 key={s.token}
                 x={0}
                 y={tokenY + 15}
@@ -130,10 +130,10 @@ export function Pipeline({ stages }: { stages: Stage[] }) {
                 }}
               >
                 {s.token}
-              </motion.text>
+              </m.text>
             );
           })}
-        </motion.g>
+        </m.g>
       </svg>
     </div>
   );

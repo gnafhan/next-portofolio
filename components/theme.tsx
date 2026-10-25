@@ -24,7 +24,7 @@ export function ThemeToggle() {
       onClick={() => setTheme(dark ? "light" : "dark")}
       className="lg flex size-9 items-center justify-center rounded-full text-ink-2 hover:text-ink"
       aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-      title="Theme (T)"
+      title="Theme (Alt+T)"
     >
       {mounted ? dark ? <Sun size={16} strokeWidth={1.75} /> : <Moon size={16} strokeWidth={1.75} /> : <span className="size-4" />}
     </button>

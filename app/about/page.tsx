@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageIntro } from "@/components/page-intro";
-import { site } from "@/lib/site";
+import { pageMeta, site } from "@/lib/site";
 import Image from "next/image";
 import { certifications, earlier, experience, honors } from "@/lib/profile";
 import { CredentialGrid, StackFlow, Timeline } from "@/components/illustrations";
+import { JsonLd } from "@/components/json-ld";
 import portrait from "@/public/images/nafhan.png";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "About",
   description: "Ghifari Nafhan is a software engineer in Yogyakarta who automates slow, manual work with AI, full-stack from data to UI.",
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 
 function Section({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
   return (
@@ -92,6 +92,16 @@ export default function AboutPage() {
           you can copy any figure as a PNG. Read <Link className="underline underline-offset-4" href="/now">what I&apos;m doing now</Link>.
         </p>
       </Section>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          "@id": `${site.url}/about#profile`,
+          url: `${site.url}/about`,
+          name: `About ${site.name}`,
+          mainEntity: { "@id": `${site.url}/#person` },
+        }}
+      />
     </div>
   );
 }

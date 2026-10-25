@@ -1,11 +1,27 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getAllPosts, getAllWork, getPage } from "@/lib/content";
+import type { Metadata } from "next";
 import { site } from "@/lib/site";
 import { WorkCard, PostRow } from "@/components/cards";
 import { TechStack } from "@/components/home/tech-stack";
-import { OneBoardStory, HoursToMinutesStory, TrustedAnswerStory, CleanDataStory } from "@/components/home/stories";
+import { LazyStory } from "@/components/lazy-visuals";
 import { HeroArt } from "@/components/home/hero-art";
+
+export function generateMetadata(): Metadata {
+  const hasPosts = getAllPosts().some((p) => !p.draft);
+  return {
+    title: { absolute: site.title },
+    description: site.description,
+    alternates: {
+      canonical: "/",
+      // Advertise the feed only once it has items.
+      ...(hasPosts ? { types: { "application/rss+xml": [{ url: "/rss.xml", title: `${site.name} · Blog` }] } } : {}),
+    },
+    openGraph: { type: "website", url: "/", siteName: site.name, locale: "en_US", title: site.title, description: site.description },
+    twitter: { card: "summary_large_image", title: site.title, description: site.description },
+  };
+}
 
 const BENTO = [
   {
@@ -14,7 +30,7 @@ const BENTO = [
     body: "An assistant reads those chats, rewrites each request as a clear task, and puts it on a single to-do list.",
     impact: "Nothing slips through the cracks",
     href: "/work/inbox-assistant",
-    demo: <OneBoardStory />,
+    demo: <LazyStory name="OneBoardStory" />,
   },
   {
     pain: "Grading lab reports took three hours every single week.",
@@ -22,7 +38,7 @@ const BENTO = [
     body: "AI does the first pass against a clear rubric, flags what's missing, and the teacher makes the final call.",
     impact: "3 hours → 3 minutes of review a week",
     href: "/work/lab-report-grading-agent",
-    demo: <HoursToMinutesStory />,
+    demo: <LazyStory name="HoursToMinutesStory" />,
   },
   {
     pain: "Chatbots sound confident even when they make numbers up.",
@@ -30,7 +46,7 @@ const BENTO = [
     body: "The AI understands the question, then looks up your real records instead of guessing the total.",
     impact: "Every number comes from your own data",
     href: "/work/catataja",
-    demo: <TrustedAnswerStory />,
+    demo: <LazyStory name="TrustedAnswerStory" />,
   },
   {
     pain: "Data typed by people is messy: dates, amounts and typos all over.",
@@ -38,7 +54,7 @@ const BENTO = [
     body: "Pipelines clean every value, drop the rows that can't be trusted, and feed a dashboard people can read.",
     impact: "Decisions made on data you can check",
     href: "/work/outbreak-investigation-platform",
-    demo: <CleanDataStory />,
+    demo: <LazyStory name="CleanDataStory" />,
   },
 ];
 

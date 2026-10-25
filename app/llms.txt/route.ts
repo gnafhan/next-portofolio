@@ -14,9 +14,7 @@ export function GET() {
 ## Case studies
 ${work.map((w) => `- [${w.title}](${absoluteUrl(`/work/${w.slug}/raw.md`)}): ${w.summary}`).join("\n")}
 
-## Blog
-${posts.map((p) => `- [${p.title}](${absoluteUrl(`/blog/${p.slug}/raw.md`)}): ${p.description}`).join("\n")}
-
+${posts.length ? `## Blog\n${posts.map((p) => `- [${p.title}](${absoluteUrl(`/blog/${p.slug}/raw.md`)}): ${p.description}`).join("\n")}\n` : ""}
 ## About
 - [About](${absoluteUrl("/about")})
 - [Now](${absoluteUrl("/now")})

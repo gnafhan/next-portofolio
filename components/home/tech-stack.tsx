@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import type { IconType } from "react-icons";
 import {
   SiAnthropic,
@@ -40,7 +40,7 @@ export function TechStack() {
       {STACK.map(({ name, Icon, brand }, i) => (
         <li key={name} className="group flex flex-col items-center gap-2" title={name}>
           <span style={{ animation: `bob 3.2s ease-in-out ${(i % 4) * -0.8}s infinite` }}>
-            <motion.span
+            <m.span
               drag
               dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
               dragTransition={{ bounceStiffness: 260, bounceDamping: 12 }}
@@ -50,7 +50,7 @@ export function TechStack() {
               style={{ "--brand": brand } as React.CSSProperties}
             >
               <Icon size={36} aria-hidden />
-            </motion.span>
+            </m.span>
           </span>
           <span className="text-[0.75rem] text-ink-3 opacity-0 transition-opacity group-hover:opacity-100">{name}</span>
         </li>

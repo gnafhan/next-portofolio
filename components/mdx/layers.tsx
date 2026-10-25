@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { useStart } from "../anim";
 
 type Layer = { label: string; holes?: number[] };
@@ -105,7 +105,7 @@ export function Layers({ layers, items, top, bottom }: { layers: Layer[]; items:
           const fall = Math.max(0.8, ((stop - 52) / GAP) * 0.35);
           const t = (s: number) => Math.min(1, s / T);
           return (
-            <motion.circle
+            <m.circle
               key={k}
               cx={colX(it.at)}
               r={5}
@@ -129,7 +129,7 @@ export function Layers({ layers, items, top, bottom }: { layers: Layer[]; items:
           const pass = it.blockedBy === undefined;
           const y = pass ? (bottom ? midY(n - 1) + 46 : midY(n - 1)) : midY(it.blockedBy!);
           return (
-            <motion.text
+            <m.text
               key={`l${k}`}
               x={colX(it.at) + 10}
               y={y - 9}
@@ -143,7 +143,7 @@ export function Layers({ layers, items, top, bottom }: { layers: Layer[]; items:
               }}
             >
               {it.label}
-            </motion.text>
+            </m.text>
           );
         })}
       </svg>

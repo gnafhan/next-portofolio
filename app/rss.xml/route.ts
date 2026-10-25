@@ -16,12 +16,13 @@ export function GET() {
       <guid isPermaLink="true">${url}</guid>
       <pubDate>${new Date(`${p.date}T00:00:00Z`).toUTCString()}</pubDate>
       <description>${esc(p.description)}</description>
+      <dc:creator>${esc(site.name)}</dc:creator>
 ${p.tags.map((t) => `      <category>${esc(t)}</category>`).join("\n")}
     </item>`;
     })
     .join("\n");
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>${esc(site.name)} · Blog</title>
     <link>${site.url}/blog</link>

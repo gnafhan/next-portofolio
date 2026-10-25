@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { Check, Clock3, MapPin } from "lucide-react";
 import { AppLogo } from "../app-logos";
 import { SiGo, SiPython, SiTypescript } from "react-icons/si";
@@ -31,28 +31,28 @@ export function HeroArt() {
       />
 
       {/* location */}
-      <motion.div {...pop(0.2)} className="absolute -top-1 right-[4%]">
-        <motion.span {...float(0, 6, 4.5)} className="lg-sm flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.78rem]">
+      <m.div {...pop(0.2)} className="absolute -top-1 right-[4%]">
+        <m.span {...float(0, 6, 4.5)} className="lg-sm flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.78rem]">
           <span className="size-1.5 rounded-full bg-[var(--ok)]" />
           <MapPin size={12} aria-hidden /> Yogyakarta, ID
-        </motion.span>
-      </motion.div>
+        </m.span>
+      </m.div>
 
       {/* result: hours to minutes */}
-      <motion.div {...pop(0.45)} className="absolute left-[-6%] top-[24%] sm:left-[-14%]">
-        <motion.div {...float(0.6, 9, 5.5)} className="glass w-[150px] rounded-2xl px-3 py-2.5 text-[0.75rem] sm:w-[170px]">
+      <m.div {...pop(0.45)} className="absolute left-[-6%] top-[24%] sm:left-[-14%]">
+        <m.div {...float(0.6, 9, 5.5)} className="glass w-[150px] rounded-2xl px-3 py-2.5 text-[0.75rem] sm:w-[170px]">
           <div className="flex items-center gap-1.5 text-ink-3">
             <Clock3 size={12} aria-hidden /> Weekly grading
           </div>
           <div className="mt-1 text-[0.95rem] font-medium">
             <span className="text-ink-3 line-through">3 hours</span> → 3 min
           </div>
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
 
       {/* result: many inboxes, one board */}
-      <motion.div {...pop(0.7)} className="absolute bottom-[14%] right-[-6%] sm:right-[-14%]">
-        <motion.div {...float(1.2, 10, 6)} className="glass w-[160px] rounded-2xl px-3 py-2.5 text-[0.75rem] sm:w-[180px]">
+      <m.div {...pop(0.7)} className="absolute bottom-[14%] right-[-6%] sm:right-[-14%]">
+        <m.div {...float(1.2, 10, 6)} className="glass w-[160px] rounded-2xl px-3 py-2.5 text-[0.75rem] sm:w-[180px]">
           <div className="flex items-center gap-1.5 text-ink-2">
             {["whatsapp", "gmail", "slack", "discord"].map((a) => (
               <AppLogo key={a} app={a} size={12} />
@@ -65,17 +65,17 @@ export function HeroArt() {
             </span>
             <span className="font-medium">Nothing slips through</span>
           </div>
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
 
       {/* stack */}
-      <motion.div {...pop(0.95)} className="absolute bottom-[-2%] left-[2%]">
-        <motion.span {...float(0.3, 7, 4.8)} className="lg-sm flex items-center gap-2 rounded-full px-3 py-1.5">
+      <m.div {...pop(0.95)} className="absolute bottom-[-2%] left-[2%]">
+        <m.span {...float(0.3, 7, 4.8)} className="lg-sm flex items-center gap-2 rounded-full px-3 py-1.5">
           <SiPython size={13} aria-hidden />
           <SiTypescript size={13} aria-hidden />
           <SiGo size={18} aria-hidden />
-        </motion.span>
-      </motion.div>
+        </m.span>
+      </m.div>
 
     </div>
   );

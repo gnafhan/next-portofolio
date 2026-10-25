@@ -13,13 +13,13 @@ export function SiteHeader() {
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
 
-  // Keyboard shortcuts: W, B, N, A for sections, H for home, T for theme.
+  // Keyboard shortcuts with Alt/Option held (WCAG 2.1.4): W, B, N, A for sections, H for home, T for theme.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+      if (!e.altKey || e.metaKey || e.ctrlKey || e.repeat) return;
       const t = e.target as HTMLElement;
       if (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
-      const key = e.key.toUpperCase();
+      const key = e.code.replace("Key", "");
       if (key === "H") return router.push("/");
       if (key === "T") return setTheme(resolvedTheme === "dark" ? "light" : "dark");
       const item = nav.find((n) => n.key === key);
@@ -46,7 +46,7 @@ export function SiteHeader() {
                     <Link
                       href={n.href}
                       aria-current={active ? "page" : undefined}
-                      title={`${n.label} (${n.key})`}
+                      title={`${n.label} (Alt+${n.key})`}
                       className={`block rounded-full px-3 py-1.5 text-[0.92rem] transition-colors ${
                         active ? "text-ink" : "text-ink-3 hover:text-ink"
                       }`}

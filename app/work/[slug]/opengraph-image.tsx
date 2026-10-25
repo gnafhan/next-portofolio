@@ -1,7 +1,7 @@
 import { renderOg, ogSize, ogContentType } from "@/lib/og";
 import { getAllWork, getWork } from "@/lib/content";
 
-export const alt = "Case study";
+export const alt = "Case study by Ghifari Nafhan";
 export const size = ogSize;
 export const contentType = ogContentType;
 

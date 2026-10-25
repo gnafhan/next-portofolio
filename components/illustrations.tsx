@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { Award, BrainCircuit, Database, GraduationCap, Hammer, LayoutDashboard, Medal, PenLine, Server, Trophy } from "lucide-react";
 import { SiGoogle, SiMeta } from "react-icons/si";
 import { cycle, useStart } from "./anim";
@@ -22,18 +22,18 @@ export function StackFlow() {
         <span className="absolute left-[12%] right-[12%] top-6 h-px bg-line-strong" aria-hidden />
         {LAYERS.map(({ label, note, Icon }, i) => (
           <div key={label} className="relative flex flex-col items-center text-center">
-            <motion.span
+            <m.span
               className="lg-sm relative z-10 flex size-12 items-center justify-center rounded-2xl text-ink"
               animate={on ? { scale: [1, 1, 1.15, 1, 1] } : undefined}
               transition={cycle(T, [0, 0.6 + i * 1.6, 0.9 + i * 1.6, 1.3 + i * 1.6, T])}
             >
               <Icon size={20} aria-hidden />
-            </motion.span>
+            </m.span>
             <span className="mt-2 text-[0.9rem] font-medium">{label}</span>
             <span className="text-[0.75rem] text-ink-3">{note}</span>
           </div>
         ))}
-        <motion.span
+        <m.span
           className="lg-accent absolute top-[18px] z-20 size-3 rounded-full"
           initial={{ left: "12%", opacity: 0 }}
           animate={on ? { left: ["12%", "12%", "37%", "62.5%", "87%", "87%"], opacity: [0, 1, 1, 1, 1, 0] } : undefined}
@@ -50,7 +50,7 @@ export function Timeline({ items }: { items: readonly { org: string; role: strin
   const [ref, on] = useStart(0.15);
   return (
     <div ref={ref} className="relative pl-7">
-      <motion.span
+      <m.span
         className="absolute left-[9px] top-2 w-px origin-top bg-line-strong"
         style={{ bottom: 8 }}
         initial={{ scaleY: 0 }}
@@ -59,7 +59,7 @@ export function Timeline({ items }: { items: readonly { org: string; role: strin
       />
       <ul className="space-y-3">
         {items.map((e, i) => (
-          <motion.li
+          <m.li
             key={`${e.org}-${e.role}`}
             className="relative"
             initial={{ opacity: 0, x: -8 }}
@@ -74,7 +74,7 @@ export function Timeline({ items }: { items: readonly { org: string; role: strin
               </div>
               <span className="text-[0.88rem] text-ink-3">{e.period}</span>
             </div>
-          </motion.li>
+          </m.li>
         ))}
       </ul>
     </div>
@@ -99,7 +99,7 @@ export function NowScenes() {
           </div>
           <div className="mt-2 grid grid-cols-3 gap-1.5">
             {[0, 1, 2, 3, 4, 5].map((k) => (
-              <motion.span
+              <m.span
                 key={k}
                 className={`h-5 rounded-md ${k === 0 ? "lg-accent" : "lg-sm"}`}
                 initial={{ opacity: 0, scale: 0.6 }}
@@ -118,7 +118,7 @@ export function NowScenes() {
         </div>
         <div className="lg-sm mt-4 h-24 space-y-2 rounded-xl p-3">
           {[85, 95, 70, 55].map((w, k) => (
-            <motion.span
+            <m.span
               key={k}
               className="block h-1.5 rounded-full bg-ink/20"
               initial={{ width: 0 }}
@@ -140,7 +140,7 @@ export function NowScenes() {
             <span>2027</span>
           </div>
           <div className="relative mt-1.5 h-2 rounded-full bg-ink/10">
-            <motion.span
+            <m.span
               className="lg-accent absolute inset-y-0 left-0 rounded-full"
               initial={{ width: "0%" }}
               animate={on ? { width: "81%" } : undefined}
@@ -172,7 +172,7 @@ export function CredentialGrid({
       {honors.map((h, i) => {
         const Icon = honorIcon(h.title);
         return (
-          <motion.div
+          <m.div
             key={h.title}
             className="glass flex items-start gap-3 rounded-2xl px-4 py-3"
             initial={{ opacity: 0, y: 10 }}
@@ -186,13 +186,13 @@ export function CredentialGrid({
               <div className="text-[0.92rem] leading-snug">{h.title}</div>
               <div className="mt-0.5 text-[0.8rem] text-ink-3">{h.year}</div>
             </div>
-          </motion.div>
+          </m.div>
         );
       })}
       {certifications.map((c, i) => {
         const Icon = certIcon(c.issuer);
         return (
-          <motion.div
+          <m.div
             key={c.title}
             className="glass flex items-start gap-3 rounded-2xl px-4 py-3"
             initial={{ opacity: 0, y: 10 }}
@@ -208,7 +208,7 @@ export function CredentialGrid({
                 {c.issuer} · {c.year}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         );
       })}
     </div>

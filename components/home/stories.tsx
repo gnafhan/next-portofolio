@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { Check, Database, Sparkles, Trash2, X } from "lucide-react";
 import { AppLogo } from "../app-logos";
 import { cycle, useStart } from "../anim";
@@ -29,7 +29,7 @@ function Steps({ values, at, total, on, className }: { values: string[]; at: num
         const from = at[k];
         const to = k + 1 < at.length ? at[k + 1] : total - 0.5;
         return (
-          <motion.span
+          <m.span
             key={v}
             className="absolute inset-0 whitespace-nowrap"
             initial={{ opacity: k === 0 ? 1 : 0 }}
@@ -37,7 +37,7 @@ function Steps({ values, at, total, on, className }: { values: string[]; at: num
             transition={k === 0 ? cycle(total, [0, to, to + 0.2, total - 0.3, total]) : cycle(total, [0, from, from + 0.2, to, to + 0.2, total])}
           >
             {v}
-          </motion.span>
+          </m.span>
         );
       })}
     </span>
@@ -54,7 +54,7 @@ export function OneBoardStory() {
         const req = REQUESTS.find((r) => r.from === k);
         const t = req ? 1 + REQUESTS.indexOf(req) * STEP1 : -1;
         return (
-          <motion.span
+          <m.span
             key={app}
             className="lg-sm absolute top-[5%] flex size-8 -translate-x-1/2 items-center justify-center rounded-xl text-ink"
             style={{ left: `${logoX(k)}%` }}
@@ -62,7 +62,7 @@ export function OneBoardStory() {
             transition={req ? cycle(T1, [0, t, t + 0.3, t + 0.7, T1]) : undefined}
           >
             <AppLogo app={app} size={15} />
-          </motion.span>
+          </m.span>
         );
       })}
 
@@ -94,7 +94,7 @@ export function OneBoardStory() {
         return (
           <div key={r.task}>
             {/* message → task */}
-            <motion.div
+            <m.div
               className="lg-sm absolute z-10 -translate-x-1/2 whitespace-nowrap rounded-lg px-2.5 py-1"
               initial={{ left: src, top: "17%", opacity: 0 }}
               animate={
@@ -109,9 +109,9 @@ export function OneBoardStory() {
               transition={cycle(T1, [0, appear, appear + 0.4, atAi, atAi + 0.5, land, land + 0.25, T1])}
             >
               <Steps on={on} total={T1} values={[`“${r.msg}”`, r.task]} at={[0, atAi + 0.1]} />
-            </motion.div>
+            </m.div>
             {/* the task row it becomes */}
-            <motion.div
+            <m.div
               className="absolute left-1/2 flex w-[68%] -translate-x-1/2 items-center gap-2 rounded-lg px-2 py-1"
               style={{ top: `${rowTop}%` }}
               initial={{ opacity: 0 }}
@@ -121,7 +121,7 @@ export function OneBoardStory() {
               <span className="size-3.5 shrink-0 rounded border border-line-strong" />
               <span className="flex-1 truncate">{r.task}</span>
               <AppLogo app={r.app} size={12} className="shrink-0 text-ink-3" />
-            </motion.div>
+            </m.div>
           </div>
         );
       })}
@@ -149,19 +149,19 @@ export function HoursToMinutesStory() {
             const at = 1.2 + i * 1;
             return (
               <div key={i} className="mb-3 flex items-center gap-2">
-                <motion.span
+                <m.span
                   className="lg-ok flex size-4 shrink-0 items-center justify-center rounded-full"
                   initial={{ scale: 0, opacity: 0 }}
                   animate={on ? { scale: [0, 0, 1, 1, 0], opacity: [0, 0, 1, 1, 0] } : undefined}
                   transition={cycle(T2, [0, at, at + 0.3, T2 - 0.6, T2])}
                 >
                   <Check size={10} strokeWidth={3} />
-                </motion.span>
+                </m.span>
                 <span className="h-2 rounded-full bg-ink/10" style={{ width: `${80 - i * 9}%` }} />
               </div>
             );
           })}
-          <motion.span
+          <m.span
             className="lg-accent absolute left-2 right-2 h-1 rounded-full"
             initial={{ top: "12%", opacity: 0 }}
             animate={on ? { top: ["12%", "12%", "90%", "90%", "12%"], opacity: [0, 1, 1, 0, 0] } : undefined}
@@ -173,30 +173,30 @@ export function HoursToMinutesStory() {
       <div className="text-center">
         <div className="text-[0.8rem] text-ink-3">Weekly grading time</div>
         <div className="relative mt-2 h-12">
-          <motion.div
+          <m.div
             className="absolute inset-0 text-[2rem] font-medium tracking-tight text-ink-3"
             animate={on ? { opacity: [1, 1, 0, 0, 1] } : undefined}
             transition={cycle(T2, [0, 6.4, 6.8, T2 - 0.4, T2])}
           >
             3 hours
-          </motion.div>
-          <motion.div
+          </m.div>
+          <m.div
             className="absolute inset-0 text-[2rem] font-medium tracking-tight text-accent"
             initial={{ opacity: 0 }}
             animate={on ? { opacity: [0, 0, 1, 1, 0, 0] } : undefined}
             transition={cycle(T2, [0, 6.8, 7.2, T2 - 0.6, T2 - 0.4, T2])}
           >
             3 minutes
-          </motion.div>
+          </m.div>
         </div>
-        <motion.div
+        <m.div
           className="lg-sm mx-auto mt-3 w-fit rounded-full px-3 py-1 text-[0.75rem] text-ink-2"
           initial={{ opacity: 0 }}
           animate={on ? { opacity: [0, 0, 1, 1, 0] } : undefined}
           transition={cycle(T2, [0, 7.4, 7.8, T2 - 0.6, T2])}
         >
           AI checks first, a person decides
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );
@@ -217,48 +217,48 @@ export function TrustedAnswerStory() {
   });
   return (
     <div ref={ref} className="flex h-full w-full flex-col justify-center gap-3 px-7 py-8 text-[0.85rem]">
-      <motion.div {...show(0.4)} className="lg-accent ml-auto max-w-[80%] rounded-2xl rounded-br-md px-4 py-2.5">
+      <m.div {...show(0.4)} className="lg-accent ml-auto max-w-[80%] rounded-2xl rounded-br-md px-4 py-2.5">
         How much did I spend on coffee in October?
-      </motion.div>
+      </m.div>
 
       <div className="grid grid-cols-2 gap-3">
-        <motion.div {...show(1.8)} className="lg-sm relative rounded-xl px-3 py-2.5">
+        <m.div {...show(1.8)} className="lg-sm relative rounded-xl px-3 py-2.5">
           <div className="flex items-center gap-1.5 text-[0.72rem] text-ink-3">
             <Sparkles size={12} aria-hidden /> AI guessing
           </div>
-          <motion.div
+          <m.div
             className="mt-1 font-medium"
             animate={on ? { opacity: [1, 1, 0.35, 0.35, 1], textDecorationLine: ["none", "none", "line-through", "line-through", "none"] } : undefined}
             transition={cycle(T3, [0, 3.6, 4.0, T3 - 0.6, T3])}
           >
             “About Rp 500k”
-          </motion.div>
-          <motion.span
+          </m.div>
+          <m.span
             className="lg-bad absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full"
             initial={{ scale: 0 }}
             animate={on ? { scale: [0, 0, 1, 1, 0] } : undefined}
             transition={cycle(T3, [0, 3.6, 4.0, T3 - 0.6, T3])}
           >
             <X size={11} strokeWidth={3} />
-          </motion.span>
-        </motion.div>
+          </m.span>
+        </m.div>
 
-        <motion.div {...show(5)} className="lg-sm rounded-xl px-3 py-2.5">
+        <m.div {...show(5)} className="lg-sm rounded-xl px-3 py-2.5">
           <div className="flex items-center gap-1.5 text-[0.72rem] text-ink-3">
             <Database size={12} aria-hidden /> Checks your records
           </div>
           <div className="mt-1 font-medium">14 receipts found</div>
-        </motion.div>
+        </m.div>
       </div>
 
-      <motion.div {...show(6.6)} className="lg-sm flex items-center gap-2.5 rounded-2xl rounded-tl-md px-4 py-2.5">
+      <m.div {...show(6.6)} className="lg-sm flex items-center gap-2.5 rounded-2xl rounded-tl-md px-4 py-2.5">
         <span className="lg-ok flex size-5 shrink-0 items-center justify-center rounded-full">
           <Check size={11} strokeWidth={3} />
         </span>
         <span>
           You spent <b>Rp 412.000</b>, from 14 receipts.
         </span>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -316,7 +316,7 @@ export function CleanDataStory() {
         const y0 = `${18 + i * 19}%`;
         const yb = `${BUCKET_Y[e.bucket]}%`;
         return (
-          <motion.div
+          <m.div
             key={e.messy}
             className="lg-sm absolute z-10 w-[29%] rounded-lg px-2 py-1 text-center"
             initial={{ left: "4%", top: y0 }}
@@ -338,7 +338,7 @@ export function CleanDataStory() {
               values={[e.messy, e.clean]}
               at={[0, inGate + 0.2]}
             />
-          </motion.div>
+          </m.div>
         );
       })}
     </div>

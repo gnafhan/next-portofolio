@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
 import { getPage, formatDate } from "@/lib/content";
 import { Mdx } from "@/lib/mdx";
 import { PageIntro } from "@/components/page-intro";
+import { pageMeta } from "@/lib/site";
 import { NowScenes } from "@/components/illustrations";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "Now",
-  description: "What Ghifari Nafhan is focused on right now.",
-  alternates: { canonical: "/now" },
-};
+  description: "What Ghifari Nafhan is focused on right now: what I'm building, writing and learning.",
+  path: "/now",
+});
 
 export default function NowPage() {
   const { data, body } = getPage("now");

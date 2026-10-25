@@ -23,8 +23,27 @@ export function personSchema() {
     address: { "@type": "PostalAddress", addressLocality: "Yogyakarta", addressCountry: "ID" },
     alumniOf: { "@type": "CollegeOrUniversity", name: "Universitas Gadjah Mada" },
     knowsAbout: ["AI engineering", "Large language models", "Retrieval-augmented generation", "Full-stack development", "Data pipelines"],
+    image: absoluteUrl("/images/nafhan.png"),
     sameAs: [site.links.github, site.links.linkedin],
   };
+}
+
+export function breadcrumbSchema(items: { name: string; path?: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      ...(it.path ? { item: absoluteUrl(it.path) } : {}),
+    })),
+  };
+}
+
+/** Dates in structured data carry the site's timezone (WIB). */
+export function isoDate(date: string) {
+  return `${date}T00:00:00+07:00`;
 }
 
 export function websiteSchema() {

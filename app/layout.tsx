@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme";
+import { MotionProvider } from "@/components/motion-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JsonLd, personSchema, websiteSchema } from "@/components/json-ld";
@@ -17,20 +18,8 @@ export const metadata: Metadata = {
   applicationName: site.name,
   authors: [{ name: site.name, url: site.url }],
   creator: site.name,
-  alternates: {
-    canonical: "/",
-    types: { "application/rss+xml": [{ url: "/rss.xml", title: `${site.name} · Blog` }] },
-  },
-  openGraph: {
-    type: "website",
-    siteName: site.name,
-    locale: "en_US",
-    url: "/",
-    title: site.title,
-    description: site.description,
-  },
-  twitter: { card: "summary_large_image", title: site.title, description: site.description },
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
+  openGraph: { type: "website", siteName: site.name, locale: "en_US" },
+  robots: { googleBot: { "max-image-preview": "large" } },
   verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
 };
 
@@ -51,7 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </a>
           <SiteHeader />
           <main id="main" className="flex-1">
-            {children}
+            <MotionProvider>{children}</MotionProvider>
           </main>
           <SiteFooter year={new Date().getFullYear()} />
         </ThemeProvider>
