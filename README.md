@@ -51,6 +51,30 @@ in prose must be escaped (`\{`, `&lt;`) or put in backticks.
 
 ### Illustrations (MDX components, no import needed)
 
+Every post needs at least one real illustration, not a boring box diagram. Prefer, in order:
+
+1. **`<Layers>`**: isometric stacked layers with holes; things fall through and stop at the layer that catches them.
+   Use it for safeguards, checks, filters, defence in depth.
+   ```mdx
+   <Figure title="Three layers, not one rule" sub="What each decision stops" caption="...">
+     <Layers
+       top="what comes in"
+       bottom="reaches production"
+       layers={[{ label: "whitelist" }, { label: "write tools denied" }, { label: "human approval" }]}
+       items={[{ at: 0.12, label: "unlisted chat", blockedBy: 0 }, { at: 0.56, label: "real request" }]}
+     />
+   </Figure>
+   ```
+   `at` is the horizontal position (0 to 1). Items without `blockedBy` pass every layer and reach `bottom`.
+2. **`<Converge>`**: many sources flow (animated dots) into one hub, then into outputs, with an optional `gate`
+   line (e.g. "I approve"). Use it for "many → one" stories: inboxes, data sources, integrations.
+   ```mdx
+   <Converge sources={["Work chats", "Email"]} hub="AI assistant" hubNote="read-only" gate="I approve" outputs={["Tickets", "Standup draft"]} />
+   ```
+3. **`<Flow>`** for step-by-step timelines, **`<BarChart>`** / **`<Stats>`** for numbers.
+4. **`<Mermaid>`** only as a last resort, for graphs the components above can't express.
+
+
 Every post should carry at least one illustration. Wrap it in `<Figure>` to get a title, a
 "Fig A" caption and copy/download-as-PNG buttons.
 

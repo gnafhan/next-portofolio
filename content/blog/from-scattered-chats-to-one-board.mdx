@@ -36,27 +36,14 @@ Nothing exotic:
   (reachable only from inside it) where they don't.
 - **Claude Code** as the client that does the reading, matching and drafting.
 
-<Figure title="How the assistant fits together" sub="Read-only inboxes in, proposed tickets out, I approve" caption="The assistant can read and propose. Only I can approve, and write tools are denied in config.">
-  <Mermaid chart={`flowchart TB
-    subgraph Inboxes["Inboxes (read-only, whitelisted)"]
-        WK[Work chats]
-        CP[Campus chats]
-        SP[Side-project chats]
-    end
-    C[Coding agent sessions<br/>Codex · OpenCode · Claude Code]
-
-    WK -- read-only --> A
-    CP -- read-only --> A
-    SP -- read-only --> A
-    C -- end-of-day sweep --> A
-
-    A[AI assistant<br/>Claude Code] -- proposes tickets --> M{Me}
-    M -- approve --> T[(It's a Plan<br/>self-hosted tracker, MCP)]
-    T -- scheduled --> SD[Standup drafts]
-    SD -- I post it myself --> M
-
-    R[[Rules file<br/>read by every coding agent]] -.-> C
-    X[/Write tools: denied in config/] -.-x A`} />
+<Figure title="Many inboxes, one board" sub="Everything is read, nothing is written, and I approve what lands" caption="The assistant only reads. Tickets reach the tracker after I approve them; standups are drafts I post myself.">
+  <Converge
+    sources={["Work chats", "Campus chats", "Side-project chats", "Coding sessions"]}
+    hub="AI assistant"
+    hubNote="read-only"
+    gate="I approve"
+    outputs={["Tracker tickets", "Standup drafts"]}
+  />
 </Figure>
 
 One tracker project for everything, with one label per area of my life (each job, the thesis, each
@@ -96,6 +83,24 @@ it belongs to, who asked, and a link to the message. It doesn't touch the board 
 That sounds slower than full automation. In practice the review is quick, and it means I trust
 the board. Every ticket also records **who asked** and **where** (a link to the original message), so
 a week later I still know why a task exists.
+
+<Figure title="Three layers, not one rule" sub="What each decision stops before it reaches my board" caption="No single rule is perfect. Stacked, they stop the mistakes that matter and let real requests through.">
+  <Layers
+    top="what the assistant runs into"
+    bottom="reaches my board"
+    layers={[
+      { label: "whitelist: only listed chats are read", holes: [0.88] },
+      { label: "config: write tools are denied", holes: [0.06] },
+      { label: "me: every ticket needs my yes" },
+    ]}
+    items={[
+      { at: 0.12, label: "unlisted channel", blockedBy: 0 },
+      { at: 0.34, label: "send_message", blockedBy: 1 },
+      { at: 0.56, label: "real request" },
+      { at: 0.78, label: "not a real task", blockedBy: 2 },
+    ]}
+  />
+</Figure>
 
 ## The surprise: the leak wasn't in the chats
 

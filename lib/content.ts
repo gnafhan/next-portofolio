@@ -4,6 +4,8 @@ import matter from "gray-matter";
 import GithubSlugger from "github-slugger";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
+// Cache parsed content only in production builds; in dev, edits to MDX show up on refresh.
+const useCache = process.env.NODE_ENV === "production";
 
 // Drafts show up in `next dev` and on Vercel preview deployments, never in production.
 const showDrafts = process.env.VERCEL_ENV
@@ -84,7 +86,7 @@ function toDateString(value: unknown): string {
 
 let postsCache: Post[] | null = null;
 export function getAllPosts(): Post[] {
-  if (!postsCache) {
+  if (!postsCache || !useCache) {
     postsCache = readDir("blog")
       .map(({ slug, data, body }) => ({
         slug,
@@ -112,7 +114,7 @@ export function getPost(slug: string) {
 
 let workCache: Work[] | null = null;
 export function getAllWork(): Work[] {
-  if (!workCache) {
+  if (!workCache || !useCache) {
     workCache = readDir("work")
       .map(({ slug, data, body }) => ({
         slug,

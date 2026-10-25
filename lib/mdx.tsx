@@ -11,6 +11,8 @@ import { Pre } from "@/components/mdx/pre";
 import { BarChart } from "@/components/mdx/bar-chart";
 import { Video, YouTube, Img } from "@/components/mdx/media";
 import { Glyph } from "@/components/icons";
+import { Layers } from "@/components/mdx/layers";
+import { Converge } from "@/components/mdx/converge";
 
 function Heading({ as: Tag, id, children }: { as: "h2" | "h3"; id?: string; children: React.ReactNode }) {
   return (
@@ -35,6 +37,8 @@ export const mdxComponents = {
   Video,
   YouTube,
   Glyph,
+  Layers,
+  Converge,
   pre: Pre,
   img: Img,
   h2: (p: React.ComponentProps<"h2">) => <Heading as="h2" id={p.id}>{p.children}</Heading>,
