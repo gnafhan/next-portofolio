@@ -71,8 +71,17 @@ Every post needs at least one real illustration, not a boring box diagram. Prefe
    ```mdx
    <Converge sources={["Work chats", "Email"]} hub="AI assistant" hubNote="read-only" gate="I approve" outputs={["Tickets", "Standup draft"]} />
    ```
-3. **`<Flow>`** for step-by-step timelines, **`<BarChart>`** / **`<Stats>`** for numbers.
-4. **`<Mermaid>`** only as a last resort, for graphs the components above can't express.
+3. **`<Pipeline>`**: isometric blocks in a row; a token travels across and its text changes at each stage,
+   so readers see what every step does to the data. Mark a person's step with `human: true`.
+   ```mdx
+   <Pipeline stages={[
+     { label: "WhatsApp", note: "the user types", token: "coffee & bread 40k" },
+     { label: "Model", note: "reads the intent", token: "2 expenses" },
+     { label: "Me", note: "final call", token: "approved ✓", human: true },
+   ]} />
+   ```
+4. **`<Flow>`** for step-by-step timelines, **`<BarChart>`** / **`<Stats>`** for numbers.
+5. **`<Mermaid>`** only as a last resort, for graphs the components above can't express.
 
 
 Every post should carry at least one illustration. Wrap it in `<Figure>` to get a title, a
