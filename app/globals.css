@@ -450,13 +450,11 @@ body {
 /* Scroll: glass surfaces settle into focus as they enter the viewport (progressive enhancement) */
 @keyframes glass-settle {
   from {
-    opacity: 0.35;
     translate: 0 18px;
     scale: 0.97;
     filter: blur(6px);
   }
   to {
-    opacity: 1;
     translate: 0 0;
     scale: 1;
     filter: none;
@@ -470,4 +468,23 @@ body {
       animation-range: entry 0% entry 55%;
     }
   }
+}
+
+/* Home intro: covers the page until the visitor zooms through the N (see intro-reveal.tsx) */
+.intro-cover {
+  display: none;
+}
+[data-intro="on"] .intro-cover {
+  display: block;
+}
+[data-intro="on"] .intro-parallax {
+  transform: scale(calc(1.08 - 0.08 * var(--intro-p, 0)));
+  transform-origin: 50% 35%;
+}
+@keyframes intro-hint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+.intro-hint {
+  animation: intro-hint 1.4s ease-in-out infinite;
 }
