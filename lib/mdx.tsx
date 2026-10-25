@@ -13,6 +13,7 @@ import { Video, YouTube, Img } from "@/components/mdx/media";
 import { Glyph } from "@/components/icons";
 import { Layers } from "@/components/mdx/layers";
 import { Converge } from "@/components/mdx/converge";
+import { Pipeline } from "@/components/mdx/pipeline";
 
 function Heading({ as: Tag, id, children }: { as: "h2" | "h3"; id?: string; children: React.ReactNode }) {
   return (
@@ -39,6 +40,7 @@ export const mdxComponents = {
   Glyph,
   Layers,
   Converge,
+  Pipeline,
   pre: Pre,
   img: Img,
   h2: (p: React.ComponentProps<"h2">) => <Heading as="h2" id={p.id}>{p.children}</Heading>,

@@ -27,14 +27,11 @@ The agent's job is understanding: what did the person mean, which tool should ru
 Gemini handles receipt photos and voice notes directly, so the first version didn't need a separate OCR or speech service, or a heavy task queue. The dashboard adds budgets, custom categories, an Excel export with live formulas, and login through a one-time link sent over WhatsApp, so nobody needs a password.
 
 <Figure title="One message, end to end" sub="The model reads and routes. Code does the money." caption="Every step that changes a number is deterministic; the LLM only decides what the user meant.">
-  <Flow items={[
-    { section: "Inbound", label: "WhatsApp message", note: "text, receipt photo or voice note", kind: "auto" },
-    { label: "Pre-LLM guards", note: "drop stale replays, fast path for simple patterns", kind: "check" },
-    { section: "Understand", label: "Agent picks a tool", note: "native tool calling", kind: "auto" },
-    { label: "Category match", note: "embedding search plus a type check after the model", kind: "check" },
-    { section: "Record", label: "Ledger service", note: "plain code writes rows and computes totals", kind: "auto" },
-    { label: "Output guard", note: "reply dropped if it carries an unknown URL", kind: "check" },
-    { section: "Review", label: "User checks the dashboard", note: "edit, budget, export", kind: "human" }
+  <Pipeline stages={[
+    { label: "WhatsApp", note: "the user types", token: "coffee & bread 40k" },
+    { label: "Model", note: "reads the intent", token: "2 expenses" },
+    { label: "Ledger code", note: "does the math", token: "Coffee 25k · Bread 15k" },
+    { label: "Database", note: "one transaction", token: "saved ✓" },
   ]} />
 </Figure>
 
@@ -46,15 +43,22 @@ Gemini handles receipt photos and voice notes directly, so the first version did
 
 **3. A QA harness that talks to the bot like a person.** Regressions kept showing up only after real conversations hit them. I built a simulation suite: 16 personas, 13 multi-turn scenarios, and LLM judges that score each turn, the whole workflow, and what actually landed in the database. Single runs are noisy, so the PR gate compares against a rolling median baseline instead of a fixed threshold. A critical failure opens a tagged issue on its own.
 
-<Figure title="The PR gate" sub="Simulated users against a staging build" caption="The judges also check what landed in the database, so a bug that reads fine in chat still fails the gate.">
-  <Mermaid chart={`flowchart LR
-  A[Persona + scenario] --> B[Staging bot]
-  B --> C[Turn judge]
-  B --> D[Workflow judge]
-  B --> E[DB assertions]
-  C & D & E --> F{Above rolling median?}
-  F -->|yes| G[Merge]
-  F -->|no| H[Open issue]`} />
+<Figure title="Three judges before a merge" sub="Simulated users run against a staging build on every PR" caption="The judges also check what landed in the database, so a bug that reads fine in chat still fails the gate.">
+  <Layers
+    top="a change to the agent"
+    bottom="merged to main"
+    layers={[
+      { label: "turn judge: was each reply right?" },
+      { label: "workflow judge: did the task finish?" },
+      { label: "DB check: is the data correct?" },
+    ]}
+    items={[
+      { at: 0.14, label: "wrong reply", blockedBy: 0 },
+      { at: 0.36, label: "stuck flow", blockedBy: 1 },
+      { at: 0.6, label: "good change" },
+      { at: 0.84, label: "looks fine, wrong row", blockedBy: 2 },
+    ]}
+  />
 </Figure>
 
 **4. Fail safely when the model provider rate-limits you.** During 429 storms, retries and half-finished tool calls created ghost records. I moved to a model tier with dedicated quota and a cross-region failover pool, benchmarked the regions, and put the one that held up best under contention first. The most frequent simple message type skips the model entirely through a regex fast path. When the model returns a malformed tool call, the engine retries without tools, falls back to a read-only answer, and finally to a friendly "try again" message. It never guesses a write.

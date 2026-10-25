@@ -25,13 +25,11 @@ The first version ran on Next.js and Firebase. Later I redesigned it around a Go
 In 2026 I consolidated the backend, the admin panel and the consumer app into one monorepo. That version brought a redesigned eight-step onboarding with a BMR calculator, AI scanning through Genkit and the OpenAI API with schema validation on the results, and an admin side for monitoring scan activity and auditing meal history.
 
 <Figure title="From plate to log" sub="The scanning path, simplified" caption="The model gives an estimate; the schema check and the admin monitor decide whether it is safe to keep.">
-  <Flow items={[
-    { section: "User", label: "Photo of a meal", note: "from the PWA, on a phone", kind: "human" },
-    { section: "Scan", label: "AI meal analysis", note: "vision model returns a structured estimate", kind: "auto" },
-    { label: "Schema validation", note: "malformed results never reach the log", kind: "check" },
-    { section: "Store", label: "Meal log", note: "Go API writes to PostgreSQL", kind: "auto" },
-    { label: "Calorie and weight trends", note: "dashboard in the app", kind: "auto" },
-    { section: "Operations", label: "Scan activity monitor", note: "admin reviews scan history", kind: "check" }
+  <Pipeline stages={[
+    { label: "Photo", note: "from the PWA", token: "meal photo" },
+    { label: "Vision model", note: "structured estimate", token: "rice, egg, greens" },
+    { label: "Schema check", note: "rejects bad output", token: "valid ✓" },
+    { label: "Meal log", note: "Go API → Postgres", token: "logged ✓" },
   ]} />
 </Figure>
 

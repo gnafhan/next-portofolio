@@ -31,11 +31,11 @@ Second, the **Grading Agent**. It reads each student report and grades it agains
 Then I review. I go through the agent's assessment and make the final decision on every grade.
 
 <Figure title="Two agents, one reviewer" sub="Guide first, then grading, then a human" caption="The agents prepare the decision. I still make it.">
-  <Flow items={[
-    { section: "Prepare", label: "Guide Maker Agent", note: "builds the grading guide for the assignment", kind: "auto" },
-    { section: "Grade", label: "Student reports", note: "one per student, every week", kind: "auto" },
-    { label: "Grading Agent", note: "checks each report against the guide", kind: "auto" },
-    { section: "Decide", label: "My review", note: "read the assessment, decide the grade", kind: "human" }
+  <Pipeline stages={[
+    { label: "Lab reports", note: "a week's batch", token: "report #12" },
+    { label: "Guide agent", note: "writes the rubric", token: "theory · method · conclusion" },
+    { label: "Grading agent", note: "first pass", token: "draft grade + notes" },
+    { label: "Me", note: "final call", token: "grade ✓", human: true },
   ]} />
 </Figure>
 

@@ -30,16 +30,12 @@ The core pieces:
 - **A typed API contract.** Every controller documents its responses in OpenAPI, and the raw spec is served so the frontend can generate its client.
 
 <Figure title="One questionnaire, two ways in" sub="Same evaluator for investigators and the public" caption="Sharing one condition evaluator between both forms means a rule behaves the same no matter who fills it in.">
-  <Mermaid chart={`flowchart LR
-  B[Builder: fields + rules] --> Q[(Questionnaire version)]
-  Q --> I[Investigator form]
-  Q --> P[Public link form]
-  I --> E[Shared condition evaluator]
-  P --> E
-  E --> V[Validate visible fields]
-  V --> R[(Responses)]
-  P -.->|optional| L[GPS + reverse geocode]
-  L -.-> R`} />
+  <Converge
+    sources={["Investigators (signed in)", "Public link (anonymous)"]}
+    hub="Condition evaluator"
+    hubNote="shared"
+    outputs={["Validated response", "Location + time"]}
+  />
 </Figure>
 
 ## Decisions that mattered

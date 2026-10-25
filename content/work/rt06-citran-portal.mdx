@@ -29,12 +29,11 @@ Behind it sits a small CMS on Supabase:
 - **An org chart that builds itself** from the position titles officers type in.
 
 <Figure title="Editing the live page" sub="What happens when an officer changes a sentence" caption="The editor is the page itself, so there is nothing new to learn.">
-  <Flow items={[
-    { section: "Officer", label: "Signs in, opens the public page", note: "floating toolbar appears", kind: "human" },
-    { label: "Clicks a text and edits it", note: "in place, with keyboard shortcuts", kind: "human" },
-    { section: "Server", label: "Authenticated save", note: "one row in a key-value content table", kind: "check" },
-    { label: "Revalidate the layout", note: "cache refreshed on demand", kind: "auto" },
-    { section: "Visitors", label: "Updated page", note: "same URL, new text", kind: "auto" }
+  <Pipeline stages={[
+    { label: "Officer", note: "signs in, clicks a text", token: "Village news", human: true },
+    { label: "Inline editor", note: "edits in place", token: "Kotagede heritage" },
+    { label: "Save", note: "authenticated, one row", token: "saving…" },
+    { label: "Live page", note: "cache refreshed", token: "updated ✓" },
   ]} />
 </Figure>
 

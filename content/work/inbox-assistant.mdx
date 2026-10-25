@@ -33,15 +33,13 @@ The setup is plain:
 Everything goes into one tracker project, with one label per area of my life. I considered separate projects, but I want one board that answers "what do I do next?", not five.
 
 <Figure title="How a request reaches the board" sub="Generic flow, all sources read-only" caption="The assistant proposes; nothing lands on the board or in a chat without me.">
-  <Mermaid chart={`flowchart LR
-  W[Work chats] -->|read-only| A[AI assistant]
-  C[Campus chats] -->|read-only| A
-  S[Side-project chats] -->|read-only| A
-  G[Coding agent sessions] -->|end-of-day sweep| A
-  A -->|proposes tickets| M{Me}
-  M -->|approve| T[(Tracker)]
-  T -->|scheduled| D[Standup draft]
-  D -->|I post it myself| M`} />
+  <Converge
+    sources={["Work chats", "Campus chats", "Side-project chats", "Coding sessions"]}
+    hub="AI assistant"
+    hubNote="read-only"
+    gate="I approve"
+    outputs={["Tracker tickets", "Standup drafts"]}
+  />
 </Figure>
 
 ## Decisions that mattered
@@ -54,14 +52,21 @@ Everything goes into one tracker project, with one label per area of my life. I 
 
 **4. Look for the leak where you already act fast.** After the inbox worked, I still found work that never made it onto the board. The pattern was always the same: someone posts a bug in chat, I copy it straight into a coding agent, it gets fixed, and I move on. The chat reader never saw it as new, because I had already handled it. The fix was one rules file that every coding agent reads (find or create the ticket, record who asked, log what was done), plus an end-of-day sweep over the day's coding sessions that lists work with no ticket yet. I approve those too.
 
-<Figure title="Closing the leak" sub="Work handled on the spot still gets a ticket" caption="The sweep catches what the chat reader never sees.">
-<Flow items={[
-  { section: "During the day", label: "Request arrives in chat", note: "handled on the spot in a coding agent", kind: "auto" },
-  { label: "Rules file", note: "agent finds or creates the ticket, records who asked", kind: "auto" },
-  { section: "End of day", label: "Session sweep", note: "lists today's work with no ticket", kind: "check" },
-  { label: "Approve proposals", note: "I pick what goes on the board", kind: "human" },
-  { section: "Standup", label: "Draft from the board", note: "I read, edit and post it myself", kind: "human" }
-]} />
+<Figure title="Closing the leak" sub="Three nets, each catching what the one above misses" caption="By the end of the day, nothing reaches the bottom: every piece of work has a ticket.">
+  <Layers
+    top="work that happens"
+    bottom="untracked work"
+    layers={[
+      { label: "chat reader: requests in chats" },
+      { label: "rules file: coding agents log a ticket" },
+      { label: "end-of-day sweep: everything else" },
+    ]}
+    items={[
+      { at: 0.15, label: "asked in a chat", blockedBy: 0 },
+      { at: 0.45, label: "started in a coding agent", blockedBy: 1 },
+      { at: 0.78, label: "quick fix, no ticket", blockedBy: 2 },
+    ]}
+  />
 </Figure>
 
 ## What I learned

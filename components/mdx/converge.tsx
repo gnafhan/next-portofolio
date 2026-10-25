@@ -57,16 +57,17 @@ export function Converge({
   const rowH = 52;
   const height = Math.max(sources.length, outputs.length) * rowH + 40;
   const hubX = 300;
+  const hw = Math.max(46, Math.ceil(hub.length * 3.6) + 14); // half-width of the hub diamond
   const hubY = height / 2;
   const srcY = (i: number) => 20 + i * rowH + (height - 40 - sources.length * rowH) / 2;
   const outY = (i: number) => 20 + i * rowH + (height - 40 - outputs.length * rowH) / 2 + 6;
   const inPath = (i: number) => {
     const y = srcY(i) + 15;
-    return `M 172 ${y} C 230 ${y}, 236 ${hubY}, ${hubX - 46} ${hubY}`;
+    return `M 172 ${y} C 230 ${y}, 236 ${hubY}, ${hubX - hw} ${hubY}`;
   };
   const outPath = (i: number) => {
     const y = outY(i) + 15;
-    return `M ${hubX + 46} ${hubY} C 380 ${hubY}, 380 ${y}, 440 ${y}`;
+    return `M ${hubX + hw} ${hubY} C 390 ${hubY}, 390 ${y}, 440 ${y}`;
   };
 
   return (
@@ -85,9 +86,9 @@ export function Converge({
 
         {/* hub: a raised diamond */}
         <g>
-          <polygon points={`${hubX},${hubY - 34} ${hubX + 46},${hubY} ${hubX},${hubY + 34} ${hubX - 46},${hubY}`} transform="translate(0,5)" className="fill-[var(--line)]" />
+          <polygon points={`${hubX},${hubY - 34} ${hubX + hw},${hubY} ${hubX},${hubY + 34} ${hubX - hw},${hubY}`} transform="translate(0,5)" className="fill-[var(--line)]" />
           <polygon
-            points={`${hubX},${hubY - 34} ${hubX + 46},${hubY} ${hubX},${hubY + 34} ${hubX - 46},${hubY}`}
+            points={`${hubX},${hubY - 34} ${hubX + hw},${hubY} ${hubX},${hubY + 34} ${hubX - hw},${hubY}`}
             className="fill-[var(--surface)] stroke-[var(--accent)]"
             strokeWidth={1.2}
           />
