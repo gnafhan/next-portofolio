@@ -90,8 +90,8 @@ export function Journey({ items }: { items: JourneyItem[] }) {
               key={y}
               type="button"
               onClick={() => jump(y)}
-              className={`rounded-full border px-3 py-1 text-[0.85rem] tabular-nums transition-colors ${
-                i === yi ? "border-line bg-surface font-medium text-accent" : "border-transparent text-ink-3 hover:text-ink"
+              className={`rounded-full px-3 py-1 text-[0.85rem] tabular-nums transition-colors ${
+                i === yi ? "lg-sm font-medium text-accent" : "text-ink-3 hover:text-ink"
               }`}
               aria-current={i === yi ? "step" : undefined}
             >
@@ -108,7 +108,7 @@ export function Journey({ items }: { items: JourneyItem[] }) {
         <div
           ref={glow}
           aria-hidden
-          className="pointer-events-none absolute left-[51px] right-0 top-0 rounded-2xl border border-line bg-surface/85 opacity-0 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.25)] transition-[transform,height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+          className="glass-static pointer-events-none absolute left-[51px] right-0 top-0 rounded-2xl opacity-0 transition-[transform,height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
         />
         <ol ref={listRef} className="relative space-y-2.5">
           {items.map((it, i) => (
@@ -161,8 +161,8 @@ const Row = memo(function Row({
       className={`flex gap-4 ${gap ? "pt-8" : ""}`}
     >
       <span
-        className={`relative z-[1] mt-2 flex size-[35px] shrink-0 items-center justify-center rounded-[11px] border transition-[background-color,color,border-color,transform] duration-300 ${
-          on ? "scale-110 border-transparent bg-accent text-white" : "border-line bg-surface text-ink-2"
+        className={`relative z-[1] mt-2 flex size-[35px] shrink-0 items-center justify-center rounded-[11px] transition-[background-color,color,box-shadow,transform] duration-300 ${
+          on ? "lg-accent scale-110" : "lg-sm text-ink-2"
         }`}
       >
         <Icon size={16} aria-hidden />
@@ -208,7 +208,7 @@ function Counts({ counts }: { counts: { k: JourneyKind; n: number }[] }) {
       {counts.map(({ k, n }) => {
         const { Icon, one, many } = KIND[k];
         return (
-          <span key={k} className="flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[0.82rem]">
+          <span key={k} className="lg-sm flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.82rem]">
             <Icon size={13} aria-hidden /> {n} {n === 1 ? one : many}
           </span>
         );

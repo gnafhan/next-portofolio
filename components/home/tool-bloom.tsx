@@ -72,7 +72,7 @@ function Tool({ tool, i, p }: { tool: (typeof TOOLS)[number]; i: number; p: Moti
   return (
     <m.li className="absolute left-0 top-0" style={{ x, y, rotate, scale }}>
       <span
-        className="lg flex size-[46px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[14px]"
+        className="lg-sm flex size-[46px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[14px]"
         style={{ animation: `bob ${4.5 + (i % 3)}s ease-in-out ${-i * 0.7}s infinite` }}
         title={tool.name}
       >

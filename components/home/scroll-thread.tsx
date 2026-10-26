@@ -159,7 +159,7 @@ export function ScrollThread() {
       </svg>
       <div
         ref={tipRef}
-        className="lg absolute left-0 top-0 grid place-items-center rounded-[30%] will-change-transform"
+        className="lg-sm absolute left-0 top-0 grid place-items-center rounded-[30%] will-change-transform"
         style={{ width: "var(--tip, 30px)", height: "var(--tip, 30px)", opacity: 0 }}
       >
         <Logo size={16} />
