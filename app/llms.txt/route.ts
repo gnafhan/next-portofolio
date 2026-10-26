@@ -17,7 +17,7 @@ ${work.map((w) => `- [${w.title}](${absoluteUrl(`/work/${w.slug}/raw.md`)}): ${w
 ${posts.length ? `## Blog\n${posts.map((p) => `- [${p.title}](${absoluteUrl(`/blog/${p.slug}/raw.md`)}): ${p.description}`).join("\n")}\n` : ""}
 ## About
 - [About](${absoluteUrl("/about")})
-- [Now](${absoluteUrl("/now")})
+- [Certificates](${absoluteUrl("/certificates")})
 - [GitHub](${site.links.github})
 - [LinkedIn](${site.links.linkedin})
 `;

@@ -15,7 +15,6 @@ npm run build   # production build, drafts hidden
 content/
   blog/<slug>.mdx    blog posts       → /blog/<slug>
   work/<slug>.mdx    case studies     → /work/<slug>
-  now.mdx            the /now page
 lib/profile.ts       experience, awards, certifications (About page)
 lib/site.ts          name, headline, links
 ```
@@ -132,6 +131,14 @@ links: []         # [{ label: "Live site", href: "https://..." }]
 ```
 
 All content must pass the NDA rules in the self-manage repo (`branding/NDA.md`) before merge.
+
+### Add a certificate
+
+Add an entry to `lib/certificates.ts`: `title`, `issuer`, and when you have them `date` ("YYYY-MM"),
+`image` (a direct image URL on i.imgur.com or api2.sololearn.com, or add another host to
+`images.remotePatterns` in `next.config.ts`), `url` (verify link) and `id`. `featured: true` puts it
+at the top of the pile and on the home timeline. A new issuer also needs a spot in `ISSUER_ORDER`.
+Entries without an image render as a typeset card.
 
 ## SEO and feeds
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getAllPosts, getAllWork, getPage } from "@/lib/content";
+import { getAllPosts, getAllWork } from "@/lib/content";
 import type { Metadata } from "next";
 import { site } from "@/lib/site";
 import { WorkCard, PostRow } from "@/components/cards";
@@ -9,6 +9,10 @@ import { LazyStory } from "@/components/lazy-visuals";
 import { HeroArt } from "@/components/home/hero-art";
 import { IntroReveal } from "@/components/home/intro-reveal";
 import { ScrollThread } from "@/components/home/scroll-thread";
+import { Journey } from "@/components/home/journey";
+import { CertPile } from "@/components/certificates/cert-pile";
+import { getJourney } from "@/lib/journey";
+import { certificates, pileCertificates } from "@/lib/certificates";
 
 export function generateMetadata(): Metadata {
   const hasPosts = getAllPosts().some((p) => !p.draft);
@@ -79,7 +83,6 @@ function SectionHead({ title, body, href, cta }: { title: string; body?: string;
 export default function Home() {
   const work = getAllWork();
   const posts = getAllPosts().slice(0, 3);
-  const now = getPage("now").data as { highlights: string[] };
 
   return (
     <>
@@ -141,6 +144,14 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Journey: the years as a scroll story */}
+        <section className="pt-24">
+          <SectionHead title="Journey" body="From first freelance sites to AI in production. Scroll through the years." />
+          <div className="mt-10">
+            <Journey items={getJourney()} />
+          </div>
+        </section>
+
         {/* Work */}
         <section className="pt-24">
           <SectionHead title="Selected work" href="/work" cta="All case studies" />
@@ -151,7 +162,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Writing + now */}
+        {/* Writing + certificates */}
         <section className="grid gap-12 pt-24 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           <div>
             <SectionHead title="Writing" href="/blog" cta="All posts" />
@@ -160,12 +171,13 @@ export default function Home() {
             </div>
           </div>
           <div>
-            <SectionHead title="Now" href="/now" cta="More" />
-            <ul className="mt-6 space-y-4 border-l border-line pl-5">
-              {now.highlights.map((h) => (
-                <li key={h} className="text-[1.02rem] leading-snug text-ink-2">{h}</li>
-              ))}
-            </ul>
+            <SectionHead title="Certificates" href="/certificates" cta={`All ${certificates.length}`} />
+            <Link href="/certificates" className="mt-6 block" aria-label={`See all ${certificates.length} certificates`}>
+              <CertPile certs={pileCertificates(6)} mode="mini" />
+            </Link>
+            <p className="mt-2 text-center text-[0.92rem] text-ink-3">
+              {certificates.length} certificates from Google, Meta, Kaggle, Alibaba Cloud and more
+            </p>
           </div>
         </section>
       </div>

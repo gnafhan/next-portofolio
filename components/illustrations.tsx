@@ -1,7 +1,7 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { Award, BrainCircuit, Database, GraduationCap, Hammer, LayoutDashboard, Medal, PenLine, Server, Trophy } from "lucide-react";
+import { Award, BrainCircuit, Database, GraduationCap, LayoutDashboard, Medal, Server, Trophy } from "lucide-react";
 import { SiGoogle, SiMeta } from "react-icons/si";
 import { cycle, useStart } from "./anim";
 
@@ -77,80 +77,6 @@ export function Timeline({ items }: { items: readonly { org: string; role: strin
           </m.li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-/* /now: three small scenes for building, writing and studying */
-export function NowScenes() {
-  const [ref, on] = useStart();
-  const T = 7;
-  return (
-    <div ref={ref} className="grid gap-4 sm:grid-cols-3">
-      <div className="glass rounded-3xl p-5">
-        <div className="flex items-center gap-2 text-[0.9rem] font-medium">
-          <Hammer size={16} aria-hidden /> Building
-        </div>
-        <div className="lg-sm mt-4 h-24 rounded-xl p-2.5">
-          <div className="flex gap-1">
-            {[0, 1, 2].map((k) => (
-              <span key={k} className="size-1.5 rounded-full bg-ink/20" />
-            ))}
-          </div>
-          <div className="mt-2 grid grid-cols-3 gap-1.5">
-            {[0, 1, 2, 3, 4, 5].map((k) => (
-              <m.span
-                key={k}
-                className={`h-5 rounded-md ${k === 0 ? "lg-accent" : "lg-sm"}`}
-                initial={{ opacity: 0, scale: 0.6 }}
-                animate={on ? { opacity: [0, 0, 1, 1, 0], scale: [0.6, 0.6, 1, 1, 0.6] } : undefined}
-                transition={cycle(T, [0, 0.4 + k * 0.5, 0.8 + k * 0.5, T - 0.6, T])}
-              />
-            ))}
-          </div>
-        </div>
-        <p className="mt-3 text-[0.88rem] text-ink-2">This site, a content machine, and my personal ops assistant.</p>
-      </div>
-
-      <div className="glass rounded-3xl p-5">
-        <div className="flex items-center gap-2 text-[0.9rem] font-medium">
-          <PenLine size={16} aria-hidden /> Writing
-        </div>
-        <div className="lg-sm mt-4 h-24 space-y-2 rounded-xl p-3">
-          {[85, 95, 70, 55].map((w, k) => (
-            <m.span
-              key={k}
-              className="block h-1.5 rounded-full bg-ink/20"
-              initial={{ width: 0 }}
-              animate={on ? { width: ["0%", "0%", `${w}%`, `${w}%`, "0%"] } : undefined}
-              transition={cycle(T, [0, 0.4 + k * 0.9, 1.2 + k * 0.9, T - 0.6, T])}
-            />
-          ))}
-        </div>
-        <p className="mt-3 text-[0.88rem] text-ink-2">Production AI lessons and build logs, in English.</p>
-      </div>
-
-      <div className="glass rounded-3xl p-5">
-        <div className="flex items-center gap-2 text-[0.9rem] font-medium">
-          <GraduationCap size={16} aria-hidden /> Studying
-        </div>
-        <div className="lg-sm mt-4 flex h-24 flex-col justify-center rounded-xl px-3">
-          <div className="flex justify-between text-[0.72rem] text-ink-3">
-            <span>2023</span>
-            <span>2027</span>
-          </div>
-          <div className="relative mt-1.5 h-2 rounded-full bg-ink/10">
-            <m.span
-              className="lg-accent absolute inset-y-0 left-0 rounded-full"
-              initial={{ width: "0%" }}
-              animate={on ? { width: "81%" } : undefined}
-              transition={{ duration: 2, ease: "easeOut", delay: 0.3 }}
-            />
-          </div>
-          <div className="mt-1.5 text-right text-[0.72rem] text-ink-3">Software Engineering, UGM</div>
-        </div>
-        <p className="mt-3 text-[0.88rem] text-ink-2">Final stretch of my degree, graduating in 2027.</p>
-      </div>
     </div>
   );
 }

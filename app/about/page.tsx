@@ -3,6 +3,7 @@ import { PageIntro } from "@/components/page-intro";
 import { pageMeta, site } from "@/lib/site";
 import Image from "next/image";
 import { certifications, earlier, experience, honors } from "@/lib/profile";
+import { certificates } from "@/lib/certificates";
 import { CredentialGrid, StackFlow, Timeline } from "@/components/illustrations";
 import { JsonLd } from "@/components/json-ld";
 import portrait from "@/public/images/nafhan.png";
@@ -78,10 +79,10 @@ export default function AboutPage() {
       <Section id="credentials" label="Awards & credentials">
         <CredentialGrid honors={honors} certifications={certifications} />
         <p className="mt-4 text-[0.9rem] text-ink-3">
-          The rest of my course certificates live on{" "}
-          <a className="underline underline-offset-4" href={site.links.linkedin} target="_blank" rel="noopener">
-            LinkedIn
-          </a>
+          All {certificates.length} course certificates, with images and verify links, are on the{" "}
+          <Link className="underline underline-offset-4" href="/certificates">
+            certificates page
+          </Link>
           .
         </p>
       </Section>
@@ -89,7 +90,7 @@ export default function AboutPage() {
       <Section label="This site">
         <p className="max-w-[44rem] text-ink-2">
           Built with Next.js, TypeScript, Tailwind and MDX. Every page is static HTML. Posts carry their own diagrams, and
-          you can copy any figure as a PNG. Read <Link className="underline underline-offset-4" href="/now">what I&apos;m doing now</Link>.
+          you can copy any figure as a PNG.
         </p>
       </Section>
       <JsonLd
