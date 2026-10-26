@@ -22,9 +22,11 @@ export default function CertificatesPage() {
         </p>
       </header>
 
-      <CertPile certs={pileCertificates(14)} />
+      <div data-agent="cert-pile">
+        <CertPile certs={pileCertificates(14)} />
+      </div>
 
-      <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-3 text-center">
+      <div data-agent="cert-stats" className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-3 text-center">
         {[
           { n: certificates.length, label: "certificates" },
           { n: issuers.length, label: "issuers" },

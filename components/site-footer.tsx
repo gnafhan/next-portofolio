@@ -23,7 +23,7 @@ export function SiteFooter({ year }: { year: number }) {
     { label: "RSS", href: "/rss.xml" },
   ];
   return (
-    <footer className="relative mt-32 overflow-hidden border-t border-line">
+    <footer data-agent="contact" className="relative mt-32 overflow-hidden border-t border-line">
       {/* faint scattered dots behind everything */}
       <svg className="pointer-events-none absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 420" aria-hidden>
         {DOTS.map((d, i) => (

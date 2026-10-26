@@ -90,6 +90,7 @@ export function Journey({ items }: { items: JourneyItem[] }) {
               key={y}
               type="button"
               onClick={() => jump(y)}
+              data-agent={`journey-year-${y}`}
               className={`rounded-full px-3 py-1 text-[0.85rem] tabular-nums transition-colors ${
                 i === yi ? "lg-sm font-medium text-accent" : "text-ink-3 hover:text-ink"
               }`}
@@ -158,6 +159,7 @@ const Row = memo(function Row({
     <li
       ref={(el) => setRow(i, el)}
       data-i={i}
+      data-agent={`journey-${it.year}-${i}`}
       className={`flex gap-4 ${gap ? "pt-8" : ""}`}
     >
       <span

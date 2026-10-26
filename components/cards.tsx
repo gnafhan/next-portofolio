@@ -6,7 +6,7 @@ import { formatDate, type Post, type Work } from "@/lib/content";
 
 export function WorkCard({ work, large = false, as: H = "h3" }: { work: Work; large?: boolean; as?: "h2" | "h3" }) {
   return (
-    <Link href={`/work/${work.slug}`} className="glass glass-hover group flex h-full flex-col rounded-2xl p-6">
+    <Link href={`/work/${work.slug}`} data-agent={`work-${work.slug}`} className="glass glass-hover group flex h-full flex-col rounded-2xl p-6">
       <div className="relative -mx-2 -mt-2">
         <LazyWorkThumb slug={work.slug} />
         <div className="absolute right-2 top-2">

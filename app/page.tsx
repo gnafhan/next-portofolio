@@ -90,7 +90,7 @@ export default function Home() {
       <div className="relative isolate mx-auto max-w-6xl px-4 sm:px-6">
         <ScrollThread />
         {/* Hero: text left, portrait right (the 2024 layout) */}
-        <section className="intro-parallax relative grid items-center gap-10 pb-10 pt-14 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:pt-24">
+        <section data-agent="hero" className="intro-parallax relative grid items-center gap-10 pb-10 pt-14 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:pt-24">
           <div className="order-2 md:order-1">
             <p className="text-[1.05rem] text-ink-2">Hi, I&apos;m {site.name}.</p>
             <h1 className="mt-3 text-[2.6rem] font-medium leading-[1.05] tracking-tighter sm:text-[3.6rem]">
@@ -120,7 +120,7 @@ export default function Home() {
         </section>
 
         {/* Bento: show, don't tell */}
-        <section className="pt-10">
+        <section data-agent="what-i-build" className="pt-10">
           <SectionHead title="What I build" body="Real problems, solved end to end. Each one is a project you can read about." />
           <div className="glass mt-8 grid overflow-hidden rounded-3xl md:grid-cols-2">
             {BENTO.map((b, i) => (
@@ -145,7 +145,7 @@ export default function Home() {
         </section>
 
         {/* Journey: the years as a scroll story */}
-        <section className="pt-24">
+        <section data-agent="journey" className="pt-24">
           <SectionHead title="Journey" body="From first freelance sites to AI in production. Scroll through the years." />
           <div className="mt-10">
             <Journey items={getJourney()} />
@@ -153,7 +153,7 @@ export default function Home() {
         </section>
 
         {/* Work */}
-        <section className="pt-24">
+        <section data-agent="work" className="pt-24">
           <SectionHead title="Selected work" href="/work" cta="All case studies" />
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {work.slice(0, 6).map((w) => (
@@ -170,7 +170,7 @@ export default function Home() {
               {posts.length ? posts.map((p) => <PostRow key={p.slug} post={p} />) : <p className="py-6 text-ink-2">First posts are on the way.</p>}
             </div>
           </div>
-          <div>
+          <div data-agent="certificates-preview">
             <SectionHead title="Certificates" href="/certificates" cta={`All ${certificates.length}`} />
             <Link href="/certificates" className="mt-6 block" aria-label={`See all ${certificates.length} certificates`}>
               <CertPile certs={pileCertificates(6)} mode="mini" />

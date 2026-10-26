@@ -21,7 +21,7 @@ export function CertList({ groups }: { groups: Group[] }) {
     <>
       <div className="space-y-12">
         {groups.map((g) => (
-          <section key={g.issuer} aria-labelledby={`issuer-${slug(g.issuer)}`}>
+          <section key={g.issuer} data-agent={`issuer-${slug(g.issuer)}`} aria-labelledby={`issuer-${slug(g.issuer)}`}>
             <div className="flex items-baseline justify-between gap-4 border-b border-line pb-3">
               <h2 id={`issuer-${slug(g.issuer)}`} className="text-[1.35rem] font-medium tracking-tight">
                 {g.issuer}
@@ -32,7 +32,7 @@ export function CertList({ groups }: { groups: Group[] }) {
             </div>
             <ul className="mt-4 grid gap-3 md:grid-cols-2">
               {g.items.map((c) => (
-                <li key={c.title} className="glass flex items-center gap-4 rounded-2xl p-3">
+                <li key={c.title} data-agent={`cert-${slug(c.title)}`} className="glass flex items-center gap-4 rounded-2xl p-3">
                   <button
                     type="button"
                     onClick={() => show(c)}

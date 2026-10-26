@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme";
 import { MotionProvider } from "@/components/motion-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MascotLoader } from "@/components/mascot/loader";
 import { JsonLd, personSchema, websiteSchema } from "@/components/json-ld";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -41,7 +42,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </a>
           <SiteHeader />
           <main id="main" className="flex-1">
-            <MotionProvider>{children}</MotionProvider>
+            <MotionProvider>
+              {children}
+              <MascotLoader />
+            </MotionProvider>
           </main>
           <SiteFooter year={new Date().getFullYear()} />
         </ThemeProvider>
