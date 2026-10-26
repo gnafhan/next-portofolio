@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import * as m from "motion/react-m";
 import { useScroll } from "motion/react";
@@ -23,7 +23,15 @@ export function Journey({ items }: { items: JourneyItem[] }) {
   const years = useMemo(() => [...new Set(items.map((i) => i.year))], [items]);
   const [active, setActive] = useState(0);
   const rows = useRef<(HTMLLIElement | null)[]>([]);
+  const cards = useRef<(HTMLDivElement | null)[]>([]);
   const listRef = useRef<HTMLOListElement>(null);
+  const glow = useRef<HTMLDivElement>(null);
+  const setRow = useCallback((i: number, el: HTMLLIElement | null) => {
+    rows.current[i] = el;
+  }, []);
+  const setCard = useCallback((i: number, el: HTMLDivElement | null) => {
+    cards.current[i] = el;
+  }, []);
   const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 50%", "end 50%"] });
 
   useEffect(() => {
@@ -37,6 +45,21 @@ export function Journey({ items }: { items: JourneyItem[] }) {
     rows.current.forEach((r) => r && io.observe(r));
     return () => io.disconnect();
   }, []);
+
+  // one highlight slides between entries (transform only) instead of every row restyling itself
+  useEffect(() => {
+    const place = () => {
+      const el = cards.current[active];
+      if (!el || !glow.current) return;
+      glow.current.style.transform = `translateY(${el.offsetTop}px)`;
+      glow.current.style.height = `${el.offsetHeight}px`;
+      glow.current.style.opacity = "1";
+    };
+    place();
+    const ro = new ResizeObserver(place);
+    if (listRef.current) ro.observe(listRef.current);
+    return () => ro.disconnect();
+  }, [active]);
 
   const year = items[active]?.year ?? years[0];
   const yi = years.indexOf(year);
@@ -67,8 +90,8 @@ export function Journey({ items }: { items: JourneyItem[] }) {
               key={y}
               type="button"
               onClick={() => jump(y)}
-              className={`rounded-full px-3 py-1 text-[0.85rem] tabular-nums transition-colors ${
-                i === yi ? "lg-sm font-medium text-accent" : "text-ink-3 hover:text-ink"
+              className={`rounded-full border px-3 py-1 text-[0.85rem] tabular-nums transition-colors ${
+                i === yi ? "border-line bg-surface font-medium text-accent" : "border-transparent text-ink-3 hover:text-ink"
               }`}
               aria-current={i === yi ? "step" : undefined}
             >
@@ -82,64 +105,93 @@ export function Journey({ items }: { items: JourneyItem[] }) {
       <div className="relative">
         <div className="absolute bottom-0 left-[17px] top-0 w-px bg-line" aria-hidden />
         <m.div className="absolute left-[17px] top-0 h-full w-px origin-top bg-accent" style={{ scaleY: scrollYProgress }} aria-hidden />
+        <div
+          ref={glow}
+          aria-hidden
+          className="pointer-events-none absolute left-[51px] right-0 top-0 rounded-2xl border border-line bg-surface/85 opacity-0 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.25)] transition-[transform,height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+        />
         <ol ref={listRef} className="relative space-y-2.5">
-          {items.map((it, i) => {
-            const on = i === active;
-            const { Icon } = KIND[it.kind];
-            const firstOfYear = i === 0 || items[i - 1].year !== it.year;
-            const body = (
-              <>
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium leading-snug">{it.title}</div>
-                  <div className="mt-0.5 text-[0.92rem] text-ink-2">{it.sub}</div>
-                </div>
-                <span className="shrink-0 pt-0.5 text-[0.85rem] tabular-nums text-ink-3">{it.period}</span>
-              </>
-            );
-            return (
-              <li
-                key={`${it.kind}-${it.title}-${it.period}`}
-                ref={(el) => {
-                  rows.current[i] = el;
-                }}
-                data-i={i}
-                className={`flex gap-4 ${firstOfYear && i > 0 ? "pt-8" : ""}`}
-              >
-                <span
-                  className={`relative z-[1] mt-2 flex size-[35px] shrink-0 items-center justify-center rounded-[11px] transition-all duration-300 ${
-                    on ? "lg-accent scale-110" : "lg-sm text-ink-2"
-                  }`}
-                >
-                  <Icon size={16} aria-hidden />
-                </span>
-                <div
-                  className={`min-w-0 flex-1 rounded-2xl border transition-all duration-300 ${
-                    on ? "glass translate-x-1" : "border-transparent"
-                  }`}
-                >
-                  {it.href ? (
-                    <Link href={it.href} className="flex items-start gap-3 px-4 py-3 hover:text-accent">
-                      {body}
-                    </Link>
-                  ) : (
-                    <div className="flex items-start gap-3 px-4 py-3">{body}</div>
-                  )}
-                </div>
-              </li>
-            );
-          })}
+          {items.map((it, i) => (
+            <Row
+              key={`${it.kind}-${it.title}-${it.period}`}
+              it={it}
+              i={i}
+              on={i === active}
+              gap={i > 0 && items[i - 1].year !== it.year}
+              setRow={setRow}
+              setCard={setCard}
+            />
+          ))}
         </ol>
       </div>
     </div>
   );
 }
 
+/** One entry; memoised so moving the highlight only re-renders the two rows that change. */
+const Row = memo(function Row({
+  it,
+  i,
+  on,
+  gap,
+  setRow,
+  setCard,
+}: {
+  it: JourneyItem;
+  i: number;
+  on: boolean;
+  gap: boolean;
+  setRow: (i: number, el: HTMLLIElement | null) => void;
+  setCard: (i: number, el: HTMLDivElement | null) => void;
+}) {
+  const { Icon } = KIND[it.kind];
+  const body = (
+    <>
+      <div className="min-w-0 flex-1">
+        <div className="font-medium leading-snug">{it.title}</div>
+        <div className="mt-0.5 text-[0.92rem] text-ink-2">{it.sub}</div>
+      </div>
+      <span className="shrink-0 pt-0.5 text-[0.85rem] tabular-nums text-ink-3">{it.period}</span>
+    </>
+  );
+  return (
+    <li
+      ref={(el) => setRow(i, el)}
+      data-i={i}
+      className={`flex gap-4 ${gap ? "pt-8" : ""}`}
+    >
+      <span
+        className={`relative z-[1] mt-2 flex size-[35px] shrink-0 items-center justify-center rounded-[11px] border transition-[background-color,color,border-color,transform] duration-300 ${
+          on ? "scale-110 border-transparent bg-accent text-white" : "border-line bg-surface text-ink-2"
+        }`}
+      >
+        <Icon size={16} aria-hidden />
+      </span>
+      <div
+        ref={(el) => setCard(i, el)}
+        className="relative min-w-0 flex-1"
+      >
+        {it.href ? (
+          <Link href={it.href} className="flex items-start gap-3 px-4 py-3 hover:text-accent">
+            {body}
+          </Link>
+        ) : (
+          <div className="flex items-start gap-3 px-4 py-3">{body}</div>
+        )}
+      </div>
+    </li>
+  );
+});
+
 /** A rolling counter: every year sits in a column that slides so only the current one shows. */
 function YearRoller({ years, index, size }: { years: number[]; index: number; size: "sm" | "lg" }) {
   const h = size === "lg" ? "h-[8.5rem] text-[8.5rem]" : "h-[2.6rem] text-[2.4rem]";
   return (
     <div className={`shrink-0 overflow-hidden whitespace-nowrap ${h.split(" ")[0]}`} aria-live="polite">
-      <div className="transition-transform duration-500 ease-out" style={{ transform: `translateY(-${index * 100}%)` }}>
+      <div
+        className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{ transform: `translateY(-${(index * 100) / years.length}%)` }}
+      >
         {years.map((y) => (
           <div key={y} className={`${h} font-medium leading-none tracking-tighter tabular-nums`} aria-hidden={y !== years[index]}>
             {y}
@@ -156,7 +208,7 @@ function Counts({ counts }: { counts: { k: JourneyKind; n: number }[] }) {
       {counts.map(({ k, n }) => {
         const { Icon, one, many } = KIND[k];
         return (
-          <span key={k} className="lg-sm flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.82rem]">
+          <span key={k} className="flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[0.82rem]">
             <Icon size={13} aria-hidden /> {n} {n === 1 ? one : many}
           </span>
         );

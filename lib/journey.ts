@@ -5,7 +5,10 @@ import { getAllWork } from "./content";
 export type JourneyKind = "study" | "work" | "project" | "award" | "cert";
 export type JourneyItem = { year: number; kind: JourneyKind; title: string; sub: string; period: string; href?: string };
 
-const KIND_ORDER: JourneyKind[] = ["study", "work", "project", "award", "cert"];
+// within a year, roles come last, so the timeline ends on the current jobs
+const KIND_ORDER: JourneyKind[] = ["study", "project", "award", "cert", "work"];
+// case studies that stay on /work but are left off the timeline
+const OFF_TIMELINE = new Set(["rt06-citran-portal"]);
 const startYear = (period: string) => Number(period.match(/\d{4}/)?.[0] ?? 0);
 
 /**
@@ -25,7 +28,7 @@ export function getJourney(): JourneyItem[] {
     }),
     ...honors.map((h) => ({ year: Number(h.year), kind: "award" as const, title: h.title, sub: "Award", period: h.year })),
     ...work
-      .filter((w) => !experience.some((e) => e.org === w.title))
+      .filter((w) => !OFF_TIMELINE.has(w.slug) && !experience.some((e) => e.org === w.title))
       .map((w) => ({ year: startYear(w.period), kind: "project" as const, title: w.title, sub: w.role || "Project", period: w.period, href: `/work/${w.slug}` })),
     ...certificates
       .filter((c) => c.featured && c.date)

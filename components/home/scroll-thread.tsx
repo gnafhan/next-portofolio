@@ -11,6 +11,8 @@ import { Logo } from "../icons";
  * Purely scroll-linked: nothing animates on its own. Placed as the first child of the page
  * container (which must be `relative isolate`); it reads that container's <section>s.
  */
+const STEP = 6; // px of path length between samples
+
 export function ScrollThread() {
   const svgRef = useRef<SVGSVGElement>(null);
   const trackRef = useRef<SVGPathElement>(null);
@@ -31,6 +33,9 @@ export function ScrollThread() {
     let goal = 0;
     let shift = 0; // svg x offset relative to the container
     let raf = 0;
+    let boxTop = 0;
+    let xs = new Float32Array(0);
+    let ys = new Float32Array(0);
 
     const layout = () => {
       const r = box.getBoundingClientRect();
@@ -69,36 +74,54 @@ export function ScrollThread() {
       draw.setAttribute("d", d);
       total = draw.getTotalLength();
       draw.style.strokeDasharray = `${total} ${total}`;
+      // sample the path once, so scrolling never has to ask the SVG engine for geometry
+      const n = Math.max(2, Math.ceil(total / STEP) + 1);
+      xs = new Float32Array(n);
+      ys = new Float32Array(n);
+      for (let i = 0; i < n; i++) {
+        const pt = draw.getPointAtLength(Math.min(total, i * STEP));
+        xs[i] = pt.x;
+        ys[i] = pt.y;
+      }
+      boxTop = r.top + window.scrollY;
       tip.style.setProperty("--tip", window.innerWidth < 640 ? "22px" : "30px");
       onScroll();
       len = goal;
       paint();
     };
 
-    // the path only ever goes down, so the length at a given height can be found by bisection
+    // the path only ever goes down, so the length at a given height is a bisection over the samples
     const lengthAtY = (y: number) => {
-      let lo = 0, hi = total;
-      for (let i = 0; i < 18; i++) {
-        const mid = (lo + hi) / 2;
-        if (draw.getPointAtLength(mid).y < y) lo = mid;
+      let lo = 0, hi = ys.length - 1;
+      if (y <= ys[0]) return 0;
+      if (y >= ys[hi]) return total;
+      while (hi - lo > 1) {
+        const mid = (lo + hi) >> 1;
+        if (ys[mid] < y) lo = mid;
         else hi = mid;
       }
-      return lo;
+      const f = (y - ys[lo]) / Math.max(1e-3, ys[hi] - ys[lo]);
+      return Math.min(total, (lo + f) * STEP);
+    };
+    const pointAt = (l: number) => {
+      const t = Math.min(xs.length - 1, Math.max(0, l / STEP));
+      const i = Math.min(xs.length - 2, Math.floor(t));
+      const f = t - i;
+      return [xs[i] + (xs[i + 1] - xs[i]) * f, ys[i] + (ys[i + 1] - ys[i]) * f];
     };
 
     function onScroll() {
       if (!total) return;
-      const r = box!.getBoundingClientRect();
-      goal = lengthAtY(window.innerHeight * 0.62 - r.top);
+      goal = lengthAtY(window.scrollY + window.innerHeight * 0.62 - boxTop);
       if (!raf) raf = requestAnimationFrame(tick);
     }
 
     const paint = () => {
       draw.style.strokeDashoffset = String(total - len);
-      const p = draw.getPointAtLength(len);
-      const q = draw.getPointAtLength(Math.min(total, len + 6));
-      const lean = (Math.atan2(q.x - p.x, q.y - p.y) * -180) / Math.PI;
-      tip.style.transform = `translate(${p.x - shift}px, ${p.y}px) translate(-50%, -50%) rotate(${lean * 0.35}deg)`;
+      const [px, py] = pointAt(len);
+      const [qx, qy] = pointAt(Math.min(total, len + 6));
+      const lean = (Math.atan2(qx - px, qy - py) * -180) / Math.PI;
+      tip.style.transform = `translate3d(${px - shift}px, ${py}px, 0) translate(-50%, -50%) rotate(${lean * 0.35}deg)`;
       tip.style.opacity = "1";
     };
 
@@ -110,15 +133,21 @@ export function ScrollThread() {
       if (len !== goal) raf = requestAnimationFrame(tick);
     };
 
-    const ro = new ResizeObserver(layout);
+    let pending = 0;
+    const relayout = () => {
+      cancelAnimationFrame(pending);
+      pending = requestAnimationFrame(layout);
+    };
+    const ro = new ResizeObserver(relayout);
     ro.observe(box);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", layout);
+    window.addEventListener("resize", relayout);
     return () => {
       ro.disconnect();
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", layout);
+      window.removeEventListener("resize", relayout);
+      cancelAnimationFrame(pending);
     };
   }, []);
 
