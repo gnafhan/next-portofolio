@@ -88,11 +88,9 @@ body {
 }
 
 /*
- * Liquid glass, no gradients. What reads as "liquid" is light, not blur: a clear body, a hard
- * specular edge where light enters (top-left), a softer bounce on the far edge (bottom-right) and
- * a white glow just inside the rim. Big cards sit on a flat background, so they carry no
- * backdrop-filter at all (blurring a flat colour is invisible and makes scrolling heavy); small
- * controls keep a light blur because they float over pictures and moving illustrations.
+ * Liquid glass for buttons and floating controls, no gradients. What reads as "liquid" is light,
+ * not blur: a clear body, a hard specular edge where light enters (top-left), a softer bounce on
+ * the far edge (bottom-right) and a white glow just inside the rim, over a light 4px blur.
  */
 :root {
   --glass-fill: rgba(255, 255, 255, 0.34);
@@ -106,7 +104,9 @@ body {
     inset -12px -14px 22px -18px rgba(15, 23, 42, 0.12),
     inset 0 0 22px -8px rgba(255, 255, 255, 0.75);
   --glass-edge: 0 0 0 1px rgba(15, 23, 42, 0.07);
-  /* rim light for coloured glass (accent, ok, bad, primary button) */
+  /* coloured pieces inside illustrations: flat, with a hairline and a faint top edge */
+  --tint-flat: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  /* rim light for the primary button */
   --tint-light:
     inset 0 0 0 1px rgba(255, 255, 255, 0.2),
     inset 1.5px 1.5px 0 -0.5px rgba(255, 255, 255, 0.75),
@@ -132,23 +132,42 @@ body {
   --glass-drop-sm: 0 6px 16px -8px rgba(0, 0, 0, 0.7);
 }
 
-/* Cards and panels (.glass-static: same look, without the scroll-in settle) */
+/*
+ * Cards and the UI pieces inside illustrations are calm, solid surfaces (like a real app): a fill a
+ * shade off the page, a hairline border and a faint top edge. Only buttons get the lit glass above.
+ * .glass-static: same look, without the scroll-in settle.
+ */
+:root {
+  --card: #ffffff;
+  --card-hover: #ffffff;
+  --card-ring: 0 0 0 1px rgba(15, 23, 42, 0.08);
+  --card-shade: inset 0 1px 0 rgba(255, 255, 255, 1), 0 1px 2px rgba(15, 23, 42, 0.04), 0 14px 34px -22px rgba(15, 23, 42, 0.22);
+  --panel: #ffffff;
+  --panel-shade: 0 0 0 1px rgba(15, 23, 42, 0.09), 0 2px 6px -2px rgba(15, 23, 42, 0.1);
+}
+[data-theme="dark"] {
+  --card: #1d1d21;
+  --card-hover: #222226;
+  --card-ring: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+  --card-shade: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 18px 40px -22px rgba(0, 0, 0, 0.85);
+  --panel: #26262b;
+  --panel-shade: inset 0 0 0 1px rgba(255, 255, 255, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 14px -6px rgba(0, 0, 0, 0.6);
+}
 .glass,
 .glass-static {
-  background-color: var(--glass-fill);
+  background-color: var(--card);
   border: 0;
-  box-shadow: var(--glass-light), var(--glass-edge), var(--glass-drop);
+  box-shadow: var(--card-ring), var(--card-shade);
 }
-/* the sliding highlight on the home timeline: a touch brighter so it reads in dark mode */
 .glass-static {
-  background-color: var(--glass-fill-hover);
+  background-color: var(--card-hover);
 }
 .glass-hover {
   transition: transform 0.25s ease, background-color 0.2s;
 }
 .glass-hover:hover {
   transform: translateY(-2px);
-  background-color: var(--glass-fill-hover);
+  background-color: var(--card-hover);
 }
 
 /* Buttons and floating controls: a light, clear blur (not frosted) plus the same light */
@@ -167,30 +186,30 @@ body {
   transform: scale(0.97);
 }
 
-/* Small glass pieces inside illustrations, chips, tags: light only, no blur */
+/* Pieces inside illustrations (bubbles, chips, mini windows): solid UI panels */
 .lg-sm {
-  background-color: var(--glass-fill-sm);
+  background-color: var(--panel);
   border: 0;
-  box-shadow: var(--glass-light), var(--glass-edge), var(--glass-drop-sm);
+  box-shadow: var(--panel-shade);
 }
-/* Accent-tinted glass (primary button, highlighted bubbles, bars) */
+/* Coloured pieces (highlighted bubbles, bars, the active timeline icon) */
 .lg-accent {
   color: #fff;
   background-color: rgb(24, 98, 214);
   border: 0;
-  box-shadow: var(--tint-light), 0 6px 16px -6px rgba(24, 98, 214, 0.55);
+  box-shadow: var(--tint-flat), 0 4px 10px -5px rgba(24, 98, 214, 0.5);
 }
 .lg-ok {
   color: #fff;
   background-color: rgba(22, 163, 74, 0.9);
   border: 0;
-  box-shadow: var(--tint-light), 0 4px 12px -4px rgba(22, 163, 74, 0.6);
+  box-shadow: var(--tint-flat), 0 3px 8px -4px rgba(22, 163, 74, 0.5);
 }
 .lg-bad {
   color: #fff;
   background-color: rgba(220, 38, 38, 0.88);
   border: 0;
-  box-shadow: var(--tint-light), 0 4px 12px -4px rgba(220, 38, 38, 0.5);
+  box-shadow: var(--tint-flat), 0 3px 8px -4px rgba(220, 38, 38, 0.45);
 }
 
 .btn {
