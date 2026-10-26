@@ -10,6 +10,8 @@ export const site = {
     "Software engineer automating slow, manual work with AI, end to end from data to UI. Case studies, build logs and production AI lessons.",
   location: "Yogyakarta, Indonesia",
   email: "nafhanghifari@gmail.com",
+  // self-hosted Plausible on vps-nafhan (dashboard: plausible.catataja.id, site "nafhan.com")
+  analytics: { domain: "nafhan.com", script: "https://analytics.nafhan.com/js/script.outbound-links.js" },
   links: {
     github: "https://github.com/gnafhan",
     linkedin: "https://www.linkedin.com/in/gnafhan",

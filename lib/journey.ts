@@ -9,6 +9,8 @@ export type JourneyItem = { year: number; kind: JourneyKind; title: string; sub:
 const KIND_ORDER: JourneyKind[] = ["study", "project", "award", "cert", "work"];
 // case studies that stay on /work but are left off the timeline
 const OFF_TIMELINE = new Set(["rt06-citran-portal"]);
+// roles still running sort after ones that ended the same year, so the newest job closes the list
+const ongoing = (i: JourneyItem) => (/now/i.test(i.period) ? 1 : 0);
 const startYear = (period: string) => Number(period.match(/\d{4}/)?.[0] ?? 0);
 
 /**
@@ -36,5 +38,5 @@ export function getJourney(): JourneyItem[] {
   ];
   return items
     .filter((i) => i.year)
-    .sort((a, b) => a.year - b.year || KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind));
+    .sort((a, b) => a.year - b.year || KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || ongoing(a) - ongoing(b));
 }

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from "@/components/theme";
 import { MotionProvider } from "@/components/motion-provider";
 import { SiteHeader } from "@/components/site-header";
@@ -45,6 +46,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteFooter year={new Date().getFullYear()} />
         </ThemeProvider>
         <JsonLd data={[personSchema(), websiteSchema()]} />
+        {/* Plausible (self-hosted, cookieless). Production only, so previews and local runs aren't counted. */}
+        {process.env.VERCEL_ENV === "production" && (
+          <Script defer data-domain={site.analytics.domain} src={site.analytics.script} strategy="afterInteractive" />
+        )}
       </body>
     </html>
   );

@@ -148,3 +148,10 @@ Entries without an image render as a typeset card.
 - Each post and case study is also served as Markdown at `<url>/raw.md`.
 - Google Search Console: set `GOOGLE_SITE_VERIFICATION` in Vercel to emit the verification meta tag,
   then submit `https://nafhan.com/sitemap.xml`.
+
+## Analytics
+
+Self-hosted Plausible on vps-nafhan (`/var/www/plausible`, shared with catataja.id). The script and
+event endpoint are served on `analytics.nafhan.com` (only `/js/*` and `/api/event` are routed there);
+the dashboard is at plausible.catataja.id, site `nafhan.com`. The script loads only when
+`VERCEL_ENV=production`, so previews and local runs are not counted. Config: `site.analytics` in `lib/site.ts`.
