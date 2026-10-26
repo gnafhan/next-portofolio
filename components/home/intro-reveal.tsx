@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { rasterize } from "./rasterize";
 import { buildLogoTextures, SDF } from "./logo-sdf";
 
 /*
@@ -9,8 +8,9 @@ import { buildLogoTextures, SDF } from "./logo-sdf";
  *
  * Separate drops of liquid glass float over a living halftone backdrop (a slow wave of light
  * sweeps the dots, a few twinkle in the logo colours). Scrolling pulls the drops together: they
- * melt into one glass "N" (the real logo, drawn from a signed distance field so it stays smooth),
- * and scrolling on zooms through the N until the page underneath takes over.
+ * melt into one glass "N" (the real logo, drawn from a signed distance field so it stays smooth).
+ * The N's pane is a clear window onto the live page underneath (the canvas is transparent there),
+ * and scrolling on zooms through it until the page is all that's left.
  *
  * An inline script decides before first paint whether to show it (WebGL on a real GPU, no
  * reduced motion, once per tab session; ?intro forces it), so there is no flash of content.
@@ -37,7 +37,6 @@ const FRAG = `
 precision highp float;
 uniform sampler2D uSdf;    // logo signed distance (R)
 uniform sampler2D uLogoCol;
-uniform sampler2D uHero;
 uniform vec2 uRes;
 uniform float uDpr;
 uniform float uTime;
@@ -49,8 +48,9 @@ uniform vec2 uAnchor;      // logo point placed at the screen centre
 uniform vec4 uSdfMap;      // k, pad, texW, texH
 uniform float uSdfRange;
 uniform float uNW;         // logo presence 0..1
-uniform float uHeroMix;   // inside the glass
-uniform float uHeroOut;   // outside the glass (only at the very end)
+uniform float uLive;      // 0 = the glass refracts the backdrop, 1 = its pane shows the live page
+uniform float uClear;     // fades the stained-glass tint while zooming through
+uniform float uOut;       // the backdrop outside the glass dissolves (only at the very end)
 uniform vec3 uBgCol;
 uniform vec3 uDotCol;
 uniform float uDark;
@@ -105,17 +105,14 @@ vec3 backdrop(vec2 px) {
   }
   return mix(uBgCol, col, clamp(dotMask, 0.0, 1.0));
 }
-vec3 src(vec2 px, float mixAmt) {
-  vec3 b = backdrop(px);
-  if (mixAmt <= 0.0) return b;
-  return mix(b, texture2D(uHero, clamp(px / uRes, 0.0, 1.0)).rgb, mixAmt);
-}
 
 void main() {
   vec2 px = vec2(vUv.x * uRes.x, (1.0 - vUv.y) * uRes.y);
   float d = scene(px);
   float sh = (1.0 - smoothstep(0.0, 30.0 * uDpr, d)) * (uDark > 0.5 ? 0.38 : 0.08);
-  if (d > max(1.5, uS / uSdfMap.x * 0.6)) { gl_FragColor = vec4(src(px, uHeroOut) * (1.0 - sh), 1.0); return; }
+  // outside the glass: the living backdrop, dissolving at the very end so the page is all that's left
+  vec4 outside = vec4(backdrop(px) * (1.0 - sh), 1.0) * (1.0 - uOut);
+  if (d > max(1.5, uS / uSdfMap.x * 0.6)) { gl_FragColor = outside; return; }
 
   float e = 1.5 * uDpr;
   vec2 g = vec2(scene(px + vec2(e, 0.0)) - scene(px - vec2(e, 0.0)),
@@ -126,31 +123,38 @@ void main() {
   float bevelW = mix(34.0, 7.0, uNW) * uDpr;
   float bevel = 1.0 - clamp(-d / bevelW, 0.0, 1.0);
 
-  // while zooming through, the middle of the glass turns clear so the page reads cleanly
-  float calm = 1.0 - uHeroMix;
-  vec2 sp = px - n * pow(bevel, 1.3) * 58.0 * uDpr - n * (1.0 - bevel) * 10.0 * uDpr * calm;
-  float fr = 0.9 * uDpr * calm;
-  vec3 c = src(sp, uHeroMix) * 0.4
-         + src(sp + vec2(fr, 0.0), uHeroMix) * 0.15 + src(sp - vec2(fr, 0.0), uHeroMix) * 0.15
-         + src(sp + vec2(0.0, fr), uHeroMix) * 0.15 + src(sp - vec2(0.0, fr), uHeroMix) * 0.15;
+  // refraction of the backdrop (drops, and the bevelled rim of the N)
+  vec2 sp = px - n * pow(bevel, 1.3) * 58.0 * uDpr - n * (1.0 - bevel) * 10.0 * uDpr;
+  float fr = 0.9 * uDpr;
+  vec3 c = backdrop(sp) * 0.4
+         + backdrop(sp + vec2(fr, 0.0)) * 0.15 + backdrop(sp - vec2(fr, 0.0)) * 0.15
+         + backdrop(sp + vec2(0.0, fr)) * 0.15 + backdrop(sp - vec2(0.0, fr)) * 0.15;
   vec2 ca = n * pow(bevel, 2.0) * 4.0 * uDpr;
-  c.r = mix(c.r, src(sp + ca, uHeroMix).r, 0.7);
-  c.b = mix(c.b, src(sp - ca, uHeroMix).b, 0.7);
-
-  // the N picks up the logo's own colours, faintly
-  vec4 lc = texture2D(uLogoCol, clamp(logoUv(px), 0.0, 1.0));
+  c.r = mix(c.r, backdrop(sp + ca).r, 0.7);
+  c.b = mix(c.b, backdrop(sp - ca).b, 0.7);
   c = mix(c, vec3(1.0), uDark > 0.5 ? 0.05 : 0.03);
-  c = mix(c, lc.rgb, 0.24 * lc.a * uNW * (1.0 - uHeroMix));
-
   c -= pow(bevel, 2.5) * (uDark > 0.5 ? 0.04 : 0.11);
-  c += pow(bevel, 9.0) * (uDark > 0.5 ? 0.45 : 0.35);
-  c += pow(max(dot(n, normalize(vec2(-0.55, -0.85))), 0.0), 10.0) * pow(bevel, 1.5) * 0.75;
-  c -= pow(max(dot(n, normalize(vec2(0.55, 0.85))), 0.0), 3.0) * pow(bevel, 2.0) * 0.12;
+
+  // once the N has formed its pane is a clear window onto the live page; only the rim stays solid
+  float body = mix(1.0, smoothstep(0.15, 1.0, bevel), uLive);
+  vec4 col = vec4(c * body, body);
+
+  // stained-glass tint in the logo's own colours, laid over whatever shows through
+  vec4 lc = texture2D(uLogoCol, clamp(logoUv(px), 0.0, 1.0));
+  float ta = 0.24 * lc.a * uNW * (1.0 - uClear);
+  col = vec4(lc.rgb * ta, ta) + col * (1.0 - ta);
+
+  // highlights: bright rim, top-left specular, soft shade on the far side
+  float hl = clamp(pow(bevel, 9.0) * (uDark > 0.5 ? 0.45 : 0.35)
+           + pow(max(dot(n, normalize(vec2(-0.55, -0.85))), 0.0), 10.0) * pow(bevel, 1.5) * 0.75, 0.0, 1.0);
+  col = vec4(vec3(hl), hl) + col * (1.0 - hl);
+  float shade = pow(max(dot(n, normalize(vec2(0.55, 0.85))), 0.0), 3.0) * pow(bevel, 2.0) * 0.12;
+  col = vec4(0.0, 0.0, 0.0, shade) + col * (1.0 - shade);
 
   // edge anti-aliasing widens with the zoom so magnified edges stay soft instead of jagged
   float aa = max(1.5, uS / uSdfMap.x * 0.6);
   float a = 1.0 - smoothstep(-aa, aa, d);
-  gl_FragColor = vec4(mix(src(px, uHeroOut) * (1.0 - sh), c, a), 1.0);
+  gl_FragColor = mix(outside, col, a);
 }
 `;
 
@@ -169,23 +173,6 @@ function cssColor(name: string, fallback: string): [number, number, number] {
   ctx.fillRect(0, 0, 1, 1);
   const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
   return [r / 255, g / 255, b / 255];
-}
-
-/** The hero as it will look once the intro is gone, at its viewport position. */
-function drawHero(W: number, H: number, dpr: number) {
-  const c = document.createElement("canvas");
-  c.width = Math.round(W * dpr);
-  c.height = Math.round(H * dpr);
-  const ctx = c.getContext("2d")!;
-  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#18181b";
-  ctx.fillRect(0, 0, c.width, c.height);
-  const hero = document.querySelector<HTMLElement>("main section");
-  if (hero) {
-    const r = hero.getBoundingClientRect();
-    const shot = rasterize(hero, dpr, document.querySelector(".intro-cover") ?? document.createElement("div"));
-    ctx.drawImage(shot, r.left * dpr, r.top * dpr);
-  }
-  return c;
 }
 
 export function IntroReveal() {
@@ -220,7 +207,7 @@ export function IntroReveal() {
       delete html.dataset.intro;
     };
 
-    const gl = canvas.getContext("webgl", { antialias: true, alpha: false });
+    const gl = canvas.getContext("webgl", { antialias: true, alpha: true, premultipliedAlpha: true });
     if (!gl) {
       release();
       return;
@@ -259,8 +246,8 @@ export function IntroReveal() {
     const U = (n: string) => gl.getUniformLocation(prog, n);
     const u = {
       res: U("uRes"), dpr: U("uDpr"), time: U("uTime"), blob: U("uBlob"), blend: U("uBlend"), c: U("uC"), s: U("uS"),
-      anchor: U("uAnchor"), sdfMap: U("uSdfMap"), sdfRange: U("uSdfRange"), nw: U("uNW"), heroMix: U("uHeroMix"), heroOut: U("uHeroOut"),
-      bgCol: U("uBgCol"), dotCol: U("uDotCol"), dark: U("uDark"), sdf: U("uSdf"), logoCol: U("uLogoCol"), hero: U("uHero"),
+      anchor: U("uAnchor"), sdfMap: U("uSdfMap"), sdfRange: U("uSdfRange"), nw: U("uNW"), live: U("uLive"), clear: U("uClear"), out: U("uOut"),
+      bgCol: U("uBgCol"), dotCol: U("uDotCol"), dark: U("uDark"), sdf: U("uSdf"), logoCol: U("uLogoCol"),
     };
     const makeTex = (unit: number, img: TexImageSource) => {
       const t = gl.createTexture();
@@ -290,22 +277,12 @@ export function IntroReveal() {
       sdfTex = makeTex(0, logo.sdf);
     }
     const colTex = makeTex(1, logo.color);
-    const placeholder = document.createElement("canvas");
-    placeholder.width = placeholder.height = 1;
-    let heroTex = makeTex(2, placeholder);
     gl.uniform1i(u.sdf, 0);
     gl.uniform1i(u.logoCol, 1);
-    gl.uniform1i(u.hero, 2);
     gl.uniform4f(u.sdfMap, SDF.k, SDF.pad, SDF.w, SDF.h);
     gl.uniform1f(u.sdfRange, SDF.range);
 
     let W = 0, H = 0, dpr = 1;
-    let heroReady = false;
-    const loadHero = () => {
-      gl.deleteTexture(heroTex);
-      heroTex = makeTex(2, drawHero(W, H, dpr));
-      heroReady = true;
-    };
     const setup = () => {
       // full-screen shader: render at <=1x (0.75x on phones) and let CSS upscale
       dpr = Math.min(window.devicePixelRatio || 1, 1) * (window.innerWidth < 768 ? 0.75 : 1);
@@ -318,7 +295,6 @@ export function IntroReveal() {
       const dot = cssColor("--ink-3", "#9a9aa4");
       gl.uniform3f(u.bgCol, bg[0], bg[1], bg[2]);
       gl.uniform3f(u.dotCol, dot[0], dot[1], dot[2]);
-      if (heroReady) loadHero();
     };
 
     // --- blobs: separate drops of glass spread over the whole screen
@@ -353,7 +329,6 @@ export function IntroReveal() {
     finish.current = end;
 
     const push = (delta: number) => {
-      if (!heroReady) loadHero();
       target = clamp01(target + delta);
       if (target >= 0.93) end();
     };
@@ -428,10 +403,13 @@ export function IntroReveal() {
       gl.uniform1f(u.s, S * dpr);
       gl.uniform2f(u.anchor, ax, ay);
       gl.uniform1f(u.nw, nW);
-      gl.uniform1f(u.heroMix, clamp01(zoom * 2.5));
-      gl.uniform1f(u.heroOut, smooth(0.75, 1, zoom));
+      gl.uniform1f(u.live, smooth(0.6, 1, nW));
+      gl.uniform1f(u.clear, clamp01(zoom * 2.5));
+      gl.uniform1f(u.out, smooth(0.75, 1, zoom));
       gl.uniform1f(u.dark, html.dataset.theme === "dark" ? 1 : 0);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      // the canvas now paints the backdrop itself; drop the cover's solid fill so the glass can see the page
+      if (rootRef.current && !rootRef.current.style.background) rootRef.current.style.background = "transparent";
 
       const hint = clamp01((t - 1.2) / 0.6);
       if (textRef.current) textRef.current.style.opacity = String(hint * Math.max(0, 1 - p * 5));
@@ -458,7 +436,6 @@ export function IntroReveal() {
       html.style.overflow = "";
       gl.deleteTexture(sdfTex);
       gl.deleteTexture(colTex);
-      gl.deleteTexture(heroTex);
       gl.deleteProgram(prog);
       gl.deleteBuffer(buf);
     };

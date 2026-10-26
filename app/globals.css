@@ -447,17 +447,15 @@ body {
   opacity: 0.85;
 }
 
-/* Scroll: glass surfaces settle into focus as they enter the viewport (progressive enhancement) */
+/* Scroll: glass surfaces rise into place as they enter the viewport (progressive enhancement) */
 @keyframes glass-settle {
   from {
     translate: 0 18px;
     scale: 0.97;
-    filter: blur(6px);
   }
   to {
     translate: 0 0;
     scale: 1;
-    filter: none;
   }
 }
 @supports (animation-timeline: view()) {
