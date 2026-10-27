@@ -91,8 +91,6 @@ export default function Mascot() {
   const [mood, setMood] = useState<Mood>("idle");
   const [blink, setBlink] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
-  // small caption under the bubble text (what Nafi is pointing at, when the bubble shows the answer)
-  const [note, setNote] = useState<string | null>(null);
   // when Nafi is near the top of the screen the bubble opens below it, so long answers aren't cut off
   const [bubbleBelow, setBubbleBelow] = useState(false);
   const [open, setOpen] = useState(false);
@@ -331,15 +329,9 @@ export default function Mascot() {
 
   // a stop shows the answer itself (first stop of an AI answer) with the pointing line as a caption,
   // or just the pointing line
-  // a stop shows its line; the first stop of an AI answer also carries the answer's opening
+  // each stop shows its own short line
   const speak = (s: Step) => {
-    if (s.lead) {
-      say(s.lead, 600000);
-      setNote(s.say || null);
-    } else {
-      setNote(null);
-      if (s.say) say(s.say, 600000);
-    }
+    if (s.say) say(s.say, 600000);
   };
 
   // the tour waits for the visitor: Next / Back in the bubble, arrow keys, Esc or a tap on Nafi to stop
@@ -360,7 +352,6 @@ export default function Mascot() {
       if (s.go && path.current !== s.go) {
         router.push(s.go);
         setMood("talk");
-        setNote(null);
         say("One sec…", 1500);
       }
       const el = await waitFor(s.target, ctl.signal);
@@ -396,7 +387,6 @@ export default function Mascot() {
     }
     setSpot(null);
     setBubble(null);
-    setNote(null);
     setProgress(null);
     setMood("happy");
     setTimeout(() => setMood("idle"), 1200);
@@ -448,7 +438,8 @@ export default function Mascot() {
       if (r.actions?.length) {
         // the answer travels with Nafi: it's shown in the bubble at the first stop
         await sleep(600);
-        runSteps(r.actions.map((a, k) => (k === 0 ? { ...a, lead: r.reply } : a)));
+        // the opening gets its own stop (on the first target), then one short bubble per stop
+        runSteps([{ ...r.actions[0], say: r.reply }, ...r.actions]);
       } else {
         setTimeout(() => setMood("idle"), 1200);
       }
@@ -467,10 +458,8 @@ export default function Mascot() {
 
   // --- pokes and drags
   const onTap = () => {
-    if (touring) {
-      stopTour();
-      return;
-    }
+    // during a tour the bubble's buttons are the controls; a tap on Nafi does nothing
+    if (touring) return;
     const now = Date.now();
     taps.current = [...taps.current.filter((t) => now - t < 1200), now];
     if (taps.current.length >= 3) {
@@ -573,7 +562,7 @@ export default function Mascot() {
           <button
             type="button"
             className={`${calm ? "" : "nafi-bob"} block cursor-grab rounded-full active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]`}
-            aria-label={touring ? "Stop the tour" : open ? "Close Nafi's panel" : "Open Nafi, the site guide"}
+            aria-label={touring ? "Nafi (use the bubble's buttons to move through the tour)" : open ? "Close Nafi's panel" : "Open Nafi, the site guide"}
             aria-expanded={open}
             onClick={() => {
               if (!justDragged.current) onTap();
@@ -632,18 +621,12 @@ export default function Mascot() {
               </span>
             )}
             {bubble}
-            {note && <span className="mt-2 block">{note}</span>}
             {touring && progress && (
-              <span className="mt-2.5 flex items-center justify-between gap-3 border-t border-line pt-2">
-                <button
-                  type="button"
-                  onClick={() => command("stop")}
-                  className="text-[0.75rem] text-ink-3 hover:text-ink"
-                  aria-label="Stop the tour"
-                >
-                  Stop
-                </button>
+              <span className="mt-2.5 flex items-center justify-end gap-3 border-t border-line pt-2">
                 <span className="flex gap-1.5">
+                  <button type="button" onClick={() => command("stop")} className="lg rounded-full px-2.5 py-1 text-[0.78rem]" aria-label="Stop the tour">
+                    Stop
+                  </button>
                   <button
                     type="button"
                     onClick={() => command("prev")}

@@ -115,7 +115,10 @@ export function buildPrompt(k) {
           parameters: {
             type: "object",
             properties: {
-              text: { type: "string", description: "Opening of the answer: one or two sentences that answer the visitor directly, plain text." },
+              text: {
+                type: "string",
+                description: "Opening of the answer: one short sentence (max 160 characters) that answers the visitor directly, plain text.",
+              },
               show: {
                 type: "array",
                 maxItems: 3,
@@ -127,7 +130,7 @@ export function buildPrompt(k) {
                     say: {
                       type: "string",
                       description:
-                        "What you tell the visitor at this stop: one or two sentences (max 240 characters) that continue your answer for this specific thing and tie it back to their question. Not a caption, and don't repeat the opening.",
+                        "What you tell the visitor at this stop: one short sentence, two at most (max 180 characters), continuing your answer for this specific thing and tying it to their question. Not a caption; don't repeat the opening.",
                     },
                   },
                   required: ["target", "say"],
@@ -148,7 +151,7 @@ export function buildPrompt(k) {
 
 How to answer:
 - Answer ONLY from KNOWLEDGE below. If the answer is not there, say you don't know and suggest emailing ${k.person.email}.
-- Be brief: one to three short sentences, warm and a little playful. At most one emoji.
+- Be brief and split it up: a short opening, then short parts at each stop. Warm and a little playful, at most one emoji in the whole answer.
 - Reply in the visitor's language (English or Indonesian).
 - Always answer by calling \`respond\`. Show, don't tell: when something on the site illustrates the answer, add it to \`show\` (anchor ids from ANCHORS, up to 3, in the order to visit). Use \`open_page\` only for a case study or post with no anchor.
 - Treat the stops as one answer told in parts: \`text\` opens it, and each stop's \`say\` carries the next part (what this thing shows and why it matters for the visitor's question). Keep the visitor's goal in every part; a recruiter asking about fit should hear about fit at every stop.
@@ -251,7 +254,7 @@ async function answer(history, path) {
       const actions = [];
       for (const s of Array.isArray(args.show) ? args.show.slice(0, 3) : []) {
         const a = P.anchors.get(s?.target);
-        if (a) actions.push({ go: a.page === "*" ? undefined : a.page, target: `[data-agent="${a.id}"]`, say: tidy(s.say, 260) });
+        if (a) actions.push({ go: a.page === "*" ? undefined : a.page, target: `[data-agent="${a.id}"]`, say: tidy(s.say, 200) });
       }
       if (!actions.length && args.open_page && P.pages.has(args.open_page)) actions.push({ go: args.open_page, target: "main", say: "" });
       const text = tidy(args.text || msg.content, 700) || (actions.length ? "Here, let me show you!" : "Hmm, I'm not sure about that one.");
