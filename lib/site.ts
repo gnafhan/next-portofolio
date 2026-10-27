@@ -11,7 +11,7 @@ export const site = {
   location: "Yogyakarta, Indonesia",
   email: "nafhanghifari@gmail.com",
   // self-hosted Plausible on vps-nafhan (dashboard: plausible.catataja.id, site "nafhan.com")
-  analytics: { domain: "nafhan.com", script: "https://analytics.nafhan.com/js/script.outbound-links.js" },
+  analytics: { domain: "nafhan.com", script: "https://analytics.nafhan.com/js/script.js" },
   links: {
     github: "https://github.com/gnafhan",
     linkedin: "https://www.linkedin.com/in/gnafhan",

@@ -6,6 +6,7 @@ import { MotionProvider } from "@/components/motion-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { MascotLoader } from "@/components/mascot/loader";
+import { OutboundTracker } from "@/components/outbound-tracker";
 import { INTRO_GATE } from "@/components/home/intro-gate";
 import { JsonLd, personSchema, websiteSchema } from "@/components/json-ld";
 import { site } from "@/lib/site";
@@ -56,7 +57,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <JsonLd data={[personSchema(), websiteSchema()]} />
         {/* Plausible (self-hosted, cookieless). Production only, so previews and local runs aren't counted. */}
         {process.env.VERCEL_ENV === "production" && (
-          <Script defer data-domain={site.analytics.domain} src={site.analytics.script} strategy="afterInteractive" />
+          <>
+            <Script defer data-domain={site.analytics.domain} src={site.analytics.script} strategy="afterInteractive" />
+            <OutboundTracker />
+          </>
         )}
       </body>
     </html>

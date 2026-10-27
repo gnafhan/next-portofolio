@@ -151,7 +151,8 @@ Entries without an image render as a typeset card.
 
 ## Analytics
 
-Self-hosted Plausible on vps-nafhan (`/var/www/plausible`, shared with catataja.id). The script and
-event endpoint are served on `analytics.nafhan.com` (only `/js/*` and `/api/event` are routed there);
+Self-hosted Plausible on vps-nafhan (`/var/www/plausible`, shared with catataja.id). The script (plain
+`script.js`; outbound clicks come from `components/outbound-tracker.tsx`) and event endpoint are served
+on `analytics.nafhan.com` (only `/js/*` and `/api/event` are routed there);
 the dashboard is at plausible.catataja.id, site `nafhan.com`. The script loads only when
 `VERCEL_ENV=production`, so previews and local runs are not counted. Config: `site.analytics` in `lib/site.ts`.

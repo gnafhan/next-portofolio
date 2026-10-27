@@ -11,7 +11,7 @@ import { Logo } from "../icons";
  * Purely scroll-linked: nothing animates on its own. Placed as the first child of the page
  * container (which must be `relative isolate`); it reads that container's <section>s.
  */
-const STEP = 6; // px of path length between samples
+const STEP = 10; // px of path length between samples
 
 export function ScrollThread() {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -26,6 +26,8 @@ export function ScrollThread() {
     const tip = tipRef.current;
     const box = svg?.parentElement?.parentElement; // the page container
     if (!svg || !track || !draw || !tip || !box) return;
+    // phones: hidden (the gutters are only 8px wide), so don't spend any work on it
+    if (!window.matchMedia("(min-width: 640px)").matches) return;
     const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let total = 0;
@@ -141,18 +143,25 @@ export function ScrollThread() {
     const ro = new ResizeObserver(relayout);
     ro.observe(box);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", relayout);
+    // phones fire resize whenever the address bar shows or hides; only a width change moves the path
+    let lastW = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      relayout();
+    };
+    window.addEventListener("resize", onResize);
     return () => {
       ro.disconnect();
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", relayout);
+      window.removeEventListener("resize", onResize);
       cancelAnimationFrame(pending);
     };
   }, []);
 
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
       <svg ref={svgRef} className="absolute top-0 overflow-visible">
         <path ref={trackRef} className="fill-none stroke-[var(--line-strong)]" strokeWidth={1.25} strokeDasharray="2 7" strokeLinecap="round" />
         <path ref={drawRef} className="fill-none stroke-[var(--accent)]" strokeWidth={2} strokeLinecap="round" opacity={0.75} />
