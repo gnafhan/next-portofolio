@@ -114,6 +114,9 @@ export default function Mascot() {
     return { w: 360, h: 460 };
   });
   const [progress, setProgress] = useState<{ i: number; n: number } | null>(null);
+  // tours advance by themselves (a ring fills around Next) until the visitor goes Back
+  const [auto, setAuto] = useState(true);
+  const [stepReady, setStepReady] = useState(false);
   const [thinkingLine, setThinkingLine] = useState(0);
 
   const home = useRef({ x: start.x, y: start.y });
@@ -336,7 +339,12 @@ export default function Mascot() {
 
   // the tour waits for the visitor: Next / Back in the bubble, arrow keys, Esc or a tap on Nafi to stop
   const nav = useRef<((cmd: "next" | "prev" | "stop") => void) | null>(null);
-  const command = (cmd: "next" | "prev" | "stop") => nav.current?.(cmd);
+  const command = (cmd: "next" | "prev" | "stop") => {
+    if (cmd === "prev") setAuto(false);
+    nav.current?.(cmd);
+  };
+  // reading time for a stop, used as the length of the auto-advance ring
+  const stepMs = (text: string) => Math.min(12000, Math.max(4000, 2500 + text.length * 45));
 
   const runSteps = async (steps: Step[]) => {
     abort.current?.abort();
@@ -344,10 +352,12 @@ export default function Mascot() {
     abort.current = ctl;
     setTouring(true);
     setOpen(false);
+    setAuto(!calm);
     let i = 0;
     let dir: 1 | -1 = 1;
     while (i >= 0 && i < steps.length && !ctl.signal.aborted) {
       const s = steps[i];
+      setStepReady(false);
       setProgress({ i: i + 1, n: steps.length });
       if (s.go && path.current !== s.go) {
         router.push(s.go);
@@ -375,6 +385,7 @@ export default function Mascot() {
         setMood("point");
       }
       speak(s);
+      setStepReady(true);
       const cmd = await new Promise<"next" | "prev" | "stop">((resolve) => {
         nav.current = resolve;
         ctl.signal.addEventListener("abort", () => resolve("stop"), { once: true });
@@ -605,6 +616,7 @@ export default function Mascot() {
               touring || (bubble?.length ?? 0) > 90 ? "max-w-[min(320px,calc(100vw-40px))]" : "max-w-[240px]"
             } rounded-2xl px-3 py-2 text-[0.85rem] leading-snug ${bubbleLeft ? "right-0" : "left-0"}`}
             role="status"
+            data-nafi-bubble=""
             // the bubble's buttons must not start a drag or count as a tap on Nafi
             onPointerDown={(e) => e.stopPropagation()}
           >
@@ -635,9 +647,36 @@ export default function Mascot() {
                   >
                     ‹ Back
                   </button>
-                  <button type="button" onClick={() => command("next")} className="btn-primary rounded-full px-3 py-1 text-[0.78rem] font-medium" autoFocus>
-                    {progress.i === progress.n ? "Done" : "Next ›"}
-                  </button>
+                  <span className="relative inline-flex">
+                    <button
+                      type="button"
+                      onClick={() => command("next")}
+                      className="btn-primary h-7 w-[72px] rounded-full text-[0.78rem] font-medium"
+                      autoFocus
+                    >
+                      {progress.i === progress.n ? "Done" : "Next ›"}
+                    </button>
+                    {/* auto-advance timer: a ring fills around Next; when it closes, Nafi moves on */}
+                    {auto && stepReady && bubble && (
+                      <svg className="pointer-events-none absolute -inset-[3px] h-[34px] w-[78px] overflow-visible" viewBox="0 0 78 34" aria-hidden>
+                        <rect x="1" y="1" width="76" height="32" rx="16" pathLength={100} className="fill-none stroke-[var(--line-strong)]" strokeWidth="2" />
+                        <rect
+                          key={`${progress.i}-${bubble}`}
+                          x="1"
+                          y="1"
+                          width="76"
+                          height="32"
+                          rx="16"
+                          pathLength={100}
+                          className="nafi-ring fill-none stroke-[var(--accent)]"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          style={{ animationDuration: `${stepMs(bubble)}ms` }}
+                          onAnimationEnd={() => command("next")}
+                        />
+                      </svg>
+                    )}
+                  </span>
                 </span>
               </span>
             )}

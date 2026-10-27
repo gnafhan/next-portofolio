@@ -584,3 +584,18 @@ body {
     animation: none;
   }
 }
+
+/* Nafi's auto-advance ring around Next: drawn as time passes; hovering the bubble pauses it */
+.nafi-ring {
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: 100;
+  animation-name: nafi-ring;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+[data-nafi-bubble]:hover .nafi-ring {
+  animation-play-state: paused;
+}
+@keyframes nafi-ring {
+  to { stroke-dashoffset: 0; }
+}
