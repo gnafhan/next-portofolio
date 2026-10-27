@@ -52,7 +52,7 @@ export function ToolBloom() {
   }, [calm, enter]);
 
   return (
-    <ul className="pointer-events-none absolute left-1/2 top-[40%] z-0 scale-[0.79] sm:scale-100" aria-label="Tools I build with">
+    <ul className="pointer-events-none absolute left-1/2 top-[40%] z-0 scale-[0.6] sm:scale-100" aria-label="Tools I build with">
       {TOOLS.map((t, i) => (
         <Tool key={t.name} tool={t} i={i} p={p} />
       ))}
