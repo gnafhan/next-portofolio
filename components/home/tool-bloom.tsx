@@ -6,24 +6,24 @@ import { animate, useMotionValue, useReducedMotion, useScroll, useSpring, useTra
 import type { IconType } from "react-icons";
 import {
   SiApacheairflow,
-  SiClaude,
   SiDocker,
   SiFastapi,
   SiGooglecloud,
   SiGooglegemini,
-  SiHuggingface,
   SiKubernetes,
-  SiLanggraph,
+  SiMistralai,
+  SiMlflow,
   SiPytorch,
   SiTerraform,
+  SiVllm,
 } from "react-icons/si";
 
 // final offsets from the portrait's head (px at the 380px desktop size), clear of the two glass cards
 const TOOLS: { name: string; Icon: IconType; color: string; x: number; y: number; r: number }[] = [
-  { name: "LangGraph", Icon: SiLanggraph, color: "var(--ink)", x: -235, y: -60, r: -16 },
-  { name: "Claude", Icon: SiClaude, color: "#D97757", x: -175, y: -165, r: 12 },
+  { name: "Mistral", Icon: SiMistralai, color: "#FA520F", x: -235, y: -60, r: -16 },
+  { name: "vLLM", Icon: SiVllm, color: "#30A2FF", x: -175, y: -165, r: 12 },
   { name: "Gemini", Icon: SiGooglegemini, color: "#8E75B2", x: -75, y: -220, r: -10 },
-  { name: "Hugging Face", Icon: SiHuggingface, color: "#FFB000", x: 40, y: -232, r: 14 },
+  { name: "MLflow", Icon: SiMlflow, color: "#0194E2", x: 40, y: -232, r: 14 },
   { name: "PyTorch", Icon: SiPytorch, color: "#EE4C2C", x: -250, y: 50, r: 18 },
   { name: "Terraform", Icon: SiTerraform, color: "#844FBA", x: 235, y: -85, r: -14 },
   { name: "Kubernetes", Icon: SiKubernetes, color: "#326CE5", x: 255, y: 25, r: 16 },

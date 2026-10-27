@@ -2,41 +2,30 @@
 
 import * as m from "motion/react-m";
 import type { IconType } from "react-icons";
-import {
-  SiAnthropic,
-  SiDocker,
-  SiFastapi,
-  SiGo,
-  SiGooglegemini,
-  SiLangchain,
-  SiNextdotjs,
-  SiPostgresql,
-  SiPython,
-  SiReact,
-  SiTerraform,
-  SiTypescript,
-} from "react-icons/si";
+import { SiClaude, SiHuggingface, SiLangchain, SiLanggraph, SiOllama, SiQdrant, SiSupabase, SiWeightsandbiases } from "react-icons/si";
+import { AiCohere, AiLangfuse, AiLangSmith, AiLlamaIndex } from "../ai-logos";
 
-// brand: hover colour. Monochrome brands (Next.js, LangChain) fall back to the text colour.
+// The AI-engineering toolbox: agents, models, retrieval, and evals/observability.
+// brand: hover colour; monochrome brands fall back to the text colour.
 const STACK: { name: string; Icon: IconType; brand: string }[] = [
-  { name: "Python", brand: "#3776AB", Icon: SiPython },
-  { name: "TypeScript", brand: "#3178C6", Icon: SiTypescript },
-  { name: "Next.js", brand: "var(--ink)", Icon: SiNextdotjs },
-  { name: "React", brand: "#58C4DC", Icon: SiReact },
-  { name: "FastAPI", brand: "#009688", Icon: SiFastapi },
-  { name: "Go", brand: "#00ADD8", Icon: SiGo },
-  { name: "PostgreSQL", brand: "#4169E1", Icon: SiPostgresql },
-  { name: "LangGraph", brand: "var(--ink)", Icon: SiLangchain },
-  { name: "Claude", brand: "#D97757", Icon: SiAnthropic },
-  { name: "Gemini", brand: "#8E75B2", Icon: SiGooglegemini },
-  { name: "Docker", brand: "#2496ED", Icon: SiDocker },
-  { name: "Terraform", brand: "#844FBA", Icon: SiTerraform },
+  { name: "LangGraph", brand: "var(--ink)", Icon: SiLanggraph },
+  { name: "LangChain", brand: "#1C3C3C", Icon: SiLangchain },
+  { name: "LlamaIndex", brand: "var(--ink)", Icon: AiLlamaIndex },
+  { name: "Claude", brand: "#D97757", Icon: SiClaude },
+  { name: "Cohere", brand: "#39594D", Icon: AiCohere },
+  { name: "Hugging Face", brand: "#FFB000", Icon: SiHuggingface },
+  { name: "Ollama", brand: "var(--ink)", Icon: SiOllama },
+  { name: "Supabase", brand: "#3ECF8E", Icon: SiSupabase },
+  { name: "Qdrant", brand: "#DC244C", Icon: SiQdrant },
+  { name: "LangSmith", brand: "#1C3C3C", Icon: AiLangSmith },
+  { name: "Langfuse", brand: "#FF5D5F", Icon: AiLangfuse },
+  { name: "Weights & Biases", brand: "#FFBE00", Icon: SiWeightsandbiases },
 ];
 
 /** Floating tech-stack icons (the bobbing row from the 2024 site): hover for colour, drag to toss. */
 export function TechStack() {
   return (
-    <ul className="grid grid-cols-4 place-items-center gap-y-10 sm:grid-cols-6 lg:grid-cols-12" aria-label="Tech I work with">
+    <ul className="grid grid-cols-4 place-items-center gap-y-10 sm:grid-cols-6 lg:grid-cols-12" aria-label="AI engineering tools I work with">
       {STACK.map(({ name, Icon, brand }, i) => (
         <li key={name} className="group flex flex-col items-center gap-2" title={name}>
           <span style={{ animation: `bob 3.2s ease-in-out ${(i % 4) * -0.8}s infinite` }}>
