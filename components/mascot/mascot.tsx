@@ -91,6 +91,10 @@ export default function Mascot() {
   const [mood, setMood] = useState<Mood>("idle");
   const [blink, setBlink] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
+  // small caption under the bubble text (what Nafi is pointing at, when the bubble shows the answer)
+  const [note, setNote] = useState<string | null>(null);
+  // when Nafi is near the top of the screen the bubble opens below it, so long answers aren't cut off
+  const [bubbleBelow, setBubbleBelow] = useState(false);
   const [open, setOpen] = useState(false);
   const [spot, setSpot] = useState<Element | null>(null);
   const [touring, setTouring] = useState(false);
@@ -136,6 +140,7 @@ export default function Mascot() {
       const fx = left ? EDGE : W - SIZE - EDGE;
       const fy = clamp(ty, 76, H - SIZE - EDGE);
       setBubbleLeft(!left);
+      setBubbleBelow(fy < 260);
       animate(x, fx, spring);
       animate(y, fy, spring);
       if (save) {
@@ -314,6 +319,7 @@ export default function Mascot() {
     const ty = clamp(r.top + Math.min(r.height, 220) / 2 - SIZE / 2, 76, H - SIZE - 8);
     setPointLeft(right);
     setBubbleLeft(tx > W / 2);
+    setBubbleBelow(ty < 260);
     if (calm) {
       x.set(tx);
       y.set(ty);
@@ -322,6 +328,19 @@ export default function Mascot() {
       animate(y, ty, { type: "spring", stiffness: 120, damping: 18 });
     }
   };
+
+  // a stop shows the answer itself (first stop of an AI answer) with the pointing line as a caption,
+  // or just the pointing line
+  const speak = (s: Step) => {
+    if (s.lead) {
+      say(s.lead, 120000);
+      setNote(s.say || null);
+    } else {
+      setNote(null);
+      if (s.say) say(s.say, 60000);
+    }
+  };
+  const readTime = (s: Step) => Math.min(16000, 2000 + ((s.lead?.length ?? 0) + s.say.length) * 38);
 
   const runSteps = async (steps: Step[]) => {
     abort.current?.abort();
@@ -335,6 +354,7 @@ export default function Mascot() {
       if (s.go && path.current !== s.go) {
         router.push(s.go);
         setMood("talk");
+        setNote(null);
         say("One sec…", 1500);
       }
       const el = await waitFor(s.target, ctl.signal);
@@ -343,8 +363,8 @@ export default function Mascot() {
         // a whole page (case study, post): no spotlight, just arrive and talk
         window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
         setMood("happy");
-        if (s.say) say(s.say, 60000);
-        await sleep(s.say ? 2200 + s.say.length * 32 : 1200);
+        speak(s);
+        await sleep(readTime(s));
         continue;
       }
       el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
@@ -353,11 +373,12 @@ export default function Mascot() {
       setSpot(el);
       flyTo(el);
       setMood("point");
-      if (s.say) say(s.say, 60000);
-      await sleep(s.hold ?? 2600 + s.say.length * 32);
+      speak(s);
+      await sleep(s.hold ?? readTime(s));
     }
     setSpot(null);
     setBubble(null);
+    setNote(null);
     setProgress(null);
     setMood("happy");
     setTimeout(() => setMood("idle"), 1200);
@@ -394,9 +415,9 @@ export default function Mascot() {
       setMsgs((ms) => [...ms, { from: "nafi", text: r.reply }]);
       setMood("happy");
       if (r.actions?.length) {
-        // give the visitor time to read the answer before Nafi sets off
-        await sleep(Math.min(6000, 1500 + r.reply.length * 30));
-        runSteps(r.actions);
+        // the answer travels with Nafi: it's shown in the bubble at the first stop
+        await sleep(600);
+        runSteps(r.actions.map((a, k) => (k === 0 ? { ...a, lead: r.reply } : a)));
       } else {
         setTimeout(() => setMood("idle"), 1200);
       }
@@ -560,7 +581,7 @@ export default function Mascot() {
             key={bubble}
             initial={{ opacity: 0, y: 6, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            className={`lg-sm pointer-events-none absolute bottom-[calc(100%+6px)] w-max max-w-[240px] rounded-2xl px-3 py-2 text-[0.85rem] leading-snug ${
+            className={`lg-sm pointer-events-none absolute ${bubbleBelow ? "top-[calc(100%+6px)]" : "bottom-[calc(100%+6px)]"} w-max ${note ? "max-w-[min(320px,calc(100vw-40px))]" : "max-w-[240px]"} rounded-2xl px-3 py-2 text-[0.85rem] leading-snug ${
               bubbleLeft ? "right-0" : "left-0"
             }`}
             role="status"
@@ -578,6 +599,7 @@ export default function Mascot() {
               </span>
             )}
             {bubble}
+            {note && <span className="mt-2 block border-t border-line pt-1.5 text-[0.8rem] text-ink-2">{note}</span>}
             {touring && <span className="mt-1 block text-[0.75rem] text-ink-3">Tap me to stop</span>}
           </m.div>
         )}
@@ -631,7 +653,7 @@ export default function Mascot() {
               </div>
             )}
           </div>
-          {msgs.length <= 3 && (
+          {!msgs.some((ms) => ms.from === "you") && (
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               {TOURS.map((t) => (
                 <button key={t.id} type="button" onClick={() => startTour(t.id)} className="lg rounded-full px-3 py-1.5 text-[0.82rem]">

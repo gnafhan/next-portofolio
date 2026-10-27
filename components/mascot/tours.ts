@@ -3,7 +3,8 @@
  * element (by its data-agent anchor), spotlights it and says a line. The AI agent will later emit
  * the same steps, so the runner below is shared.
  */
-export type Step = { go?: string; target: string; say: string; hold?: number };
+/** `lead`: the full answer, shown in the bubble at the first stop so the pointing makes sense. */
+export type Step = { go?: string; target: string; say: string; hold?: number; lead?: string };
 export type Tour = { id: string; label: string; intro: string; steps: Step[] };
 
 const a = (id: string) => `[data-agent="${id}"]`;
