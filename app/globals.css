@@ -75,6 +75,12 @@ body {
   color: var(--ink);
 }
 
+/* nothing may widen the page sideways (decorations near the edges on phones) */
+html,
+body {
+  overflow-x: clip;
+}
+
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;

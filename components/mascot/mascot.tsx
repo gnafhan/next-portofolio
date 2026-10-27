@@ -116,6 +116,10 @@ export default function Mascot() {
   const [progress, setProgress] = useState<{ i: number; n: number } | null>(null);
   // tours advance by themselves (a ring fills around Next) until the visitor goes Back
   const [auto, setAuto] = useState(true);
+  // phones: the tour's bubble becomes a sheet along the bottom with Nafi sitting on it
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const sheet = touring && isMobile;
   const [stepReady, setStepReady] = useState(false);
   const [thinkingLine, setThinkingLine] = useState(0);
 
@@ -161,6 +165,12 @@ export default function Mascot() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [x, y, settle]);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   // --- eyes follow the cursor, blink, doze off when nothing happens
   useEffect(() => {
@@ -297,6 +307,23 @@ export default function Mascot() {
     window.addEventListener("pointerup", up);
   };
 
+  // phones: while the sheet is up, Nafi perches on its top-right corner
+  useEffect(() => {
+    if (!sheet) return;
+    const el = sheetRef.current;
+    const perch = () => {
+      const h = sheetRef.current?.getBoundingClientRect().height ?? 160;
+      setBubbleBelow(false);
+      animate(x, window.innerWidth - SIZE - 14, spring);
+      animate(y, window.innerHeight - h - 12 - SIZE + 14, spring);
+    };
+    perch();
+    if (!el) return;
+    const ro = new ResizeObserver(perch);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [sheet, bubble, x, y]);
+
   // keep the newest message in view
   useEffect(() => {
     const el = listRef.current;
@@ -312,6 +339,7 @@ export default function Mascot() {
 
   // --- tours: change page, scroll, spotlight, fly next to the thing, talk
   const flyTo = (el: Element) => {
+    if (isMobile) return; // on phones Nafi sits on the bottom sheet instead
     const r = el.getBoundingClientRect();
     const W = window.innerWidth;
     const H = window.innerHeight;
@@ -330,8 +358,6 @@ export default function Mascot() {
     }
   };
 
-  // a stop shows the answer itself (first stop of an AI answer) with the pointing line as a caption,
-  // or just the pointing line
   // each stop shows its own short line
   const speak = (s: Step) => {
     if (s.say) say(s.say, 600000);
@@ -377,7 +403,12 @@ export default function Mascot() {
         window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
         setMood("happy");
       } else {
-        el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
+        if (isMobile) {
+          // phones: bring the target just under the header, above the sheet at the bottom
+          window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 84, behavior: calm ? "auto" : "smooth" });
+        } else {
+          el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
+        }
         await sleep(calm ? 100 : 750);
         if (ctl.signal.aborted) break;
         setSpot(el);
@@ -554,72 +585,8 @@ export default function Mascot() {
     );
   }
 
-  return (
+  const bubbleContent = (
     <>
-      <Spotlight target={spot} />
-      <m.div
-        className="nafi-root group fixed left-0 top-0 z-[50] touch-none select-none"
-        style={{ x, y, width: SIZE, height: SIZE }}
-        drag
-        dragMomentum={false}
-        dragElastic={0}
-        onDragStart={onDragStart}
-        onDrag={onDrag}
-        onDragEnd={onDragEnd}
-        onHoverStart={() => moodRef.current === "idle" && setMood("hover")}
-        onHoverEnd={() => moodRef.current === "hover" && setMood("idle")}
-      >
-        <m.div style={{ rotate: tilt, scaleX, scaleY, transformOrigin: "50% 90%" }}>
-          <button
-            type="button"
-            className={`${calm ? "" : "nafi-bob"} block cursor-grab rounded-full active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]`}
-            aria-label={touring ? "Nafi (use the bubble's buttons to move through the tour)" : open ? "Close Nafi's panel" : "Open Nafi, the site guide"}
-            aria-expanded={open}
-            onClick={() => {
-              if (!justDragged.current) onTap();
-            }}
-          >
-            <NafiFace mood={mood} blink={blink} px={px} py={py} pointLeft={pointLeft} />
-          </button>
-        </m.div>
-
-        {/* thinking orb above Nafi's head */}
-        {busy && (
-          <m.span initial={{ opacity: 0, y: 6, scale: 0.6 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2">
-            <ThinkingOrb size={22} />
-          </m.span>
-        )}
-
-        {/* hide */}
-        {!touring && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              hide();
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-            className="lg absolute -top-1 right-0 flex size-5 items-center justify-center rounded-full text-ink-3 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-            aria-label="Hide Nafi"
-          >
-            <X size={11} aria-hidden />
-          </button>
-        )}
-
-        {/* speech bubble */}
-        {bubble && (
-          <m.div
-            key={bubble}
-            initial={{ opacity: 0, y: 6, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            className={`lg-sm absolute ${touring ? "pointer-events-auto" : "pointer-events-none"} ${bubbleBelow ? "top-[calc(100%+6px)]" : "bottom-[calc(100%+6px)]"} w-max ${
-              touring || (bubble?.length ?? 0) > 90 ? "max-w-[min(320px,calc(100vw-40px))]" : "max-w-[240px]"
-            } rounded-2xl px-3 py-2 text-[0.85rem] leading-snug ${bubbleLeft ? "right-0" : "left-0"}`}
-            role="status"
-            data-nafi-bubble=""
-            // the bubble's buttons must not start a drag or count as a tap on Nafi
-            onPointerDown={(e) => e.stopPropagation()}
-          >
             {progress && progress.n > 1 && (
               <span className="mb-1.5 flex items-center gap-2">
                 <span className="lg-accent rounded-full px-1.5 py-px text-[0.7rem] font-medium tabular-nums">
@@ -680,9 +647,96 @@ export default function Mascot() {
                 </span>
               </span>
             )}
+    </>
+  );
+
+  return (
+    <>
+      <Spotlight target={spot} />
+      <m.div
+        className="nafi-root group fixed left-0 top-0 z-[50] touch-none select-none"
+        style={{ x, y, width: SIZE, height: SIZE }}
+        drag
+        dragMomentum={false}
+        dragElastic={0}
+        onDragStart={onDragStart}
+        onDrag={onDrag}
+        onDragEnd={onDragEnd}
+        onHoverStart={() => moodRef.current === "idle" && setMood("hover")}
+        onHoverEnd={() => moodRef.current === "hover" && setMood("idle")}
+      >
+        <m.div style={{ rotate: tilt, scaleX, scaleY, transformOrigin: "50% 90%" }}>
+          <button
+            type="button"
+            className={`${calm ? "" : "nafi-bob"} block cursor-grab rounded-full active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]`}
+            aria-label={touring ? "Nafi (use the bubble's buttons to move through the tour)" : open ? "Close Nafi's panel" : "Open Nafi, the site guide"}
+            aria-expanded={open}
+            onClick={() => {
+              if (!justDragged.current) onTap();
+            }}
+          >
+            <span className="block origin-bottom scale-[0.82] sm:scale-100">
+              <NafiFace mood={mood} blink={blink} px={px} py={py} pointLeft={pointLeft} />
+            </span>
+          </button>
+        </m.div>
+
+        {/* thinking orb above Nafi's head */}
+        {busy && (
+          <m.span initial={{ opacity: 0, y: 6, scale: 0.6 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2">
+            <ThinkingOrb size={22} />
+          </m.span>
+        )}
+
+        {/* hide */}
+        {!touring && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              hide();
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            className="lg absolute -top-1 right-0 flex size-5 items-center justify-center rounded-full text-ink-3 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+            aria-label="Hide Nafi"
+          >
+            <X size={11} aria-hidden />
+          </button>
+        )}
+
+        {/* speech bubble (on phones during a tour it's the sheet below instead) */}
+        {bubble && !sheet && (
+          <m.div
+            key={bubble}
+            initial={{ opacity: 0, y: 6, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className={`lg-sm absolute ${touring ? "pointer-events-auto" : "pointer-events-none"} ${bubbleBelow ? "top-[calc(100%+6px)]" : "bottom-[calc(100%+6px)]"} w-max ${
+              touring || (bubble?.length ?? 0) > 90 ? "max-w-[min(320px,calc(100vw-40px))]" : "max-w-[240px]"
+            } rounded-2xl px-3 py-2 text-[0.85rem] leading-snug ${bubbleLeft ? "right-0" : "left-0"}`}
+            role="status"
+            data-nafi-bubble=""
+            // the bubble's buttons must not start a drag or count as a tap on Nafi
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            {bubbleContent}
           </m.div>
         )}
       </m.div>
+
+      {/* phones: the tour's bubble as a sheet along the bottom of the screen */}
+      {bubble && sheet && (
+        <m.div
+          ref={sheetRef}
+          key={bubble}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="lg-sm fixed inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] z-[51] max-h-[45vh] overflow-y-auto rounded-2xl px-4 py-3 text-[0.92rem] leading-snug"
+          role="status"
+          data-nafi-bubble=""
+        >
+          {bubbleContent}
+        </m.div>
+      )}
 
       {/* chat panel */}
       {open && (
