@@ -1,0 +1,74 @@
+---
+title: "CatatAja"
+summary: "A personal finance assistant on WhatsApp. Type, snap a receipt or send a voice note; an LLM understands it and a deterministic ledger records it."
+role: "Founder & lead engineer"
+period: "2026"
+stack: ["Python", "FastAPI", "LangGraph", "PostgreSQL", "pgvector", "Gemini", "Redis", "React"]
+icon: "wallet"
+order: 1
+featured: true
+links: []
+---
+
+## The problem
+
+Most people stop tracking their money for a boring reason: typing every expense into an app is tedious. Chat is different. Sending "lunch 25k" to a contact you already have open takes two seconds.
+
+So the idea was simple. Let people record expenses and income in WhatsApp, by text, receipt photo or voice note, and give them a web dashboard for the bigger picture.
+
+The hard part is that a language model is a bad bookkeeper. It is great at reading "bought coffee and bread, 40k total" and very good at sounding sure. It is not something you want computing a balance.
+
+## What I built
+
+CatatAja is a WhatsApp-first backend in FastAPI with LangGraph orchestration, plus a React dashboard.
+
+The agent's job is understanding: what did the person mean, which tool should run, how should the reply read. Everything that touches money lives in plain service code: ledger writes, balances, plan limits, idempotency.
+
+Gemini handles receipt photos and voice notes directly, so the first version didn't need a separate OCR or speech service, or a heavy task queue. The dashboard adds budgets, custom categories, an Excel export with live formulas, and login through a one-time link sent over WhatsApp, so nobody needs a password.
+
+<Figure title="One message, end to end" sub="The model reads and routes. Code does the money." caption="Every step that changes a number is deterministic; the LLM only decides what the user meant.">
+  <Pipeline stages={[
+    { label: "WhatsApp", note: "the user types", token: "coffee & bread 40k" },
+    { label: "Model", note: "reads the intent", token: "2 expenses" },
+    { label: "Ledger code", note: "does the math", token: "Coffee 25k · Bread 15k" },
+    { label: "Database", note: "one transaction", token: "saved ✓" },
+  ]} />
+</Figure>
+
+## Decisions that mattered
+
+**1. Don't let the model do the money math.** The model routes and summarizes. Service code writes the ledger and computes every total. A wrong category is annoying; a wrong balance means nobody trusts the app again. Keeping arithmetic out of the model made the dangerous failures impossible instead of just unlikely.
+
+**2. Native tool calling plus vector search for categories.** The first agent used hand-written handlers for each kind of request. In v2 I moved to native tool calling and added pgvector to match Indonesian transaction descriptions against category embeddings. The model still got some things confidently wrong. Income was sometimes saved as an expense, with full confidence. So I added a plain keyword check after the model that flips a mismatched type, and separate query templates for income so the two never mix.
+
+**3. A QA harness that talks to the bot like a person.** Regressions kept showing up only after real conversations hit them. I built a simulation suite: 16 personas, 13 multi-turn scenarios, and LLM judges that score each turn, the whole workflow, and what actually landed in the database. Single runs are noisy, so the PR gate compares against a rolling median baseline instead of a fixed threshold. A critical failure opens a tagged issue on its own.
+
+<Figure title="Three judges before a merge" sub="Simulated users run against a staging build on every PR" caption="The judges also check what landed in the database, so a bug that reads fine in chat still fails the gate.">
+  <Layers
+    top="a change to the agent"
+    bottom="merged to main"
+    layers={[
+      { label: "turn judge: was each reply right?" },
+      { label: "workflow judge: did the task finish?" },
+      { label: "DB check: is the data correct?" },
+    ]}
+    items={[
+      { at: 0.14, label: "wrong reply", blockedBy: 0 },
+      { at: 0.36, label: "stuck flow", blockedBy: 1 },
+      { at: 0.6, label: "good change" },
+      { at: 0.84, label: "looks fine, wrong row", blockedBy: 2 },
+    ]}
+  />
+</Figure>
+
+**4. Fail safely when the model provider rate-limits you.** During 429 storms, retries and half-finished tool calls created ghost records. I moved to a model tier with dedicated quota and a cross-region failover pool, benchmarked the regions, and put the one that held up best under contention first. The most frequent simple message type skips the model entirely through a regex fast path. When the model returns a malformed tool call, the engine retries without tools, falls back to a read-only answer, and finally to a friendly "try again" message. It never guesses a write.
+
+**5. Never let the model hand out a link it made up.** When a renewal tool failed, the model once replied with a payment link that didn't exist. The fix had two parts. An output guard now drops any reply containing a URL that isn't from a known first-party host or returned by a tool. Later I removed payment-link generation from the model's tools completely. Upgrades now go through a single link built by code, with no LLM in that path.
+
+## What I learned
+
+<Callout type="lesson">The model should decide what the user meant. Code should decide what happens to their money.</Callout>
+
+Most of the real work was the boring edge around the model. Webhooks get replayed for hours after a restart, so the gateway drops anything older than ten minutes instead of answering day-old messages. Deploys over SSH from CI failed whenever the network between runner and server dropped packets, so I switched to a pull model: CI sends an HMAC-signed webhook, and the server pulls and restarts itself.
+
+None of that is clever. It is what made an LLM product behave like software you can rely on.

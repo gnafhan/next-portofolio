@@ -1,0 +1,54 @@
+# Nafi agent on vps-nafhan (deployed to /root/nafhan-agent, secrets in .env next to this file).
+#   agent.nafhan.com -> Traefik (TLS, per-IP rate limit, 16 KB body cap) -> agent -> 9router (ai_internal)
+#   Redis keeps rate-limit counters and anonymised transcripts (7 days), capped at 48 MB.
+# Deploy: see README.md in this folder.
+services:
+  agent:
+    build: .
+    image: nafhan-agent:latest
+    container_name: nafhan-agent
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      REDIS_URL: redis://nafhan-agent-redis:6379
+      PORT: "8080"
+    depends_on:
+      - redis
+    networks:
+      - traefik_network
+      - ai_internal
+      - nafi_internal
+    mem_limit: 192m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_network"
+      - "traefik.http.routers.nafhan-agent.rule=Host(`agent.nafhan.com`)"
+      - "traefik.http.routers.nafhan-agent.entrypoints=websecure"
+      - "traefik.http.routers.nafhan-agent.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.nafhan-agent.middlewares=nafhan-agent-rl@docker,nafhan-agent-body@docker"
+      - "traefik.http.services.nafhan-agent.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.nafhan-agent-rl.ratelimit.average=30"
+      - "traefik.http.middlewares.nafhan-agent-rl.ratelimit.period=1m"
+      - "traefik.http.middlewares.nafhan-agent-rl.ratelimit.burst=20"
+      - "traefik.http.middlewares.nafhan-agent-body.buffering.maxRequestBodyBytes=16384"
+
+  redis:
+    image: redis:7-alpine
+    container_name: nafhan-agent-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--save", "", "--maxmemory", "48mb", "--maxmemory-policy", "volatile-lru"]
+    volumes:
+      - ./redis:/data
+    networks:
+      - nafi_internal
+    mem_limit: 80m
+
+networks:
+  traefik_network:
+    external: true
+    name: traefik_network
+  ai_internal:
+    external: true
+    name: ai_internal
+  nafi_internal:
+    name: nafi_internal

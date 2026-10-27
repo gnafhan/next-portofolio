@@ -1,0 +1,56 @@
+---
+title: "NutriPlate"
+summary: "An AI nutrition tracker: photograph a meal, get a nutrition estimate, and follow calories and weight in an installable web app."
+role: "Co-founder & lead software engineer"
+period: "2024–2026"
+stack: ["Go", "Fiber", "PostgreSQL", "Next.js", "PWA", "Docker", "Traefik", "Genkit"]
+icon: "plate"
+order: 4
+featured: false
+links: []
+---
+
+## The problem
+
+Tracking what you eat works, but almost nobody keeps doing it. Logging a meal by hand means finding each ingredient, guessing portions, and typing it all in, three times a day.
+
+NutriPlate tries to remove that step. You take a photo of your plate, the app estimates the nutrition, and the meal goes into your log. Around that sit calorie and weight tracking, an onboarding flow that sets your targets, and a nutrition chatbot.
+
+I co-founded NutriPlate and led the engineering. The interesting part, looking back, is less any single feature and more how the system had to change shape as it grew.
+
+## What I built
+
+The first version ran on Next.js and Firebase. Later I redesigned it around a Go backend. That rebuild grew out of NutriSmart, our entry for the GEMASTIK national competition: a Next.js PWA in front, a Go REST API on PostgreSQL behind it, Midtrans for payments, everything in Docker. That version added AI meal scanning, calorie and weight dashboards, and a multi-agent nutrition chatbot.
+
+In 2026 I consolidated the backend, the admin panel and the consumer app into one monorepo. That version brought a redesigned eight-step onboarding with a BMR calculator, AI scanning through Genkit and the OpenAI API with schema validation on the results, and an admin side for monitoring scan activity and auditing meal history.
+
+<Figure title="From plate to log" sub="The scanning path, simplified" caption="The model gives an estimate; the schema check and the admin monitor decide whether it is safe to keep.">
+  <Pipeline stages={[
+    { label: "Photo", note: "from the PWA", token: "meal photo" },
+    { label: "Vision model", note: "structured estimate", token: "rice, egg, greens" },
+    { label: "Schema check", note: "rejects bad output", token: "valid ✓" },
+    { label: "Meal log", note: "Go API → Postgres", token: "logged ✓" },
+  ]} />
+</Figure>
+
+## Decisions that mattered
+
+**1. Move from Firebase to a Go backend.** Once there were subscriptions, payments and gated features, the logic needed a home of its own. The Go API on PostgreSQL owns meals, recipes, body metrics, subscriptions and payment webhooks. Feature permissions travel inside the JWT claims, so route middleware can check access without another database call.
+
+**2. A coordinator and three specialized agents, not one big agent.** For the chatbot, a coordinator routes each question to a research agent, a nutritionist agent backed by retrieval, or a personal agent that knows the user's own data. Splitting the work kept each agent's context small and its answers more precise than one agent trying to do everything.
+
+**3. Stop compiling on the production server.** Building images on a small VPS was slow and ran out of memory. Building on my Apple Silicon machine for the amd64 server through QEMU emulation crashed the Go compiler with segfaults. The fix was to build multi-stage images with Go's native cross-compilation, push them to a container registry, and have the server only pull finished images.
+
+**4. Route by container labels, not hand-written proxy config.** With a backend, an admin panel and a consumer app in one repo, maintaining Nginx port mappings by hand got fragile. Traefik picks up each service from its Docker labels, so adding or moving a service doesn't mean editing proxy files.
+
+<Callout type="lesson">An installable web app keeps old code around. If the service worker serves a stale bundle, the bug you're chasing may not exist in your current build.</Callout>
+
+## What I learned
+
+Two production bugs taught me more than most features did.
+
+The first was login failing with a generic server error. The cause was a cached PWA bundle that no longer matched the server, which broke Next.js Server Actions. I cleared the stale caches and moved login to a plain API route, which doesn't depend on client and server bundles matching.
+
+The second was a 100% discount coupon that failed at checkout. The payment gateway rejects transactions with a total of zero. The backend now skips the gateway when the total is zero, activates the subscription directly, and gives back coupons that earlier failed attempts had used up.
+
+Both were small fixes. Both came from assumptions that only break once real people use the product.

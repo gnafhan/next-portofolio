@@ -1,0 +1,80 @@
+---
+title: "Inbox assistant: every request on one board"
+summary: "A read-only AI assistant that collects work requests from my chat apps, proposes tickets for my tracker, and drafts my standups. I approve everything."
+role: "Builder (personal system)"
+period: "2026"
+stack: ["Claude Code", "MCP", "It's a Plan", "Python"]
+icon: "inbox"
+order: 2
+featured: true
+links: []
+---
+
+## The problem
+
+If you work with more than one team, your to-do list doesn't live in one place. It lives in whatever app someone used to message you.
+
+Mine was split everywhere. A campus assignment in one app, a request from a lecturer in another, a teammate in a third. On top of that, one of my teams runs a daily standup, so every evening I had to answer one question: what did I actually get done today?
+
+Some things I fixed in minutes and forgot. Some only existed as one line in a chat I scrolled past. Keeping track of my work had quietly become a second job, and all of it was manual: remember, write it down, remember again at standup time.
+
+I kept thinking: "why am I the one doing the remembering?"
+
+## What I built
+
+I spent about a week building an assistant that does the remembering for me. It reads my chats and tells me what people asked for, turns those requests into tickets once I approve them, checks at the end of the day for work that never got a ticket, and drafts my daily standup.
+
+The setup is plain:
+
+- **It's a Plan**, a self-hosted issue tracker on my own server. It ships an MCP server, so an AI client can read and update issues.
+- **My chat apps**, connected read-only: MCP servers where they exist, and a gateway on my own server, reachable only from inside it, where they don't.
+- **Claude Code** as the client that does the reading, matching and drafting.
+
+Everything goes into one tracker project, with one label per area of my life. I considered separate projects, but I want one board that answers "what do I do next?", not five.
+
+<Figure title="How a request reaches the board" sub="Generic flow, all sources read-only" caption="The assistant proposes; nothing lands on the board or in a chat without me.">
+  <Converge
+    sources={["Work chats", "Campus chats", "Side-project chats", "Coding sessions"]}
+    hub="AI assistant"
+    hubNote="read-only"
+    gate="I approve"
+    outputs={["Tracker tickets", "Standup drafts"]}
+  />
+</Figure>
+
+## Decisions that mattered
+
+**1. Read-only, enforced in config.** The first thing I told the assistant was: never write anything. No messages, no reactions, nothing. A line in the prompt would be a request, not a guarantee. So for the chat MCP servers, every tool that sends, edits, deletes, reacts or creates is denied in the client's config. The assistant can see that a send tool exists; it just can't call it. If I want a draft reply, it writes the text for me to copy.
+
+**2. A whitelist, not a blacklist.** "Read everything except the noisy channels" sounds reasonable and is a trap. New channels appear, someone adds you to a group, and suddenly the assistant reads things you never meant it to. Instead, one file lists exactly which channels, DMs and groups can be read, per area. Anything not listed is never read. Alert channels full of bot messages and channels that have been dead for months are excluded too, because they bury real requests under noise.
+
+**3. It proposes, I decide.** When I ask "anything new in my chats?", I get a list: what it found, which area it belongs to, who asked, and a link to the message. It doesn't touch the board until I say which ones to add. That sounds slower than full automation. In practice the review is quick, and it means I trust the board. Every ticket also records who asked and where, so a week later I still know why a task exists.
+
+**4. Look for the leak where you already act fast.** After the inbox worked, I still found work that never made it onto the board. The pattern was always the same: someone posts a bug in chat, I copy it straight into a coding agent, it gets fixed, and I move on. The chat reader never saw it as new, because I had already handled it. The fix was one rules file that every coding agent reads (find or create the ticket, record who asked, log what was done), plus an end-of-day sweep over the day's coding sessions that lists work with no ticket yet. I approve those too.
+
+<Figure title="Closing the leak" sub="Three nets, each catching what the one above misses" caption="By the end of the day, nothing reaches the bottom: every piece of work has a ticket.">
+  <Layers
+    top="work that happens"
+    bottom="untracked work"
+    layers={[
+      { label: "chat reader: requests in chats" },
+      { label: "rules file: coding agents log a ticket" },
+      { label: "end-of-day sweep: everything else" },
+    ]}
+    items={[
+      { at: 0.15, label: "asked in a chat", blockedBy: 0 },
+      { at: 0.45, label: "started in a coding agent", blockedBy: 1 },
+      { at: 0.78, label: "quick fix, no ticket", blockedBy: 2 },
+    ]}
+  />
+</Figure>
+
+## What I learned
+
+Once the board is honest, the standup is just a view of it. A scheduled task drafts it from the board and the day's sessions. It never posts.
+
+Two smaller lessons from the sweep. One coding session often holds several unrelated tasks, so each new request in a session is its own candidate. And tiny investigations count: "checked why a login failed, no code change" is still work someone asked for.
+
+<Callout type="lesson">The hard part wasn't the code. It was deciding what the assistant should never be allowed to do.</Callout>
+
+The whole thing is a few config files, one rules file and one Python script. I'm still the one deciding what goes on the board. The AI just does the remembering.

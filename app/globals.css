@@ -1,0 +1,605 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Flat, neutral tokens: one blue accent, hairline borders, no gradients. */
+:root {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface-solid: #ffffff;
+  --surface-2: #f4f4f5;
+  --surface-2-solid: #f4f4f5;
+  --ink: #0a0a0a;
+  --ink-2: #52525b;
+  --ink-3: #6b6b74;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --accent: #1d6ae5;
+  --accent-ink: #ffffff;
+  --accent-soft: #eaf2ff;
+  --human: #ea580c;
+  --ok: #16a34a;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #18181b;
+  --surface: #1f1f23;
+  --surface-solid: #1f1f23;
+  --surface-2: #27272a;
+  --surface-2-solid: #27272a;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #9a9aa4;
+  --line: #2e2e33;
+  --line-strong: #3f3f46;
+  --accent: #5c9dff;
+  --accent-ink: #ffffff;
+  --accent-soft: #1b2a45;
+  --human: #fb923c;
+  --ok: #4ade80;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, -apple-system, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+html {
+  background: var(--bg);
+  scroll-padding-top: 6rem;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+/* the chat box already shows its caret; it doesn't need a ring as well */
+.nafi-input:focus-visible {
+  outline: none;
+}
+
+/* Small muted caption. Sentence case, no mono. */
+.label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+/*
+ * Liquid glass for buttons and floating controls, no gradients. What reads as "liquid" is light,
+ * not blur: a clear body, a hard specular edge where light enters (top-left), a softer bounce on
+ * the far edge (bottom-right) and a white glow just inside the rim, over a light 4px blur.
+ */
+:root {
+  --glass-fill: rgba(255, 255, 255, 0.34);
+  --glass-fill-hover: rgba(255, 255, 255, 0.55);
+  --glass-fill-sm: rgba(255, 255, 255, 0.62);
+  --glass-light:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 1.5px 1.5px 0 -0.5px rgba(255, 255, 255, 1),
+    inset -1.5px -1.5px 0 -0.5px rgba(255, 255, 255, 0.85),
+    inset 10px 12px 18px -16px rgba(255, 255, 255, 1),
+    inset -12px -14px 22px -18px rgba(15, 23, 42, 0.12),
+    inset 0 0 22px -8px rgba(255, 255, 255, 0.75);
+  --glass-edge: 0 0 0 1px rgba(15, 23, 42, 0.07);
+  /* coloured pieces inside illustrations: flat, with a hairline and a faint top edge */
+  --tint-flat: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  /* rim light for the primary button */
+  --tint-light:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 1.5px 1.5px 0 -0.5px rgba(255, 255, 255, 0.75),
+    inset -1.5px -1.5px 0 -0.5px rgba(255, 255, 255, 0.3),
+    inset 10px 12px 16px -14px rgba(255, 255, 255, 0.6),
+    inset -10px -12px 16px -14px rgba(255, 255, 255, 0.25);
+  --glass-drop: 0 12px 30px -16px rgba(15, 23, 42, 0.28);
+  --glass-drop-sm: 0 6px 16px -8px rgba(15, 23, 42, 0.26);
+}
+[data-theme="dark"] {
+  --glass-fill: rgba(255, 255, 255, 0.045);
+  --glass-fill-hover: rgba(255, 255, 255, 0.09);
+  --glass-fill-sm: rgba(255, 255, 255, 0.06);
+  --glass-light:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    inset 1.5px 1.5px 0 -0.5px rgba(255, 255, 255, 0.38),
+    inset -1.5px -1.5px 0 -0.5px rgba(255, 255, 255, 0.14),
+    inset 10px 12px 18px -16px rgba(255, 255, 255, 0.3),
+    inset -10px -12px 18px -16px rgba(255, 255, 255, 0.12),
+    inset 0 0 22px -8px rgba(255, 255, 255, 0.07);
+  --glass-edge: 0 0 0 1px rgba(0, 0, 0, 0.35);
+  --glass-drop: 0 14px 34px -16px rgba(0, 0, 0, 0.85);
+  --glass-drop-sm: 0 6px 16px -8px rgba(0, 0, 0, 0.7);
+}
+
+/*
+ * Cards and the UI pieces inside illustrations are calm, solid surfaces (like a real app): a fill a
+ * shade off the page, a hairline border and a faint top edge. Only buttons get the lit glass above.
+ * .glass-static: same look, without the scroll-in settle.
+ */
+:root {
+  --card: #ffffff;
+  --card-hover: #ffffff;
+  --card-ring: 0 0 0 1px rgba(15, 23, 42, 0.08);
+  --card-shade: inset 0 1px 0 rgba(255, 255, 255, 1), 0 1px 2px rgba(15, 23, 42, 0.04), 0 14px 34px -22px rgba(15, 23, 42, 0.22);
+  --panel: #ffffff;
+  --panel-shade: 0 0 0 1px rgba(15, 23, 42, 0.09), 0 2px 6px -2px rgba(15, 23, 42, 0.1);
+}
+[data-theme="dark"] {
+  --card: #1d1d21;
+  --card-hover: #222226;
+  --card-ring: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+  --card-shade: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 18px 40px -22px rgba(0, 0, 0, 0.85);
+  --panel: #26262b;
+  --panel-shade: inset 0 0 0 1px rgba(255, 255, 255, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 14px -6px rgba(0, 0, 0, 0.6);
+}
+.glass,
+.glass-static {
+  background-color: var(--card);
+  border: 0;
+  box-shadow: var(--card-ring), var(--card-shade);
+}
+.glass-static {
+  background-color: var(--card-hover);
+}
+.glass-hover {
+  transition: transform 0.25s ease, background-color 0.2s;
+}
+.glass-hover:hover {
+  transform: translateY(-2px);
+  background-color: var(--card-hover);
+}
+
+/* Buttons and floating controls: a light, clear blur (not frosted) plus the same light */
+.lg {
+  -webkit-backdrop-filter: blur(4px) saturate(170%);
+  backdrop-filter: blur(4px) saturate(170%);
+  background-color: var(--glass-fill);
+  border: 0;
+  box-shadow: var(--glass-light), var(--glass-edge), var(--glass-drop-sm);
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.lg:hover {
+  background-color: var(--glass-fill-hover);
+}
+.lg:active {
+  transform: scale(0.97);
+}
+
+/* Pieces inside illustrations (bubbles, chips, mini windows): solid UI panels */
+.lg-sm {
+  background-color: var(--panel);
+  border: 0;
+  box-shadow: var(--panel-shade);
+}
+/* Coloured pieces (highlighted bubbles, bars, the active timeline icon) */
+.lg-accent {
+  color: #fff;
+  background-color: rgb(24, 98, 214);
+  border: 0;
+  box-shadow: var(--tint-flat), 0 4px 10px -5px rgba(24, 98, 214, 0.5);
+}
+.lg-ok {
+  color: #fff;
+  background-color: rgba(22, 163, 74, 0.9);
+  border: 0;
+  box-shadow: var(--tint-flat), 0 3px 8px -4px rgba(22, 163, 74, 0.5);
+}
+.lg-bad {
+  color: #fff;
+  background-color: rgba(220, 38, 38, 0.88);
+  border: 0;
+  box-shadow: var(--tint-flat), 0 3px 8px -4px rgba(220, 38, 38, 0.45);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.62rem 1.25rem;
+  font-size: 0.93rem;
+  font-weight: 500;
+}
+/* Tinted glass: the accent shows through, highlight stays on top */
+.btn-primary {
+  color: #fff;
+  background-color: rgb(24, 98, 214);
+  box-shadow: var(--tint-light), 0 0 0 1px rgba(24, 98, 214, 0.35), 0 8px 22px -8px rgba(43, 127, 255, 0.65);
+}
+.btn-primary:hover,
+[data-theme="dark"] .btn-primary:hover {
+  background-color: rgba(43, 127, 255, 1);
+}
+[data-theme="dark"] .btn-primary {
+  background-color: rgba(43, 127, 255, 0.8);
+  box-shadow: var(--tint-light), 0 8px 22px -8px rgba(43, 127, 255, 0.7);
+}
+
+/* App-style icons: flat squircle, white glyph */
+.app-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.app-icon-blue { background-color: #2b7fff; }
+.app-icon-green { background-color: #16a34a; }
+.app-icon-orange { background-color: #ea580c; }
+.app-icon-violet { background-color: #7c3aed; }
+
+/* Animations */
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(var(--r)) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(var(--r)) rotate(-360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Article typography */
+.prose {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.prose > * + * {
+  margin-top: 1.15em;
+}
+.prose h2 {
+  margin-top: 2.4em;
+  font-size: 1.45rem;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.prose h3 {
+  margin-top: 1.8em;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.prose h2 + *,
+.prose h3 + * {
+  margin-top: 0.6em;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.prose a:hover {
+  text-decoration-thickness: 2px;
+}
+.prose strong {
+  font-weight: 600;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.3em;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ul > li::marker {
+  color: var(--ink-3);
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose ol > li::marker {
+  color: var(--ink-3);
+}
+.prose li + li {
+  margin-top: 0.4em;
+}
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  padding-left: 1em;
+  color: var(--ink-2);
+}
+.prose hr {
+  border: 0;
+  border-top: 1px dashed var(--line-strong);
+  margin: 2.5em 0;
+}
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+.prose table {
+  width: 100%;
+  font-size: 0.92em;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+.prose th,
+.prose td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.5em 0.75em 0.5em 0;
+  text-align: left;
+  vertical-align: top;
+}
+.prose th {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.prose img {
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+/* Code blocks (rehype-pretty-code, dual theme) */
+.prose figure[data-rehype-pretty-code-figure] {
+  position: relative;
+}
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  background: var(--surface) !important;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+}
+.prose pre code {
+  display: grid;
+}
+.prose code[data-theme] span {
+  color: var(--shiki-light);
+}
+[data-theme="dark"] .prose code[data-theme] span {
+  color: var(--shiki-dark);
+}
+.prose [data-highlighted-line] {
+  background: var(--accent-soft);
+}
+.prose figcaption[data-rehype-pretty-code-title] {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+  margin-bottom: 0.4rem;
+}
+
+/* Heading anchors */
+.prose .anchor {
+  margin-left: 0.4em;
+  color: var(--ink-3);
+  text-decoration: none;
+  opacity: 0;
+  font-weight: 400;
+}
+.prose h2:hover .anchor,
+.prose h3:hover .anchor {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Figure numbering: Fig A, Fig B, ... per article */
+.article {
+  counter-reset: fig;
+}
+.article .fig {
+  counter-increment: fig;
+}
+.fig-label::before {
+  content: "Fig " counter(fig, upper-alpha);
+}
+
+/* Components inside articles opt out of article typography */
+.prose .not-prose ol,
+.prose .not-prose ul {
+  list-style: none;
+  padding-left: 0;
+}
+.prose .not-prose li::before {
+  content: none;
+}
+.prose .not-prose li + li {
+  margin-top: 0;
+}
+
+/* Footer wordmark: twinkling dots and a slow scan band */
+@keyframes wordmark-twinkle {
+  0%, 35%, 65%, 100% { opacity: 0; }
+  50% { opacity: 0.95; }
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.8; }
+}
+.star-twinkle {
+  animation: star-twinkle 4s ease-in-out infinite;
+}
+@keyframes wordmark-scan {
+  0% { transform: translateX(0); }
+  70%, 100% { transform: translateX(1320px); }
+}
+.wordmark-twinkle {
+  animation: wordmark-twinkle 3s ease-in-out infinite;
+}
+.wordmark-scan {
+  animation: wordmark-scan 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  opacity: 0.85;
+}
+
+/* Scroll: glass surfaces rise into place as they enter the viewport (progressive enhancement) */
+@keyframes glass-settle {
+  from {
+    translate: 0 18px;
+    scale: 0.97;
+  }
+  to {
+    translate: 0 0;
+    scale: 1;
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main .glass {
+      animation: glass-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+
+/* Home intro: covers the page until the visitor zooms through the N (see intro-reveal.tsx) */
+.intro-cover {
+  display: none;
+}
+[data-intro="on"] .intro-cover {
+  display: block;
+}
+[data-intro="on"] .intro-parallax {
+  transform: scale(calc(1.08 - 0.08 * var(--intro-p, 0)));
+  transform-origin: 50% 35%;
+}
+@keyframes intro-hint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+.intro-hint {
+  animation: intro-hint 1.4s ease-in-out infinite;
+}
+
+/* Nafi, the site mascot (components/mascot): a light glass drop in both themes, lit like the buttons */
+.nafi-body {
+  border-radius: 50% 50% 46% 46% / 56% 56% 44% 44%;
+  background-color: #e8f1ff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 2px 2px 0 -0.5px rgba(255, 255, 255, 1),
+    inset 10px 12px 16px -12px rgba(255, 255, 255, 1),
+    inset -8px -10px 14px -10px rgba(29, 106, 229, 0.22),
+    0 0 0 1px rgba(15, 23, 42, 0.08),
+    0 10px 22px -10px rgba(15, 23, 42, 0.35);
+}
+.nafi-arm {
+  background-color: #dbe8ff;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+[data-intro="on"] .nafi-root {
+  display: none;
+}
+@keyframes nafi-bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+.nafi-bob {
+  animation: nafi-bob 3.2s ease-in-out infinite;
+}
+
+/* Nafi's thinking orb: flat blobs (no gradients) swirling and morphing inside a lit glass bead */
+.nafi-orb {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: #eef4ff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 2px 2px 0 -0.5px rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(15, 23, 42, 0.08),
+    0 4px 10px -4px rgba(29, 106, 229, 0.45);
+  animation: nafi-orb-breathe 1.6s ease-in-out infinite;
+}
+.nafi-orb-blob {
+  position: absolute;
+  inset: 18%;
+  border-radius: 46% 54% 52% 48% / 55% 45% 55% 45%;
+  filter: blur(1.5px);
+  opacity: 0.82;
+}
+.nafi-orb-a {
+  background-color: #557cbe;
+  transform-origin: 40% 60%;
+  animation: nafi-orb-spin 1.8s linear infinite, nafi-orb-morph 2.2s ease-in-out infinite;
+}
+.nafi-orb-b {
+  background-color: #e94436;
+  transform-origin: 62% 42%;
+  animation: nafi-orb-spin 2.4s linear infinite reverse, nafi-orb-morph 1.9s ease-in-out infinite;
+}
+.nafi-orb-c {
+  background-color: #f8b916;
+  transform-origin: 50% 30%;
+  animation: nafi-orb-spin 3s linear infinite, nafi-orb-morph 2.6s ease-in-out infinite reverse;
+}
+@keyframes nafi-orb-spin {
+  to { rotate: 360deg; }
+}
+@keyframes nafi-orb-morph {
+  0%, 100% { border-radius: 46% 54% 52% 48% / 55% 45% 55% 45%; scale: 1; }
+  50% { border-radius: 58% 42% 40% 60% / 42% 58% 42% 58%; scale: 0.82; }
+}
+@keyframes nafi-orb-breathe {
+  0%, 100% { transform: scale(0.94); }
+  50% { transform: scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nafi-orb,
+  .nafi-orb-blob {
+    animation: none;
+  }
+}
+
+/* Nafi's auto-advance ring around Next: drawn as time passes; hovering the bubble pauses it */
+.nafi-ring {
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: 100;
+  animation-name: nafi-ring;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+[data-nafi-bubble]:hover .nafi-ring {
+  animation-play-state: paused;
+}
+@keyframes nafi-ring {
+  to { stroke-dashoffset: 0; }
+}
