@@ -4,10 +4,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import * as m from "motion/react-m";
 import { animate, useMotionValue, useReducedMotion, useTransform, useVelocity, type PanInfo } from "motion/react";
-import { X } from "lucide-react";
+import { ArrowUp, X } from "lucide-react";
 import { NafiFace, type Mood } from "./nafi-face";
 import { Spotlight } from "./spotlight";
 import { TOURS, type Step } from "./tours";
+import { ask, friendly, getSession, type Turn } from "./agent-client";
 
 const SIZE = 76;
 const EDGE = 14;
@@ -90,7 +91,12 @@ export default function Mascot() {
   const [spot, setSpot] = useState<Element | null>(null);
   const [touring, setTouring] = useState(false);
   const [pointLeft, setPointLeft] = useState(false);
-  const [msgs, setMsgs] = useState<Msg[]>([{ from: "nafi", text: "Hi, I'm Nafi! I can show you around Nafhan's site. Pick one:" }]);
+  // which way the speech bubble opens (towards the middle of the screen)
+  const [bubbleLeft, setBubbleLeft] = useState(() => start.x > window.innerWidth / 2);
+  const [msgs, setMsgs] = useState<Msg[]>([{ from: "nafi", text: "Hi, I'm Nafi! Ask me anything about Nafhan, or pick a tour:" }]);
+  const [draft, setDraft] = useState("");
+  const [busy, setBusy] = useState(false);
+  const turns = useRef<Turn[]>([]);
   const [panelPos, setPanelPos] = useState({ left: 0, top: 0 });
 
   const home = useRef({ x: start.x, y: start.y });
@@ -112,6 +118,7 @@ export default function Mascot() {
       const left = tx + SIZE / 2 < W / 2;
       const fx = left ? EDGE : W - SIZE - EDGE;
       const fy = clamp(ty, 76, H - SIZE - EDGE);
+      setBubbleLeft(!left);
       animate(x, fx, spring);
       animate(y, fy, spring);
       if (save) {
@@ -238,6 +245,7 @@ export default function Mascot() {
     const tx = right ? Math.min(r.right + 12, W - SIZE - 8) : Math.max(8, r.left - SIZE - 12);
     const ty = clamp(r.top + Math.min(r.height, 220) / 2 - SIZE / 2, 76, H - SIZE - 8);
     setPointLeft(right);
+    setBubbleLeft(tx > W / 2);
     if (calm) {
       x.set(tx);
       y.set(ty);
@@ -262,13 +270,21 @@ export default function Mascot() {
       }
       const el = await waitFor(s.target, ctl.signal);
       if (!el || ctl.signal.aborted) continue;
+      if (s.target === "main") {
+        // a whole page (case study, post): no spotlight, just arrive and talk
+        window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
+        setMood("happy");
+        if (s.say) say(s.say, 60000);
+        await sleep(s.say ? 2200 + s.say.length * 32 : 1200);
+        continue;
+      }
       el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
       await sleep(calm ? 100 : 750);
       if (ctl.signal.aborted) break;
       setSpot(el);
       flyTo(el);
       setMood("point");
-      say(s.say, 60000);
+      if (s.say) say(s.say, 60000);
       await sleep(s.hold ?? 2600 + s.say.length * 32);
     }
     setSpot(null);
@@ -290,6 +306,41 @@ export default function Mascot() {
     setMsgs((ms) => [...ms, { from: "you", text: tour.label }, { from: "nafi", text: tour.intro }]);
     runSteps(tour.steps);
   };
+
+  // --- free-form questions: the agent answers and may send steps to show
+  const send = async () => {
+    const q = draft.trim().slice(0, 500);
+    if (!q || busy) return;
+    setDraft("");
+    setMsgs((ms) => [...ms, { from: "you", text: q }]);
+    turns.current = [...turns.current, { role: "user" as const, content: q }].slice(-8);
+    setBusy(true);
+    setMood("talk");
+    track("Nafi ask");
+    try {
+      const r = await ask(turns.current, path.current);
+      turns.current = [...turns.current, { role: "assistant" as const, content: r.reply }].slice(-8);
+      setMsgs((ms) => [...ms, { from: "nafi", text: r.reply }]);
+      setMood("happy");
+      if (r.actions?.length) {
+        // give the visitor time to read the answer before Nafi sets off
+        await sleep(Math.min(6000, 1500 + r.reply.length * 30));
+        runSteps(r.actions);
+      } else {
+        setTimeout(() => setMood("idle"), 1200);
+      }
+    } catch (e) {
+      setMsgs((ms) => [...ms, { from: "nafi", text: friendly(e) }]);
+      moodFor("dizzy", 1600);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // warm up the proof-of-work while the visitor is still reading the panel
+  useEffect(() => {
+    if (open) getSession().catch(() => {});
+  }, [open]);
 
   // --- pokes and drags
   const onTap = () => {
@@ -377,8 +428,6 @@ export default function Mascot() {
       </button>
     );
   }
-
-  const bubbleLeft = x.get() > window.innerWidth / 2;
 
   return (
     <>
@@ -470,20 +519,61 @@ export default function Mascot() {
             {msgs.map((ms, i) => (
               <div
                 key={i}
-                className={`w-fit max-w-[85%] rounded-2xl px-3 py-2 text-[0.88rem] leading-snug ${ms.from === "you" ? "lg-accent ml-auto" : "lg-sm"}`}
+                className={`w-fit max-w-[85%] whitespace-pre-line rounded-2xl px-3 py-2 text-[0.88rem] leading-snug ${ms.from === "you" ? "lg-accent ml-auto" : "lg-sm"}`}
               >
                 {ms.text}
               </div>
             ))}
+            {busy && (
+              <div className="lg-sm flex w-fit gap-1 rounded-2xl px-3 py-2.5" aria-label="Nafi is thinking">
+                {[0, 1, 2].map((d) => (
+                  <m.span
+                    key={d}
+                    className="size-1.5 rounded-full bg-[var(--ink-3)]"
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1, repeat: Infinity, delay: d * 0.18 }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-          <div className="flex flex-wrap gap-1.5 px-4 pb-3">
-            {TOURS.map((t) => (
-              <button key={t.id} type="button" onClick={() => startTour(t.id)} className="lg rounded-full px-3 py-1.5 text-[0.82rem]">
-                {t.label}
-              </button>
-            ))}
+          {msgs.length <= 3 && (
+            <div className="flex flex-wrap gap-1.5 px-4 pb-3">
+              {TOURS.map((t) => (
+                <button key={t.id} type="button" onClick={() => startTour(t.id)} className="lg rounded-full px-3 py-1.5 text-[0.82rem]">
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <form
+            className="flex items-center gap-2 border-t border-line px-3 py-2.5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              send();
+            }}
+          >
+            <input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              maxLength={500}
+              placeholder="Ask about his work, skills, certificates…"
+              aria-label="Ask Nafi"
+              className="min-w-0 flex-1 bg-transparent px-1 text-[0.9rem] outline-none placeholder:text-ink-3"
+              autoFocus
+            />
+            <button
+              type="submit"
+              disabled={busy || !draft.trim()}
+              className="btn-primary flex size-8 shrink-0 items-center justify-center rounded-full disabled:opacity-40"
+              aria-label="Send"
+            >
+              <ArrowUp size={15} aria-hidden />
+            </button>
+          </form>
+          <div className="px-4 pb-2.5 text-[0.72rem] leading-snug text-ink-3">
+            AI answers from this site only. Chats are kept anonymously for 7 days to improve Nafi.
           </div>
-          <div className="border-t border-line px-4 py-2.5 text-[0.78rem] text-ink-3">Free-form questions are coming soon.</div>
         </m.div>
       )}
     </>

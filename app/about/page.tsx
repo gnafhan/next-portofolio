@@ -16,7 +16,11 @@ export const metadata = pageMeta({
 
 function Section({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="grid gap-4 border-t border-line py-10 md:grid-cols-[13rem_minmax(0,1fr)]">
+    <section
+      id={id}
+      data-agent={`about-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`}
+      className="grid gap-4 border-t border-line py-10 md:grid-cols-[13rem_minmax(0,1fr)]"
+    >
       <h2 className="label pt-1">{label}</h2>
       <div>{children}</div>
     </section>

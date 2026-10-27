@@ -1,0 +1,18 @@
+{
+  "name": "nafhan-agent",
+  "private": true,
+  "type": "module",
+  "description": "Nafi, the AI guide on nafhan.com: answers from the site's public content and tells the browser what to show.",
+  "scripts": {
+    "start": "node src/server.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@hono/node-server": "2.1.5",
+    "altcha-lib": "2.8.0",
+    "hono": "4.13.14",
+    "ioredis": "6.0.0"
+  }
+}

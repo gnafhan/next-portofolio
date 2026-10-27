@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "altcha-lib": "^2.8.0",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "html-to-image": "^1.11.13",
