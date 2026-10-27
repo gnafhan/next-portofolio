@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import * as m from "motion/react-m";
 import { animate, useMotionValue, useReducedMotion, useTransform, useVelocity, type PanInfo } from "motion/react";
 import { ArrowUp, X } from "lucide-react";
+import { ThinkingOrb } from "./orb";
 import { NafiFace, type Mood } from "./nafi-face";
 import { Spotlight } from "./spotlight";
 import { TOURS, type Step } from "./tours";
@@ -15,6 +16,9 @@ const EDGE = 14;
 const POS_KEY = "nafi-pos";
 const HIDE_KEY = "nafi-hidden";
 const HI_KEY = "nafi-hi";
+const PANEL_KEY = "nafi-panel";
+const PANEL_MIN = { w: 300, h: 340 };
+const THINKING = ["Reading Nafhan's site…", "Finding the right part…", "Almost there…"];
 
 const spring = { type: "spring" as const, stiffness: 260, damping: 24 };
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -97,7 +101,18 @@ export default function Mascot() {
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
   const turns = useRef<Turn[]>([]);
-  const [panelPos, setPanelPos] = useState({ left: 0, top: 0 });
+  const listRef = useRef<HTMLDivElement>(null);
+  const [panelPos, setPanelPos] = useState({ left: 0, top: 0, grip: "left" as "left" | "right" });
+  // the panel can be resized from the corner away from Nafi; the size is remembered
+  const [panelSize, setPanelSize] = useState(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem(PANEL_KEY) ?? "null");
+      if (v?.w && v?.h) return { w: v.w as number, h: v.h as number };
+    } catch {}
+    return { w: 360, h: 460 };
+  });
+  const [progress, setProgress] = useState<{ i: number; n: number } | null>(null);
+  const [thinkingLine, setThinkingLine] = useState(0);
 
   const home = useRef({ x: start.x, y: start.y });
   const lastActive = useRef(0);
@@ -109,6 +124,8 @@ export default function Mascot() {
     moodRef.current = mood;
   }, [mood]);
   const dragging = useRef(false);
+  // the click that ends a drag must not count as a tap
+  const justDragged = useRef(false);
 
   // --- placement: remembered spot, else bottom-right
   const settle = useCallback(
@@ -217,24 +234,75 @@ export default function Mascot() {
     return () => clearTimeout(t);
   }, [hidden, say, moodFor]);
 
-  // --- panel follows Nafi
+  // --- panel follows Nafi: beside it when there's room, else above/below; always fully on screen
+  const fitSize = useCallback(() => {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    return { w: clamp(panelSize.w, Math.min(PANEL_MIN.w, W - 24), Math.min(640, W - 24)), h: clamp(panelSize.h, Math.min(PANEL_MIN.h, H - 24), H - 24) };
+  }, [panelSize]);
   useEffect(() => {
     if (!open) return;
     const place = () => {
       const W = window.innerWidth;
-      const pw = Math.min(340, W - 24);
-      const left = clamp(x.get() + SIZE / 2 - pw / 2 + (x.get() > W / 2 ? -pw / 2 + 20 : pw / 2 - 20), 12, W - pw - 12);
-      const above = y.get() > 400;
-      setPanelPos({ left, top: above ? y.get() - 12 : y.get() + SIZE + 12 });
+      const H = window.innerHeight;
+      const { w, h } = fitSize();
+      const nx = x.get();
+      const ny = y.get();
+      const onRight = nx + SIZE / 2 > W / 2;
+      let left = onRight ? nx - w - 10 : nx + SIZE + 10;
+      let top = ny + SIZE / 2 - h / 2;
+      if (left < 12 || left + w > W - 12) {
+        // no room beside Nafi (phones): stack above or below it
+        left = clamp(nx + SIZE / 2 - w / 2, 12, W - w - 12);
+        top = ny > H / 2 ? ny - h - 10 : ny + SIZE + 10;
+      }
+      setPanelPos({ left, top: clamp(top, 12, H - h - 12), grip: onRight ? "left" : "right" });
     };
     place();
     const u1 = x.on("change", place);
     const u2 = y.on("change", place);
+    window.addEventListener("resize", place);
     return () => {
       u1();
       u2();
+      window.removeEventListener("resize", place);
     };
-  }, [open, x, y]);
+  }, [open, x, y, fitSize]);
+
+  const startResize = (e: React.PointerEvent) => {
+    e.preventDefault();
+    const sx = e.clientX;
+    const sy = e.clientY;
+    const start0 = fitSize();
+    const dirX = panelPos.grip === "left" ? -1 : 1;
+    let last = start0;
+    const move = (ev: PointerEvent) => {
+      last = { w: start0.w + (ev.clientX - sx) * dirX, h: start0.h - (ev.clientY - sy) };
+      setPanelSize(last);
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      try {
+        localStorage.setItem(PANEL_KEY, JSON.stringify(last));
+      } catch {}
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  };
+
+  // keep the newest message in view
+  useEffect(() => {
+    const el = listRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [msgs, busy, open]);
+
+  // cycle the thinking status line
+  useEffect(() => {
+    if (!busy) return;
+    const t = setInterval(() => setThinkingLine((n) => (n + 1) % THINKING.length), 1300);
+    return () => clearInterval(t);
+  }, [busy]);
 
   // --- tours: change page, scroll, spotlight, fly next to the thing, talk
   const flyTo = (el: Element) => {
@@ -261,8 +329,9 @@ export default function Mascot() {
     abort.current = ctl;
     setTouring(true);
     setOpen(false);
-    for (const s of steps) {
+    for (const [idx, s] of steps.entries()) {
       if (ctl.signal.aborted) break;
+      setProgress(steps.length > 1 ? { i: idx + 1, n: steps.length } : null);
       if (s.go && path.current !== s.go) {
         router.push(s.go);
         setMood("talk");
@@ -289,6 +358,7 @@ export default function Mascot() {
     }
     setSpot(null);
     setBubble(null);
+    setProgress(null);
     setMood("happy");
     setTimeout(() => setMood("idle"), 1200);
     setTouring(false);
@@ -315,7 +385,8 @@ export default function Mascot() {
     setMsgs((ms) => [...ms, { from: "you", text: q }]);
     turns.current = [...turns.current, { role: "user" as const, content: q }].slice(-8);
     setBusy(true);
-    setMood("talk");
+    setThinkingLine(0);
+    setMood("hover");
     track("Nafi ask");
     try {
       const r = await ask(turns.current, path.current);
@@ -370,6 +441,7 @@ export default function Mascot() {
 
   const onDragStart = () => {
     dragging.current = true;
+    justDragged.current = true;
     stopTour();
     setBubble(null);
     setMood("hover");
@@ -388,6 +460,7 @@ export default function Mascot() {
   };
   const onDragEnd = (_: unknown, info: PanInfo) => {
     dragging.current = false;
+    setTimeout(() => (justDragged.current = false), 80);
     // a little throw: carry the release speed, then land on the nearest edge with a squash
     settle(x.get() + info.velocity.x * 0.18, y.get() + info.velocity.y * 0.18);
     if (!calm) {
@@ -441,7 +514,6 @@ export default function Mascot() {
         onDragStart={onDragStart}
         onDrag={onDrag}
         onDragEnd={onDragEnd}
-        onTap={onTap}
         onHoverStart={() => moodRef.current === "idle" && setMood("hover")}
         onHoverEnd={() => moodRef.current === "hover" && setMood("idle")}
       >
@@ -451,16 +523,20 @@ export default function Mascot() {
             className={`${calm ? "" : "nafi-bob"} block cursor-grab rounded-full active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]`}
             aria-label={touring ? "Stop the tour" : open ? "Close Nafi's panel" : "Open Nafi, the site guide"}
             aria-expanded={open}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onTap();
-              }
+            onClick={() => {
+              if (!justDragged.current) onTap();
             }}
           >
             <NafiFace mood={mood} blink={blink} px={px} py={py} pointLeft={pointLeft} />
           </button>
         </m.div>
+
+        {/* thinking orb above Nafi's head */}
+        {busy && (
+          <m.span initial={{ opacity: 0, y: 6, scale: 0.6 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2">
+            <ThinkingOrb size={22} />
+          </m.span>
+        )}
 
         {/* hide */}
         {!touring && (
@@ -489,6 +565,18 @@ export default function Mascot() {
             }`}
             role="status"
           >
+            {progress && (
+              <span className="mb-1.5 flex items-center gap-2">
+                <span className="lg-accent rounded-full px-1.5 py-px text-[0.7rem] font-medium tabular-nums">
+                  {progress.i}/{progress.n}
+                </span>
+                <span className="flex gap-1" aria-hidden>
+                  {Array.from({ length: progress.n }, (_, k) => (
+                    <span key={k} className={`h-1 rounded-full transition-all ${k < progress.i ? "w-3 bg-accent" : "w-1.5 bg-[var(--line-strong)]"}`} />
+                  ))}
+                </span>
+              </span>
+            )}
             {bubble}
             {touring && <span className="mt-1 block text-[0.75rem] text-ink-3">Tap me to stop</span>}
           </m.div>
@@ -500,12 +588,22 @@ export default function Mascot() {
         <m.div
           initial={{ opacity: 0, y: 8, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="glass-static fixed z-[51] flex w-[min(340px,calc(100vw-24px))] flex-col overflow-hidden rounded-2xl"
-          style={{ left: panelPos.left, top: panelPos.top, translate: y.get() > 400 ? "0 -100%" : undefined }}
+          className="glass-static fixed z-[51] flex flex-col overflow-hidden rounded-2xl"
+          style={{ left: panelPos.left, top: panelPos.top, width: fitSize().w, height: fitSize().h }}
           role="dialog"
           aria-label="Nafi, site guide"
           onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
         >
+          {/* resize grip, on the corner away from Nafi */}
+          <span
+            onPointerDown={startResize}
+            className={`absolute top-0 z-10 size-5 touch-none ${panelPos.grip === "left" ? "left-0 cursor-nwse-resize" : "right-0 cursor-nesw-resize"}`}
+            aria-hidden
+          >
+            <svg viewBox="0 0 20 20" className={`size-full text-ink-3 ${panelPos.grip === "left" ? "" : "-scale-x-100"}`}>
+              <path d="M5 13 L13 5 M5 9 L9 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.7" />
+            </svg>
+          </span>
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <div>
               <div className="text-[0.95rem] font-medium">Nafi</div>
@@ -515,7 +613,7 @@ export default function Mascot() {
               <X size={14} aria-hidden />
             </button>
           </div>
-          <div className="max-h-[220px] space-y-2 overflow-y-auto px-4 py-3" aria-live="polite">
+          <div ref={listRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto px-4 py-3" aria-live="polite">
             {msgs.map((ms, i) => (
               <div
                 key={i}
@@ -525,15 +623,11 @@ export default function Mascot() {
               </div>
             ))}
             {busy && (
-              <div className="lg-sm flex w-fit gap-1 rounded-2xl px-3 py-2.5" aria-label="Nafi is thinking">
-                {[0, 1, 2].map((d) => (
-                  <m.span
-                    key={d}
-                    className="size-1.5 rounded-full bg-[var(--ink-3)]"
-                    animate={{ opacity: [0.3, 1, 0.3] }}
-                    transition={{ duration: 1, repeat: Infinity, delay: d * 0.18 }}
-                  />
-                ))}
+              <div className="lg-sm flex w-fit items-center gap-2.5 rounded-2xl py-2 pl-2 pr-3" aria-label="Nafi is thinking">
+                <ThinkingOrb size={24} />
+                <m.span key={thinkingLine} initial={{ opacity: 0, y: 3 }} animate={{ opacity: 1, y: 0 }} className="text-[0.85rem] text-ink-2">
+                  {THINKING[thinkingLine]}
+                </m.span>
               </div>
             )}
           </div>

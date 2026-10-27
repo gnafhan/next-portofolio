@@ -6,6 +6,7 @@ import { MotionProvider } from "@/components/motion-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { MascotLoader } from "@/components/mascot/loader";
+import { INTRO_GATE } from "@/components/home/intro-gate";
 import { JsonLd, personSchema, websiteSchema } from "@/components/json-ld";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -34,8 +35,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col">
+        <Script id="intro-gate" strategy="beforeInteractive">
+          {INTRO_GATE}
+        </Script>
         <ThemeProvider>
           <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50">
             Skip to content

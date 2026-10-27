@@ -12,12 +12,11 @@ import { buildLogoTextures, SDF } from "./logo-sdf";
  * The N's pane is a clear window onto the live page underneath (the canvas is transparent there),
  * and scrolling on zooms through it until the page is all that's left.
  *
- * An inline script decides before first paint whether to show it (WebGL on a real GPU, no
- * reduced motion, once per tab session; ?intro forces it), so there is no flash of content.
+ * A beforeInteractive script (intro-gate.ts, run from the root layout) decides before first paint
+ * whether to show it (WebGL on a real GPU, no reduced motion, once per tab session; ?intro forces
+ * it), so there is no flash of content.
  */
 
-// Skipped without a real GPU (software renderers like SwiftShader would make it stutter).
-const GATE = `(function(){try{var d=document.documentElement,force=/[?&]intro\\b/.test(location.search),why=function(r){console.info('[intro] skipped: '+r+' (add ?intro to the URL to force it)');};if(!force&&matchMedia('(prefers-reduced-motion: reduce)').matches)return why('reduced motion is on in system settings');if(!force&&sessionStorage.getItem('intro-seen'))return why('already shown in this tab');var g=document.createElement('canvas').getContext('webgl');if(!g)return why('WebGL unavailable');var i=g.getExtension('WEBGL_debug_renderer_info');var r=i?String(g.getParameter(i.UNMASKED_RENDERER_WEBGL)):'';if(!force&&/swiftshader|llvmpipe|software/i.test(r))return why('software renderer: '+r);d.dataset.intro='on';}catch(e){console.info('[intro] skipped: '+e);}})();`;
 
 const LOGO_H = 290;
 const CENTER = { x: 228, y: 249 };
@@ -443,7 +442,6 @@ export function IntroReveal() {
 
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: GATE }} />
       <div ref={rootRef} className="intro-cover fixed inset-0 z-[60] bg-bg">
         <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden />
         <div ref={textRef} className="pointer-events-none absolute inset-x-0 bottom-[7vh] flex flex-col items-center gap-3 text-center" style={{ opacity: 0 }}>

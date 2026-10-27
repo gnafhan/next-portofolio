@@ -529,3 +529,58 @@ body {
 .nafi-bob {
   animation: nafi-bob 3.2s ease-in-out infinite;
 }
+
+/* Nafi's thinking orb: flat blobs (no gradients) swirling and morphing inside a lit glass bead */
+.nafi-orb {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: #eef4ff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 2px 2px 0 -0.5px rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(15, 23, 42, 0.08),
+    0 4px 10px -4px rgba(29, 106, 229, 0.45);
+  animation: nafi-orb-breathe 1.6s ease-in-out infinite;
+}
+.nafi-orb-blob {
+  position: absolute;
+  inset: 18%;
+  border-radius: 46% 54% 52% 48% / 55% 45% 55% 45%;
+  filter: blur(1.5px);
+  opacity: 0.82;
+}
+.nafi-orb-a {
+  background-color: #557cbe;
+  transform-origin: 40% 60%;
+  animation: nafi-orb-spin 1.8s linear infinite, nafi-orb-morph 2.2s ease-in-out infinite;
+}
+.nafi-orb-b {
+  background-color: #e94436;
+  transform-origin: 62% 42%;
+  animation: nafi-orb-spin 2.4s linear infinite reverse, nafi-orb-morph 1.9s ease-in-out infinite;
+}
+.nafi-orb-c {
+  background-color: #f8b916;
+  transform-origin: 50% 30%;
+  animation: nafi-orb-spin 3s linear infinite, nafi-orb-morph 2.6s ease-in-out infinite reverse;
+}
+@keyframes nafi-orb-spin {
+  to { rotate: 360deg; }
+}
+@keyframes nafi-orb-morph {
+  0%, 100% { border-radius: 46% 54% 52% 48% / 55% 45% 55% 45%; scale: 1; }
+  50% { border-radius: 58% 42% 40% 60% / 42% 58% 42% 58%; scale: 0.82; }
+}
+@keyframes nafi-orb-breathe {
+  0%, 100% { transform: scale(0.94); }
+  50% { transform: scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nafi-orb,
+  .nafi-orb-blob {
+    animation: none;
+  }
+}

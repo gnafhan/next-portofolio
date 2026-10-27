@@ -24,8 +24,13 @@ answer, page, actions, no IP or session id) live in Redis lists `transcripts:YYY
 
 ## .env (on the VPS, mode 600)
 `AGENT_SECRET` (random, ≥32 chars), `LLM_BASE_URL`, `LLM_API_KEY` (9router key `nafhan-agent`),
-`LLM_MODEL`, `LLM_FALLBACK_MODEL`, `ALLOWED_ORIGINS`, `ALLOWED_ORIGIN_RE` (Vercel previews),
+`LLM_MODEL`, `LLM_FALLBACK_MODEL`, `LLM_EXTRA` (JSON merged into each request, e.g. `{"thinking":{"type":"disabled"}}`), `ALLOWED_ORIGINS`, `ALLOWED_ORIGIN_RE` (Vercel previews),
 `KNOWLEDGE_URL=https://nafhan.com/agent/index.json`.
+
+## Choosing a model
+`docker exec -e MODELS=ocg/a,ocg/b [-e EXTRA='{...}'] nafhan-agent node src/bench.mjs` times candidates with the real
+prompt and tool. Oct 2026: `ocg/glm-5.2` with thinking disabled ~2.8 s (vs ~9 s with reasoning), fallback
+`ocg/glm-5.3-flash` ~3.5 s.
 
 ## Deploy
 From the repo root, with the dev server running on :3100 (or point at production):
