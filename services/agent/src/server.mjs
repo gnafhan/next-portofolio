@@ -326,7 +326,9 @@ app.post("/chat", async (c) => {
     hit(`usage:${d}:requests`, 2 * 86400),
   ]);
   if (perMin > LIMIT.perMin) return c.json({ error: "slow_down" }, 429);
-  if (perDay > LIMIT.perDay || perSession > LIMIT.perSession) return c.json({ error: "daily_limit" }, 429);
+  if (perDay > LIMIT.perDay) return c.json({ error: "daily_limit" }, 429);
+  // a long session just needs a fresh token (and a new proof-of-work); the browser does that itself
+  if (perSession > LIMIT.perSession) return c.json({ error: "session_limit" }, 429);
   if (global > LIMIT.globalDay) return c.json({ error: "resting" }, 503);
 
   const t0 = Date.now();

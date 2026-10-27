@@ -52,8 +52,12 @@ export async function ask(messages: Turn[], path: string): Promise<Reply> {
       body: JSON.stringify({ messages: messages.slice(-8), path }),
     });
   let r = await send(await getSession());
-  if (r.status === 401) r = await send(await getSession(true));
-  const d = await r.json().catch(() => ({}));
+  let d = await r.json().catch(() => ({}));
+  // expired token, or this session used up its questions: start a fresh session once and retry
+  if (r.status === 401 || d?.error === "session_limit") {
+    r = await send(await getSession(true));
+    d = await r.json().catch(() => ({}));
+  }
   if (!r.ok) throw new AgentError(d?.error ?? "upstream");
   return d as Reply;
 }
