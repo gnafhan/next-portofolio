@@ -79,6 +79,10 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+/* the chat box already shows its caret; it doesn't need a ring as well */
+.nafi-input:focus-visible {
+  outline: none;
+}
 
 /* Small muted caption. Sentence case, no mono. */
 .label {

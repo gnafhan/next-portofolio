@@ -754,7 +754,7 @@ export default function Mascot() {
               maxLength={500}
               placeholder="Ask about his work, skills, certificates…"
               aria-label="Ask Nafi"
-              className="min-w-0 flex-1 bg-transparent px-1 text-[0.9rem] outline-none placeholder:text-ink-3"
+              className="nafi-input min-w-0 flex-1 bg-transparent px-1 text-[0.9rem] outline-none placeholder:text-ink-3"
               autoFocus
             />
             <button
