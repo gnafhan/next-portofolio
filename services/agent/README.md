@@ -16,6 +16,9 @@ Traefik: 30 req/min per IP (burst 20), 16 KB bodies. App: `CHAT_PER_MIN=6`, `CHA
 `CHAT_PER_SESSION=25`, `CHAT_GLOBAL_PER_DAY=1500`, `CHALLENGE_PER_MIN=20`, `MAX_INPUT_CHARS=500`,
 `MAX_HISTORY=8`. Kill switch: `AGENT_DISABLED=1` in `.env`, or `redis-cli set agent:off 1`.
 
+## Reset today's limits (e.g. after heavy testing from one IP)
+`ssh vps-nafhan 'R="docker exec nafhan-agent-redis redis-cli"; for k in $($R --scan --pattern "rl:*"); do $R del "$k"; done'`
+
 ## Privacy
 IPs are only stored hashed with a daily-rotating salt (rate-limit keys). Transcripts (question,
 answer, page, actions, no IP or session id) live in Redis lists `transcripts:YYYY-MM-DD` for
