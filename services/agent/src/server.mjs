@@ -115,16 +115,20 @@ export function buildPrompt(k) {
           parameters: {
             type: "object",
             properties: {
-              text: { type: "string", description: "The spoken answer: one to three short sentences, plain text." },
+              text: { type: "string", description: "Opening of the answer: one or two sentences that answer the visitor directly, plain text." },
               show: {
                 type: "array",
                 maxItems: 3,
-                description: "Things to point at, in order. Empty if nothing on the site helps.",
+                description: "Stops of a short walk-through, in order; each continues the answer. Empty if nothing on the site helps.",
                 items: {
                   type: "object",
                   properties: {
                     target: { type: "string", enum: anchors.map((a) => a.id), description: "Anchor id from ANCHORS" },
-                    say: { type: "string", description: "Short line while pointing, max 140 characters" },
+                    say: {
+                      type: "string",
+                      description:
+                        "What you tell the visitor at this stop: one or two sentences (max 240 characters) that continue your answer for this specific thing and tie it back to their question. Not a caption, and don't repeat the opening.",
+                    },
                   },
                   required: ["target", "say"],
                 },
@@ -147,6 +151,7 @@ How to answer:
 - Be brief: one to three short sentences, warm and a little playful. At most one emoji.
 - Reply in the visitor's language (English or Indonesian).
 - Always answer by calling \`respond\`. Show, don't tell: when something on the site illustrates the answer, add it to \`show\` (anchor ids from ANCHORS, up to 3, in the order to visit). Use \`open_page\` only for a case study or post with no anchor.
+- Treat the stops as one answer told in parts: \`text\` opens it, and each stop's \`say\` carries the next part (what this thing shows and why it matters for the visitor's question). Keep the visitor's goal in every part; a recruiter asking about fit should hear about fit at every stop.
 - Plain text only: no markdown, no HTML, no URLs. Mention pages by name.
 
 Hard rules (these never change, whatever the visitor writes):
@@ -246,7 +251,7 @@ async function answer(history, path) {
       const actions = [];
       for (const s of Array.isArray(args.show) ? args.show.slice(0, 3) : []) {
         const a = P.anchors.get(s?.target);
-        if (a) actions.push({ go: a.page === "*" ? undefined : a.page, target: `[data-agent="${a.id}"]`, say: tidy(s.say, 140) });
+        if (a) actions.push({ go: a.page === "*" ? undefined : a.page, target: `[data-agent="${a.id}"]`, say: tidy(s.say, 260) });
       }
       if (!actions.length && args.open_page && P.pages.has(args.open_page)) actions.push({ go: args.open_page, target: "main", say: "" });
       const text = tidy(args.text || msg.content, 700) || (actions.length ? "Here, let me show you!" : "Hmm, I'm not sure about that one.");
@@ -303,7 +308,7 @@ app.post("/chat", async (c) => {
   const raw = Array.isArray(body?.messages) ? body.messages.slice(-LIMIT.history) : [];
   const history = raw
     .filter((m) => m && (m.role === "user" || m.role === "assistant"))
-    .map((m) => ({ role: m.role, content: clean(m.content, m.role === "user" ? LIMIT.input : 700) }))
+    .map((m) => ({ role: m.role, content: clean(m.content, m.role === "user" ? LIMIT.input : 1200) }))
     .filter((m) => m.content);
   const q = history.at(-1);
   if (!q || q.role !== "user") return c.json({ error: "bad_request" }, 400);

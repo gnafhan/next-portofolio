@@ -331,16 +331,20 @@ export default function Mascot() {
 
   // a stop shows the answer itself (first stop of an AI answer) with the pointing line as a caption,
   // or just the pointing line
+  // a stop shows its line; the first stop of an AI answer also carries the answer's opening
   const speak = (s: Step) => {
     if (s.lead) {
-      say(s.lead, 120000);
+      say(s.lead, 600000);
       setNote(s.say || null);
     } else {
       setNote(null);
-      if (s.say) say(s.say, 60000);
+      if (s.say) say(s.say, 600000);
     }
   };
-  const readTime = (s: Step) => Math.min(16000, 2000 + ((s.lead?.length ?? 0) + s.say.length) * 38);
+
+  // the tour waits for the visitor: Next / Back in the bubble, arrow keys, Esc or a tap on Nafi to stop
+  const nav = useRef<((cmd: "next" | "prev" | "stop") => void) | null>(null);
+  const command = (cmd: "next" | "prev" | "stop") => nav.current?.(cmd);
 
   const runSteps = async (steps: Step[]) => {
     abort.current?.abort();
@@ -348,9 +352,11 @@ export default function Mascot() {
     abort.current = ctl;
     setTouring(true);
     setOpen(false);
-    for (const [idx, s] of steps.entries()) {
-      if (ctl.signal.aborted) break;
-      setProgress(steps.length > 1 ? { i: idx + 1, n: steps.length } : null);
+    let i = 0;
+    let dir: 1 | -1 = 1;
+    while (i >= 0 && i < steps.length && !ctl.signal.aborted) {
+      const s = steps[i];
+      setProgress({ i: i + 1, n: steps.length });
       if (s.go && path.current !== s.go) {
         router.push(s.go);
         setMood("talk");
@@ -358,23 +364,35 @@ export default function Mascot() {
         say("One sec…", 1500);
       }
       const el = await waitFor(s.target, ctl.signal);
-      if (!el || ctl.signal.aborted) continue;
-      if (s.target === "main") {
-        // a whole page (case study, post): no spotlight, just arrive and talk
-        window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
-        setMood("happy");
-        speak(s);
-        await sleep(readTime(s));
+      if (ctl.signal.aborted) break;
+      if (!el) {
+        // nothing to show here (e.g. hidden on this screen size): skip in the direction of travel
+        i += dir;
         continue;
       }
-      el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
-      await sleep(calm ? 100 : 750);
-      if (ctl.signal.aborted) break;
-      setSpot(el);
-      flyTo(el);
-      setMood("point");
+      if (s.target === "main") {
+        // a whole page (case study, post): no spotlight, just arrive and talk
+        setSpot(null);
+        window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
+        setMood("happy");
+      } else {
+        el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
+        await sleep(calm ? 100 : 750);
+        if (ctl.signal.aborted) break;
+        setSpot(el);
+        flyTo(el);
+        setMood("point");
+      }
       speak(s);
-      await sleep(s.hold ?? readTime(s));
+      const cmd = await new Promise<"next" | "prev" | "stop">((resolve) => {
+        nav.current = resolve;
+        ctl.signal.addEventListener("abort", () => resolve("stop"), { once: true });
+      });
+      nav.current = null;
+      if (cmd === "stop") break;
+      dir = cmd === "next" ? 1 : -1;
+      i = Math.max(0, i + dir);
+      if (cmd === "prev" && i === 0 && dir === -1) dir = 1;
     }
     setSpot(null);
     setBubble(null);
@@ -385,6 +403,17 @@ export default function Mascot() {
     setTouring(false);
     settle(home.current.x, home.current.y, false);
   };
+
+  useEffect(() => {
+    if (!touring) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") command("next");
+      else if (e.key === "ArrowLeft") command("prev");
+      else if (e.key === "Escape") command("stop");
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [touring]);
 
   const stopTour = () => {
     abort.current?.abort();
@@ -411,8 +440,10 @@ export default function Mascot() {
     track("Nafi ask");
     try {
       const r = await ask(turns.current, path.current);
-      turns.current = [...turns.current, { role: "assistant" as const, content: r.reply }].slice(-8);
-      setMsgs((ms) => [...ms, { from: "nafi", text: r.reply }]);
+      // the whole answer (opening + every stop) stays readable in the panel and is the context for follow-ups
+      const full = [r.reply, ...(r.actions ?? []).map((st) => st.say).filter(Boolean)].join("\n\n");
+      turns.current = [...turns.current, { role: "assistant" as const, content: full }].slice(-8);
+      setMsgs((ms) => [...ms, { from: "nafi", text: full }]);
       setMood("happy");
       if (r.actions?.length) {
         // the answer travels with Nafi: it's shown in the bubble at the first stop
@@ -581,12 +612,14 @@ export default function Mascot() {
             key={bubble}
             initial={{ opacity: 0, y: 6, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            className={`lg-sm pointer-events-none absolute ${bubbleBelow ? "top-[calc(100%+6px)]" : "bottom-[calc(100%+6px)]"} w-max ${note ? "max-w-[min(320px,calc(100vw-40px))]" : "max-w-[240px]"} rounded-2xl px-3 py-2 text-[0.85rem] leading-snug ${
-              bubbleLeft ? "right-0" : "left-0"
-            }`}
+            className={`lg-sm absolute ${touring ? "pointer-events-auto" : "pointer-events-none"} ${bubbleBelow ? "top-[calc(100%+6px)]" : "bottom-[calc(100%+6px)]"} w-max ${
+              touring || (bubble?.length ?? 0) > 90 ? "max-w-[min(320px,calc(100vw-40px))]" : "max-w-[240px]"
+            } rounded-2xl px-3 py-2 text-[0.85rem] leading-snug ${bubbleLeft ? "right-0" : "left-0"}`}
             role="status"
+            // the bubble's buttons must not start a drag or count as a tap on Nafi
+            onPointerDown={(e) => e.stopPropagation()}
           >
-            {progress && (
+            {progress && progress.n > 1 && (
               <span className="mb-1.5 flex items-center gap-2">
                 <span className="lg-accent rounded-full px-1.5 py-px text-[0.7rem] font-medium tabular-nums">
                   {progress.i}/{progress.n}
@@ -599,8 +632,32 @@ export default function Mascot() {
               </span>
             )}
             {bubble}
-            {note && <span className="mt-2 block border-t border-line pt-1.5 text-[0.8rem] text-ink-2">{note}</span>}
-            {touring && <span className="mt-1 block text-[0.75rem] text-ink-3">Tap me to stop</span>}
+            {note && <span className="mt-2 block">{note}</span>}
+            {touring && progress && (
+              <span className="mt-2.5 flex items-center justify-between gap-3 border-t border-line pt-2">
+                <button
+                  type="button"
+                  onClick={() => command("stop")}
+                  className="text-[0.75rem] text-ink-3 hover:text-ink"
+                  aria-label="Stop the tour"
+                >
+                  Stop
+                </button>
+                <span className="flex gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => command("prev")}
+                    disabled={progress.i === 1}
+                    className="lg rounded-full px-2.5 py-1 text-[0.78rem] disabled:opacity-35"
+                  >
+                    ‹ Back
+                  </button>
+                  <button type="button" onClick={() => command("next")} className="btn-primary rounded-full px-3 py-1 text-[0.78rem] font-medium" autoFocus>
+                    {progress.i === progress.n ? "Done" : "Next ›"}
+                  </button>
+                </span>
+              </span>
+            )}
           </m.div>
         )}
       </m.div>
