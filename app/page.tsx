@@ -7,7 +7,6 @@ import { WorkCard, PostRow } from "@/components/cards";
 import { TechStack } from "@/components/home/tech-stack";
 import { LazyStory } from "@/components/lazy-visuals";
 import { HeroArt } from "@/components/home/hero-art";
-import { IntroReveal } from "@/components/home/intro-reveal";
 import { ScrollThread } from "@/components/home/scroll-thread";
 import { Journey } from "@/components/home/journey";
 import { CertPile } from "@/components/certificates/cert-pile";
@@ -86,11 +85,10 @@ export default function Home() {
 
   return (
     <>
-      <IntroReveal />
       <div className="relative isolate mx-auto max-w-6xl px-4 sm:px-6">
         <ScrollThread />
         {/* Hero: text left, portrait right (the 2024 layout) */}
-        <section data-agent="hero" className="intro-parallax relative grid items-center gap-10 pb-10 pt-14 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:pt-24">
+        <section data-agent="hero" className="relative grid items-center gap-10 pb-10 pt-14 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:pt-24">
           <div className="order-2 md:order-1">
             <p className="text-[1.05rem] text-ink-2">Hi, I&apos;m {site.name}.</p>
             <h1 className="mt-3 text-[2.6rem] font-medium leading-[1.05] tracking-tighter sm:text-[3.6rem]">
