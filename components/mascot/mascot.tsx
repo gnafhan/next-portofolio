@@ -10,6 +10,7 @@ import { NafiFace, type Mood } from "./nafi-face";
 import { Spotlight } from "./spotlight";
 import { TOURS, type Step } from "./tours";
 import { ask, friendly, getSession, type Turn } from "./agent-client";
+import { smoothScrollTo } from "../smooth-scroll";
 
 const SIZE = 76;
 const EDGE = 14;
@@ -400,14 +401,15 @@ export default function Mascot() {
       if (s.target === "main") {
         // a whole page (case study, post): no spotlight, just arrive and talk
         setSpot(null);
-        window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
+        smoothScrollTo(0, { instant: !!calm });
         setMood("happy");
       } else {
         if (isMobile) {
           // phones: bring the target just under the header, above the sheet at the bottom
-          window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 84, behavior: calm ? "auto" : "smooth" });
+          smoothScrollTo(el, { offset: -84, instant: !!calm });
         } else {
-          el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
+          const h = el.getBoundingClientRect().height;
+          smoothScrollTo(el, { offset: -Math.max(84, (window.innerHeight - Math.min(h, window.innerHeight)) / 2), instant: !!calm });
         }
         await sleep(calm ? 100 : 750);
         if (ctl.signal.aborted) break;
@@ -731,6 +733,7 @@ export default function Mascot() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           className="lg-sm fixed inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] z-[51] max-h-[45vh] overflow-y-auto rounded-2xl px-4 py-3 text-[0.92rem] leading-snug"
+          data-lenis-prevent
           role="status"
           data-nafi-bubble=""
         >
@@ -746,6 +749,7 @@ export default function Mascot() {
           className="glass-static fixed z-[51] flex flex-col overflow-hidden rounded-2xl"
           style={{ left: panelPos.left, top: panelPos.top, width: fitSize().w, height: fitSize().h }}
           role="dialog"
+          data-lenis-prevent
           aria-label="Nafi, site guide"
           onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
         >

@@ -422,6 +422,10 @@ body {
     scroll-behavior: smooth;
   }
 }
+/* Lenis (components/smooth-scroll.tsx) moves the page itself; CSS smoothing would fight it */
+html.lenis {
+  scroll-behavior: auto !important;
+}
 
 /* Figure numbering: Fig A, Fig B, ... per article */
 .article {

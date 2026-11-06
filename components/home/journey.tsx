@@ -6,6 +6,7 @@ import * as m from "motion/react-m";
 import { useScroll } from "motion/react";
 import { BadgeCheck, Briefcase, FolderGit2, GraduationCap, Trophy, type LucideIcon } from "lucide-react";
 import type { JourneyItem, JourneyKind } from "@/lib/journey";
+import { smoothScrollTo } from "../smooth-scroll";
 
 const KIND: Record<JourneyKind, { Icon: LucideIcon; one: string; many: string }> = {
   study: { Icon: GraduationCap, one: "study", many: "study" },
@@ -69,7 +70,8 @@ export function Journey({ items }: { items: JourneyItem[] }) {
 
   const jump = (y: number) => {
     const i = items.findIndex((it) => it.year === y);
-    rows.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
+    const row = rows.current[i];
+    if (row) smoothScrollTo(row, { offset: -Math.max(84, (window.innerHeight - row.offsetHeight) / 2) });
   };
 
   return (

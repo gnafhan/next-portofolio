@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { MascotLoader } from "@/components/mascot/loader";
 import { OutboundTracker } from "@/components/outbound-tracker";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import { JsonLd, personSchema, websiteSchema } from "@/components/json-ld";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col">
+        <SmoothScroll />
         <ThemeProvider>
           <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50">
             Skip to content
