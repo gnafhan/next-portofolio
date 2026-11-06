@@ -68,6 +68,7 @@ export function CertList({ groups }: { groups: Group[] }) {
       </div>
 
       <dialog
+        data-lenis-prevent
         ref={dialog}
         onClose={() => setOpen(null)}
         onClick={(e) => e.target === dialog.current && dialog.current?.close()}
