@@ -33,6 +33,13 @@ const LLM = {
   // extra request fields, e.g. {"thinking":{"type":"disabled"}}: skipping reasoning cuts answers from ~9 s to ~3 s
   extra: env.LLM_EXTRA ? JSON.parse(env.LLM_EXTRA) : {},
 };
+// the fallback may live on another OpenAI-compatible endpoint (e.g. Anthropic's /v1/chat/completions
+// called directly, since 9router adds Claude Code beta headers that plain API keys are refused with)
+const FALLBACK = {
+  base: (env.LLM_FALLBACK_BASE_URL || LLM.base).replace(/\/$/, ""),
+  key: env.LLM_FALLBACK_API_KEY || LLM.key,
+  extra: env.LLM_FALLBACK_EXTRA ? JSON.parse(env.LLM_FALLBACK_EXTRA) : env.LLM_FALLBACK_BASE_URL ? {} : LLM.extra,
+};
 const LIMIT = {
   perMin: num(env.CHAT_PER_MIN, 6),
   perDay: num(env.CHAT_PER_DAY, 40),
@@ -217,12 +224,12 @@ const tidy = (s, max) =>
     .slice(0, max)
     .trim();
 
-async function llm(messages, { tools, toolChoice, model }) {
-  const r = await fetch(`${LLM.base}/chat/completions`, {
+async function llm(messages, { tools, toolChoice, model, via = LLM }) {
+  const r = await fetch(`${via.base}/chat/completions`, {
     method: "POST",
-    headers: { "content-type": "application/json", authorization: `Bearer ${LLM.key}` },
+    headers: { "content-type": "application/json", authorization: `Bearer ${via.key}` },
     // no temperature: some gateway models only accept their default
-    body: JSON.stringify({ model, messages, stream: false, max_tokens: 1800, ...LLM.extra, ...(tools ? { tools, tool_choice: toolChoice } : {}) }),
+    body: JSON.stringify({ model, messages, stream: false, max_tokens: 1800, ...via.extra, ...(tools ? { tools, tool_choice: toolChoice } : {}) }),
     signal: AbortSignal.timeout(LLM.timeoutMs),
   });
   if (!r.ok) throw new Error(`llm ${r.status}`);
@@ -233,12 +240,15 @@ async function llm(messages, { tools, toolChoice, model }) {
 async function answer(history, path) {
   const P = prompt;
   const messages = [{ role: "system", content: `${P.system}\n\nThe visitor is currently on: ${path}` }, ...history];
-  const models = [LLM.model, LLM.fallback].filter(Boolean);
+  const models = [
+    { model: LLM.model, via: LLM },
+    { model: LLM.fallback, via: FALLBACK },
+  ].filter((m) => m.model);
   let lastErr;
-  for (const model of models) {
+  for (const { model, via } of models) {
     try {
       // one round trip: the model must call `respond` with the answer and what to show
-      const { msg, finish, tokens } = await llm(messages, { tools: P.tools, toolChoice: { type: "function", function: { name: "respond" } }, model });
+      const { msg, finish, tokens } = await llm(messages, { tools: P.tools, toolChoice: { type: "function", function: { name: "respond" } }, model, via });
       const call = (msg.tool_calls || []).find((c) => c.function?.name === "respond");
       let args = {};
       try {
