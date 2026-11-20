@@ -27,7 +27,7 @@ answer, page, actions, no IP or session id) live in Redis lists `transcripts:YYY
 
 ## .env (on the VPS, mode 600)
 `AGENT_SECRET` (random, ≥32 chars), `LLM_BASE_URL`, `LLM_API_KEY` (9router key `nafhan-agent`),
-`LLM_MODEL`, `LLM_FALLBACK_MODEL`, `LLM_EXTRA` (JSON merged into each request, e.g. `{"thinking":{"type":"disabled"}}`), `ALLOWED_ORIGINS`, `ALLOWED_ORIGIN_RE` (Vercel previews),
+`LLM_MODEL`, `LLM_FALLBACK_MODEL`, `LLM_EXTRA` (JSON merged into each request, e.g. `{"thinking":{"type":"disabled"}}`), `LLM_FALLBACK_BASE_URL` / `LLM_FALLBACK_API_KEY` / `LLM_FALLBACK_EXTRA` (optional: send the fallback to another OpenAI-compatible endpoint, e.g. Anthropic's `https://api.anthropic.com/v1` directly, because 9router adds Claude Code beta headers that plain API keys are refused with), `ALLOWED_ORIGINS`, `ALLOWED_ORIGIN_RE` (Vercel previews),
 `KNOWLEDGE_URL=https://nafhan.com/agent/index.json`.
 
 ## Choosing a model
